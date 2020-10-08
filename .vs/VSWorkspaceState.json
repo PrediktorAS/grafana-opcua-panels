@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\grafana-ua-panel",
+    "\\grafana-ua-panel\\.circleci",
+    "\\grafana-ua-panel\\docs",
+    "\\grafana-ua-panel\\src",
+    "\\grafana-ua-panel\\src\\img"
+  ],
+  "SelectedNode": "\\grafana-ua-panel\\src\\SimplePanel.tsx",
+  "PreviewInSolutionExplorer": false
+}
