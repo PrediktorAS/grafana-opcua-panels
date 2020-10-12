@@ -142,7 +142,7 @@ export default class TreeNode extends Component<Props, State> {
 						{...this.props}
 						level={this.props.level + 1}
 						node={childNode}
-						parentNode={this}
+            parentNode={this}
 						/>
 					))}
 			</>
