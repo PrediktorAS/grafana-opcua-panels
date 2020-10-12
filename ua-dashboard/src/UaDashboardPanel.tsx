@@ -12,7 +12,8 @@ export const UaDashboardPanel: React.FC<Props> = ({ options, data, width, height
 
   const instanceId = replaceVariables('$InstanceId')
   //this.event
-  const query = replaceVariables('Now displaying $InstanceId')
+//  const query = replaceVariables('Now displaying $InstanceId')
+  const dashboardUrlText = replaceVariables('Current dashboard $DashboardUrl')
 
   let url;
 
@@ -20,7 +21,7 @@ export const UaDashboardPanel: React.FC<Props> = ({ options, data, width, height
     url = "/d/1VFKB3FGz/my-dashboard";
   }
   else {
-    url = "/d/IYY1f5vGk/new-dashboard-copy";
+    url = replaceVariables('$DashboardUrl?kiosk');
   }
 
   return (
@@ -35,7 +36,7 @@ export const UaDashboardPanel: React.FC<Props> = ({ options, data, width, height
     >
       <iframe src={url} width={width} height={height} frameBorder="0">
       </iframe>
-      <div>{query}</div>
+      <div>{dashboardUrlText}</div>
     </div>
   );
 };

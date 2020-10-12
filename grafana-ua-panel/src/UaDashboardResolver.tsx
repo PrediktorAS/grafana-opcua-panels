@@ -1,22 +1,24 @@
 import { DataSourceWithBackend } from '@grafana/runtime';
 import { OpcUaBrowseResults } from './types';
 
-export function findDashboard(nodeId: string, dataSource: DataSourceWithBackend | null): Promise<string> {
+export function findDashboard(nodeId: string, dataSource: DataSourceWithBackend | null): Promise<DashboardData[]> {
 
   if (dataSource != null) {
 
-    dataSource.getResource('gettypedefinition', { nodeId: nodeId })
-      .then((r: OpcUaBrowseResults) => r.browseName.name).then((t: string) => fetch('http://localhost:3000/api/search?query=Browse%20Ua')
+    return dataSource.getResource('gettypedefinition', { nodeId: nodeId })
+      .then((r: OpcUaBrowseResults) => r.browseName.name).then((t: string) => fetch('/api/search?query=' + encodeURI(t))
+//        .then((r: OpcUaBrowseResults) => r.browseName.name).then((t: string) => fetch('/api/search?query=Browse%20Ua')
       .then(res => res.json())
       .then(res => {
         if (res) {
-          return res as string
-          //return (res as DashboardData).url;
+
+          let db = res as DashboardData[];
+          return db;
         }
-        return "Not found";
+        return [];
       }))
   }
-  return new Promise<string>(() => "");
+  return new Promise<DashboardData[]>(() => []);
 }
 
 //export function findDashboard(nodeId: string, dataSource: DataSourceWithBackend | null): Promise<string> {
@@ -40,7 +42,7 @@ export function findDashboard(nodeId: string, dataSource: DataSourceWithBackend 
 //}
 
 
-interface DashboardData {
+export interface DashboardData {
   url: string
 }
 
