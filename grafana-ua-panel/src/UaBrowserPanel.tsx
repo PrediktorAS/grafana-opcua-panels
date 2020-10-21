@@ -9,11 +9,17 @@ import { getLocationSrv } from '@grafana/runtime';
 import { getDataSourceSrv } from '@grafana/runtime';
 import { DataSourceWithBackend } from '@grafana/runtime';
 import { Browser } from './Browser';
-import { findDashboard, DashboardData/*, findDashboard2*/ } from './UaDashboardResolver';
+import { findDashboard, DashboardData, findAllDashboards } from './UaDashboardResolver';
+//import { Button } from '@grafana/ui';
+import { DashMappingPanel } from './DashMappingPanel';
 
 interface Props extends PanelProps<SimpleOptions> { }
 
-interface State { selectedNode: OpcUaBrowseResults | null, browsePath: QualifiedName[] | null, dataSource: DataSourceWithBackend | null, selectedDashboard: string | null }
+interface State {
+  selectedNode: OpcUaBrowseResults | null, browsePath: QualifiedName[] | null,
+  dataSource: DataSourceWithBackend | null, selectedDashboard: DashboardData | null,
+  dashboards: DashboardData[] | null
+}
 
 export class UaBrowserPanel extends PureComponent<Props, State> {
 
@@ -24,24 +30,23 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
       browsePath: null,
       dataSource: null,
       selectedDashboard: null,
+      dashboards: null
     };    
   }
 
   render() {
 
-    let rootNodeId: OpcUaBrowseResults = { nodeId: "i=85", browseName: { name: "Objects", namespaceUrl: "http://opcfoundation.org/UA/" }, displayName: "Objects", isForward: true, nodeClass: 1 };
-
-    //let res = findDashboard2(rootNodeId.nodeId, this.state.dataSource);
-
-    //res.then((dashboards: DashboardData[]) => this.testFunc(dashboards));
-
-
+    let rootNodeId: OpcUaBrowseResults = {
+      nodeId: "i=85", browseName: { name: "Objects", namespaceUrl: "http://opcfoundation.org/UA/" },
+      displayName: "Objects", isForward: true, nodeClass: 1
+    };
 
     return <div className="gf-form-inline">
       <Browser closeBrowser={() => { }} closeOnSelect={false}
         browse={a => this.browse(a)}
         ignoreRootNode={true} rootNodeId={rootNodeId}
         onNodeSelectedChanged={(node, browsepath) => {
+
           this.setState({
             selectedNode: node, browsePath: browsepath
           })
@@ -49,49 +54,35 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
           let dashboard = findDashboard(node.nodeId, this.state.dataSource);
           dashboard.then((dashboards: DashboardData[]) => {
 
-            let dashboardName = "";
+            let selectedDashboard: DashboardData;
 
             if (dashboards.length > 0) {
-              dashboardName = dashboards[0].url;
-            }
-            getLocationSrv().update({
+              selectedDashboard = dashboards[0];
+              //dashboardUrl = dashboards[0].url;
+              getLocationSrv().update({
 
-              query: {
-                'var-InstanceId': node.nodeId,
-              },
-              partial: true,
-              replace: true,
+                query: {
+                  'var-InstanceId': node.nodeId,
+                  'var_SelectedNodeInfo': JSON.stringify(this.state.selectedNode),
+                  'var-DashboardUrl': selectedDashboard.url,
+                },
+                partial: true,
+                replace: true,
 
-            })
-            getLocationSrv().update({
+                })
 
-              query: {
-                'var-DashboardUrl': dashboardName,
-              },
-              partial: true,
-              replace: true,
-
-            })
-
-            this.setState({
-              selectedDashboard: dashboardName
-            })
+                this.setState({
+                  selectedDashboard: selectedDashboard
+                })
+              }
           });
-
-          //let dashboard2 = findDashboard(node.nodeId, this.state.dataSource);
-          //dashboard2.then((dashboardName: string) =>
-          //  this.setState({ selectedDashboard: dashboardName }));
-
 
         }}>
       </Browser>
-        <a href="/d/1VFKB3FGz/my-dashboard">
-        <div>Selected Node: {this.state.selectedNode?.displayName}</div>
-        <div>Selected Dashboard: {this.state.selectedDashboard}</div>
-        </a>
+      <div>Perspective: </div>
+      <DashMappingPanel selectedNode={JSON.stringify(this.state.selectedNode)} selectedDashboard={JSON.stringify(this.state.selectedDashboard)} hidden={!this.props.options.configMode} closeBrowser={() => { }}/>
     </div>;
   }
-
 
   browse(parentId: string): Promise<OpcUaBrowseResults[]> {
 
@@ -113,33 +104,23 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
     return new Promise<OpcUaBrowseResults[]>(() => [] );
   }
 
- resizeIframe(obj:any) {
-  obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
+  resizeIframe(obj:any) {
+    obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
   }
 
 
-  testFunc2() {
-    console.log("dashboards: " );
+  addDashboardMapping() {
 
+    let dboards = findAllDashboards();
+    let res = dboards.then((dashboards: DashboardData[]) => {
+
+
+      this.setState({
+        dashboards: dashboards
+      })
+    });
+
+    return res;
   }
-  testFunc(dashboards: DashboardData[]) {
-    console.info("dashboards: " + dashboards);
-    console.info("dashboards2: " + dashboards.length);
-    console.info("dashboards3: " + dashboards[0].url);
-    this.setState({ selectedDashboard: dashboards[0].url });
-  }
-  //testButton() {
-
-  //  var datasourceName = this.props.data.request?.targets[0].datasource;
-  //  getDataSourceSrv().get(datasourceName).then((result) => {
-
-  //    var dataSourceWithBackend: DataSourceWithBackend = result as unknown as DataSourceWithBackend;
-  //    var nodeId = "i=85";
-  //    dataSourceWithBackend.getResource('browse', { nodeId: nodeId }).then((r: OpcUaBrowseResults[]) => {
-  //      this.setState({ s: r[0].displayName });
-  //    })
-  //  })
-  //}
-
 };
 

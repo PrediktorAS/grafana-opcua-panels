@@ -7,6 +7,7 @@ export interface SimpleOptions {
   showSeriesCount: boolean;
   seriesCountSize: SeriesSize;
   color: CircleColor;
+  configMode: boolean;
 }
 
 export interface QualifiedName {
@@ -25,3 +26,6 @@ export interface OpcUaBrowseResults extends OpcUaNodeInfo {
   isForward: boolean;
 }
 
+export interface UaDashboardInfo {
+  name: string;
+}

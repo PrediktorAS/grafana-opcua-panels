@@ -12,6 +12,11 @@ export const plugin = new PanelPlugin<SimpleOptions>(UaBrowserPanel).setPanelOpt
       defaultValue: 'Default value of text input option',
     })
     .addBooleanSwitch({
+      path: 'configMode',
+      name: 'Configure dashboard mappings',
+      defaultValue: false,
+    })
+    .addBooleanSwitch({
       path: 'showSeriesCount',
       name: 'Show series counter',
       defaultValue: false,
@@ -117,5 +122,6 @@ export const plugin2 = new PanelPlugin<SimpleOptions>(SimplePanel).setPanelOptio
           },
         ],
       }
-    });
+    })
+;
 });

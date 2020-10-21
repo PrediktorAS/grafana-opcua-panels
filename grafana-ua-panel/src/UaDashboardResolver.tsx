@@ -1,67 +1,65 @@
 import { DataSourceWithBackend } from '@grafana/runtime';
-import { OpcUaBrowseResults } from './types';
+import { UaDashboardInfo } from './types';
+//import { OpcUaBrowseResults } from './types';
 
 export function findDashboard(nodeId: string, dataSource: DataSourceWithBackend | null): Promise<DashboardData[]> {
 
   if (dataSource != null) {
 
-    return dataSource.getResource('gettypedefinition', { nodeId: nodeId })
-      .then((r: OpcUaBrowseResults) => r.browseName.name).then((t: string) => fetch('/api/search?query=' + encodeURI(t))
-//        .then((r: OpcUaBrowseResults) => r.browseName.name).then((t: string) => fetch('/api/search?query=Browse%20Ua')
+    return dataSource.getResource('getdashboard', { nodeId: nodeId, perspective: "Operator" })
+      .then((d: UaDashboardInfo) => d.name)
+      .then((t: string) => fetch('/api/search?query=' + encodeURI(t))
       .then(res => res.json())
       .then(res => {
-        if (res) {
 
+        if (res) {
           let db = res as DashboardData[];
           return db;
         }
+
         return [];
       }))
   }
+
+  //if (dataSource != null) {
+
+  //  return dataSource.getResource('gettypedefinition', { nodeId: nodeId })
+  //    .then((r: OpcUaBrowseResults) => r.browseName.name)
+  //    .then((t: string) => fetch('/api/search?query=' + encodeURI(t))
+  //      .then(res => res.json())
+  //      .then(res => {
+
+  //        if (res) {
+  //          let db = res as DashboardData[];
+  //          return db;
+  //        }
+
+  //        return [];
+  //      }))
+  //}
+
   return new Promise<DashboardData[]>(() => []);
 }
 
-//export function findDashboard(nodeId: string, dataSource: DataSourceWithBackend | null): Promise<string> {
+export function findAllDashboards(): Promise<DashboardData[]> {
 
-//  if (dataSource != null) {
+  return fetch('/api/search?query=')
+      .then(res => res.json())
+      .then(res => {
 
-//    let type = dataSource.getResource('gettypedefinition', { nodeId: nodeId }).then((r: OpcUaBrowseResults) => r.browseName.name);
-//    return type.then((t: string) => fetch('/api/search?query=' + t)
-//      // the JSON body is taken from the response
-//      .then(res => res.json())
-//      .then(res => {
-//        // The response has an `any` type, so we need to cast
-//        // it to the `DashboardData` type, and return it from the promise
-//        if (res) {
-//          return (res as DashboardData).url
-//        }
-//        return "Not found"
-//      }))
-//  }
-//  return new Promise<string>(() => "");
-//}
+        if (res) {
+          let dd = res as DashboardData[];
+          return dd;
+        }
 
+        return [];
+      });
+}
 
 export interface DashboardData {
+  id: string
   url: string
+  title: string
+  type: string
+  folderId: string
 }
-
-export function getUsers(): Promise<DashboardData[]> {
-
-  // For now, consider the data is stored on a static `users.json` file
-  return fetch('/users.json')
-    // the JSON body is taken from the response
-    .then(res => res.json())
-    .then(res => {
-      // The response has an `any` type, so we need to cast
-      // it to the `User` type, and return it from the promise
-      return res as DashboardData[]
-    })
-}
-
-
-//export function findDashboard(nodeId: string, dataSource: DataSourceWithBackend | null): Promise<string> {
-//  if (dataSource != null)
-//    return dataSource.getResource('gettypedefinition', { nodeId: nodeId }).then((r: OpcUaBrowseResults) => r.browseName.name);
-//  return new Promise<string>(() => "");
-//}
