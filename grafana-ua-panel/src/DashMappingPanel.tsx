@@ -5,8 +5,9 @@ import { /*Select,*/ Checkbox, Input, Button } from '@grafana/ui';;
 //import { convertRemToPixels } from './ConvertRemToPixels';
 import { ThemeGetter } from './ThemesGetter';
 import { GrafanaTheme } from '@grafana/data';
-import { DashboardData, findAllDashboards } from './UaDashboardResolver';
+import { DashboardData, findAllDashboards, addDashboardMapping } from './UaDashboardResolver';
 import { OpcUaBrowseResults } from './types';
+import { DataSourceWithBackend } from '@grafana/runtime';
 //import { Input } from '@grafana/ui';
 
 
@@ -14,17 +15,20 @@ type Props = {
   closeBrowser: () => void;
   hidden: boolean;
   selectedNode: string;
-  selectedDashboard: string;
+  mappedDashboard: string;
+  dataSource: DataSourceWithBackend | null;
 };
 
 type State = {
   theme: GrafanaTheme | null;
-//  currentDashboard: DashboardData | null;
   typedefinitionChecked: boolean;
   selectedPerspective: string | null | undefined;
   dashboards: DashboardData[] | null;
+  selectedNode: OpcUaBrowseResults | null;
   selectedDashFolder: DashboardData | null;
   selectedDash: DashboardData | null;
+  mappedDashboard: DashboardData | null;
+  mappedDashboardChanged: boolean;
 }
 
 const generalFolder: DashboardData = { id: "", title: "General", folderId: "", type: "dash-folder", url: "" };
@@ -38,15 +42,19 @@ export class DashMappingPanel extends Component<Props, State> {
 	 * @param {*} props sets the data structure
 	 */
 	constructor(props: Props) {
-		super(props);
+    super(props);
+
+    //alert("mappedDashboard: " + props.mappedDashboard);
     this.state = {
       theme: null,
-//      currentDashboard: null,
       typedefinitionChecked: true,
-      selectedPerspective: "general",
+      selectedPerspective: "General",
       dashboards: null,
+      selectedNode: null,
       selectedDashFolder: generalFolder,
       selectedDash: null,
+      mappedDashboard: null,
+      mappedDashboardChanged: false,
 		}
 	}
 
@@ -61,10 +69,13 @@ export class DashMappingPanel extends Component<Props, State> {
 	 */
   render() {
 
-    //alert("DashMappingPanel");
 
     let selectedNode = JSON.parse(this.props.selectedNode) as OpcUaBrowseResults;
-    let selectedDashboard = JSON.parse(this.props.selectedDashboard) as DashboardData;
+    let mappedDashboard = JSON.parse(this.props.mappedDashboard) as DashboardData;
+
+    this.setupCurrentMapping(selectedNode, mappedDashboard);
+
+
     this.setupDashboards();
 
     const dashFolders = [
@@ -116,7 +127,7 @@ export class DashMappingPanel extends Component<Props, State> {
             </tr>
             <tr >
               <td><Input style={{ margin: "15px" }} css={""} type="text" value={selectedNode?.displayName} readOnly={true} /></td>
-              <td><Input css={""} type="text" value={selectedDashboard?.title} /></td>
+              <td><Input css={""} type="text" value={this.state.mappedDashboard?.title} readOnly={true} /></td>
             </tr>
             <tr>
               <td>
@@ -129,7 +140,7 @@ export class DashMappingPanel extends Component<Props, State> {
               <td style={{ verticalAlign: "top" }}>
                 <table style={{ width: "50%"}}>
                   <tr >
-                    <th>Dashboard Folders</th>
+                    <th>Folders</th>
                   </tr>
                   {dashFolders?.map(dBoard => (
                     <tr>
@@ -158,7 +169,8 @@ export class DashMappingPanel extends Component<Props, State> {
               </td>
             </tr>
             <tr >
-              <td><Button contentEditable={false} onClick={() => alert("Apply")}>Apply Mapping</Button></td>
+              <td></td>
+              <td style={{ textAlign: "right", padding: "5px" }} ><Button disabled={this.state.selectedDash?.id == this.state.mappedDashboard?.id} contentEditable={false} onClick={() => this.applyDashboardMapping(selectedNode, mappedDashboard)}>Apply Mapping</Button></td>
             </tr>
           </table>
           
@@ -175,7 +187,34 @@ export class DashMappingPanel extends Component<Props, State> {
     }
   }
 
-  setupDashboards() {
+  private setupCurrentMapping(selectedNode: OpcUaBrowseResults, mappedDashboard: DashboardData) {
+
+      if (selectedNode != null && selectedNode.nodeId != this.state.selectedNode?.nodeId) {
+          this.setState({
+              selectedNode: selectedNode,
+              mappedDashboard: null,
+              mappedDashboardChanged: false
+          });
+      }
+
+      if (mappedDashboard != null) {
+
+          if (!this.state.mappedDashboardChanged && this.state.mappedDashboard?.id != mappedDashboard.id) {
+              this.setState({
+                  mappedDashboard: mappedDashboard,
+                  selectedDash: mappedDashboard
+              });
+          }
+      }
+      else if (this.state.mappedDashboard != null) {
+          this.setState({
+              mappedDashboard: null,
+              mappedDashboardChanged: false
+          });
+      }
+  }
+
+  private setupDashboards() {
 
     if (this.state.dashboards == null) {
       let dboards = findAllDashboards();
@@ -192,21 +231,22 @@ export class DashMappingPanel extends Component<Props, State> {
     return null;
   }
 
-  dashboardFolderSelected(selectedFolder: DashboardData) {
-    //alert("dashboardFolderSelected: " + selectedFolder.title);
+  private applyDashboardMapping(selectedNode: OpcUaBrowseResults, existingDashboard: DashboardData) {
 
-    this.setState({
-      selectedDashFolder: selectedFolder
-    })
+    if (this.props.dataSource != null && this.state.selectedDash != null) {
+      addDashboardMapping(selectedNode.nodeId, this.state.typedefinitionChecked, this.state.selectedDash?.title, existingDashboard?.title, this.props.dataSource)
+        .then((success: boolean) => {
+          if (success) {
 
+            this.setState({
+
+              mappedDashboardChanged: true,
+              mappedDashboard: this.state.selectedDash
+            });
+          }
+
+        })
+    }
   }
-  //perspectiveChanged(persp: SelectableValue<string>) {
-
-  //  this.setState({
-      
-  //    selectedPerspective:  persp.value
-  //  })
-
-  //}
 }
 

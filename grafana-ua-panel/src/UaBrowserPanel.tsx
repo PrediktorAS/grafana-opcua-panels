@@ -17,7 +17,7 @@ interface Props extends PanelProps<SimpleOptions> { }
 
 interface State {
   selectedNode: OpcUaBrowseResults | null, browsePath: QualifiedName[] | null,
-  dataSource: DataSourceWithBackend | null, selectedDashboard: DashboardData | null,
+  dataSource: DataSourceWithBackend | null, mappedDashboard: DashboardData | null,
   dashboards: DashboardData[] | null
 }
 
@@ -29,7 +29,7 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
       selectedNode: null,
       browsePath: null,
       dataSource: null,
-      selectedDashboard: null,
+      mappedDashboard: null,
       dashboards: null
     };    
   }
@@ -54,17 +54,17 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
           let dashboard = findDashboard(node.nodeId, this.state.dataSource);
           dashboard.then((dashboards: DashboardData[]) => {
 
-            let selectedDashboard: DashboardData;
+            let mappedDashboard: DashboardData;
 
             if (dashboards.length > 0) {
-              selectedDashboard = dashboards[0];
+              mappedDashboard = dashboards[0];
               //dashboardUrl = dashboards[0].url;
               getLocationSrv().update({
 
                 query: {
                   'var-InstanceId': node.nodeId,
                   'var_SelectedNodeInfo': JSON.stringify(this.state.selectedNode),
-                  'var-DashboardUrl': selectedDashboard.url,
+                  'var-DashboardUrl': mappedDashboard.url,
                 },
                 partial: true,
                 replace: true,
@@ -72,7 +72,7 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
                 })
 
                 this.setState({
-                  selectedDashboard: selectedDashboard
+                  mappedDashboard: mappedDashboard
                 })
               }
           });
@@ -80,7 +80,8 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
         }}>
       </Browser>
       <div>Perspective: </div>
-      <DashMappingPanel selectedNode={JSON.stringify(this.state.selectedNode)} selectedDashboard={JSON.stringify(this.state.selectedDashboard)} hidden={!this.props.options.configMode} closeBrowser={() => { }}/>
+      <DashMappingPanel selectedNode={JSON.stringify(this.state.selectedNode)} mappedDashboard={JSON.stringify(this.state.mappedDashboard)}
+        hidden={!this.props.options.configMode} dataSource={this.state.dataSource} closeBrowser={() => { }} />
     </div>;
   }
 
