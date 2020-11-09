@@ -1,0 +1,6 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/grafana-ua-panel/v16/TestStore/0/000.testlog
+/.vs/grafana-ua-panel/v16/TestStore/0/testlog.manifest
