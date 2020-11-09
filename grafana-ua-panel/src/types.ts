@@ -28,9 +28,17 @@ export interface OpcUaBrowseResults extends OpcUaNodeInfo {
 
 export interface UaDashboardInfo {
   name: string;
+  dashKeys: string[];
 }
 
 export interface UaResult {
   success: boolean;
   error: string;
+}
+
+export interface InterfaceNodeInfo {
+  displayName: string;
+  browseName: QualifiedName;
+  nodeId: string;
+  selected: boolean;
 }

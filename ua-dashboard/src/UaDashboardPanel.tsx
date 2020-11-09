@@ -11,7 +11,8 @@ export const UaDashboardPanel: React.FC<Props> = ({ options, data, width, height
   //const theme = useTheme();
   const styles = getStyles();
 
-  const instanceId = replaceVariables('$InstanceId')
+  const instanceId = replaceVariables('$InstanceId');
+  //const instanceDisplayName = replaceVariables('$InstanceDisplayName');
 
   //const fromDate = replaceVariables('$_fromTime');
   //const toDate = replaceVariables('$_toTime');
