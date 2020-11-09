@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import { PanelProps } from '@grafana/data';
-import { SimpleOptions, OpcUaBrowseResults, QualifiedName } from 'types';
+import { SimpleOptions, OpcUaBrowseResults, QualifiedName, OpcUaNodeInfo } from 'types';
 //import { Button } from '@grafana/ui';
 
 //import { css, cx } from 'emotion';
@@ -9,16 +9,17 @@ import { getLocationSrv } from '@grafana/runtime';
 import { getDataSourceSrv } from '@grafana/runtime';
 import { DataSourceWithBackend } from '@grafana/runtime';
 import { Browser } from './Browser';
-import { findDashboard, DashboardData, findAllDashboards } from './UaDashboardResolver';
+import { getDashboard, DashboardData, getAllDashboards } from './UaDashboardResolver';
 //import { Button } from '@grafana/ui';
 import { DashMappingPanel } from './DashMappingPanel';
 
 interface Props extends PanelProps<SimpleOptions> { }
 
 interface State {
-  selectedNode: OpcUaBrowseResults | null, browsePath: QualifiedName[] | null,
+  selectedNode: OpcUaBrowseResults | null, selectedNodeType: OpcUaBrowseResults | null,
+  browsePath: QualifiedName[] | null,
   dataSource: DataSourceWithBackend | null, mappedDashboard: DashboardData | null,
-  dashboards: DashboardData[] | null
+  dashboards: DashboardData[] | null, interfaces: OpcUaNodeInfo[] | null
 }
 
 export class UaBrowserPanel extends PureComponent<Props, State> {
@@ -27,10 +28,12 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
     super(props);
     this.state = {
       selectedNode: null,
+      selectedNodeType: null,
       browsePath: null,
       dataSource: null,
       mappedDashboard: null,
-      dashboards: null
+      dashboards: null,
+      interfaces: null
     };    
   }
 
@@ -41,47 +44,102 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
       displayName: "Objects", isForward: true, nodeClass: 1
     };
 
-    return <div className="gf-form-inline">
-      <Browser closeBrowser={() => { }} closeOnSelect={false}
-        browse={a => this.browse(a)}
-        ignoreRootNode={true} rootNodeId={rootNodeId}
-        onNodeSelectedChanged={(node, browsepath) => {
+    return <div className="gf-form-inline" >
 
-          this.setState({
-            selectedNode: node, browsePath: browsepath
-          })
+      <table style={{ width:"100%"}}>
+        <tr>
+          <td style={{ height:"50%" }}>
+            <Browser closeBrowser={() => { }} closeOnSelect={false}
+              browse={a => this.browse(a)}
+              ignoreRootNode={true} rootNodeId={rootNodeId}
+              onNodeSelectedChanged={(node, browsepath) => {
 
-          let dashboard = findDashboard(node.nodeId, this.state.dataSource);
-          dashboard.then((dashboards: DashboardData[]) => {
+                let browseType = this.browseReferenceTargets(node.nodeId, "i=40");
+                browseType.then((browseTypes: OpcUaBrowseResults[]) => {
 
-            let mappedDashboard: DashboardData;
+                  if (browseTypes?.length > 0) {
 
-            if (dashboards.length > 0) {
-              mappedDashboard = dashboards[0];
-              //dashboardUrl = dashboards[0].url;
-              getLocationSrv().update({
+                    let selectedNodeType = browseTypes[0];
+                    this.setState({
+                      selectedNodeType: selectedNodeType
+                    });
+                  }
+                });
 
-                query: {
-                  'var-InstanceId': node.nodeId,
-                  'var_SelectedNodeInfo': JSON.stringify(this.state.selectedNode),
-                  'var-DashboardUrl': mappedDashboard.url,
-                },
-                partial: true,
-                replace: true,
-
-                })
 
                 this.setState({
-                  mappedDashboard: mappedDashboard
-                })
-              }
-          });
+                  selectedNode: node, browsePath: browsepath
+                });
 
-        }}>
-      </Browser>
-      <div>Perspective: </div>
-      <DashMappingPanel selectedNode={JSON.stringify(this.state.selectedNode)} mappedDashboard={JSON.stringify(this.state.mappedDashboard)}
-        hidden={!this.props.options.configMode} dataSource={this.state.dataSource} closeBrowser={() => { }} />
+                let dashboard = getDashboard(node.nodeId, this.state.dataSource);
+                dashboard.then((mappedDashboard: DashboardData | null) => {
+
+                  console.info("mappedDashboard?.dashKeys?.length: " + mappedDashboard?.dashKeys?.length);
+                  //alert("mappedDashboard2: " + mappedDashboard?.title);
+                  //let mappedDashboard: DashboardData;
+
+                  //if (dashboards.length > 0) {
+                  //  mappedDashboard = dashboards[0];
+                    //dashboardUrl = dashboards[0].url;
+                    getLocationSrv().update({
+
+                      query: {
+                        'var-InstanceDisplayName': node.displayName,
+                        'var-InstanceId': node.nodeId,
+                        //'var_SelectedNodeInfo': JSON.stringify(this.state.selectedNode),
+                        'var-DashboardUrl': mappedDashboard?.url,
+                      },
+                      partial: true,
+                      replace: true,
+
+                    });
+
+                    this.setState({
+                      mappedDashboard: mappedDashboard
+                    });
+                  });
+
+                if (this.props.options.configMode) {
+
+                  let interfaceList = new Array<OpcUaBrowseResults>();
+
+                  let hasInterface = "i=17603";
+                  let interfaces = this.browseReferenceTargets(node.nodeId, hasInterface);
+                  interfaces.then((interfaces: OpcUaBrowseResults[]) => {
+
+                    for (let i = 0; i < interfaces?.length; i++) {
+                      interfaceList.push(interfaces[i]);
+                    }
+                  })
+
+                  let definedByEquipmentClass = "{\"namespaceUrl\":\"http://www.OPCFoundation.org/UA/2013/01/ISA95\",\"id\":\"i=4919\"}";
+                  let eqClasses = this.browseReferenceTargets(node.nodeId, definedByEquipmentClass);
+                  eqClasses.then((eqClasses: OpcUaBrowseResults[]) => {
+
+                    for (let i = 0; i < eqClasses?.length; i++) {
+                      interfaceList.push(eqClasses[i]);
+                    }
+                  })
+
+                  this.setState({
+                    interfaces: interfaceList
+                  });
+                }
+
+              }}>
+            </Browser>
+            <div>Perspective: Operator</div>
+           </td>
+        </tr>
+        <tr style={{ height: "50%" }}>
+          <td>
+            <DashMappingPanel selectedNode={JSON.stringify(this.state.selectedNode)} selectedNodeType={JSON.stringify(this.state.selectedNodeType)} mappedDashboard={JSON.stringify(this.state.mappedDashboard)}
+              hidden={!this.props.options.configMode} dataSource={this.state.dataSource} interfaces={JSON.stringify(this.state.interfaces)} closeBrowser={() => { }} />
+          </td>
+        </tr>
+      </table>
+
+     
     </div>;
   }
 
@@ -105,6 +163,26 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
     return new Promise<OpcUaBrowseResults[]>(() => [] );
   }
 
+  browseReferenceTargets(nodeId: string, referenceId: string): Promise<OpcUaBrowseResults[]> {
+
+    if (this.state.dataSource != null) {
+
+      return this.state.dataSource.getResource('browsereferencetargets', { nodeId: nodeId, referenceId: referenceId })
+      .then(res => {
+
+        if (res) {
+          let interfaces = res as OpcUaBrowseResults[];
+          return interfaces;
+        }
+
+        return [];
+      });
+    }
+
+    return new Promise<OpcUaBrowseResults[]>(() => []);
+  }
+
+
   resizeIframe(obj:any) {
     obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
   }
@@ -112,7 +190,7 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
 
   addDashboardMapping() {
 
-    let dboards = findAllDashboards();
+    let dboards = getAllDashboards();
     let res = dboards.then((dashboards: DashboardData[]) => {
 
 

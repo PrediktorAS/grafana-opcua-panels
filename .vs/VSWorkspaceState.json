@@ -6,6 +6,6 @@
     "\\ua-dashboard",
     "\\ua-dashboard\\src"
   ],
-  "SelectedNode": "\\grafana-ua-panel\\src\\UaBrowserPanel.tsx",
+  "SelectedNode": "\\grafana-ua-panel\\src\\DashMappingPanel.tsx",
   "PreviewInSolutionExplorer": false
 }
