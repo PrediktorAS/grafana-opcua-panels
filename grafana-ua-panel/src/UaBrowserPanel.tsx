@@ -67,37 +67,37 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
                 });
 
 
-                this.setState({
-                  selectedNode: node, browsePath: browsepath
-                });
+                //this.setState({
+                //  selectedNode: node, browsePath: browsepath
+                //});
 
                 let dashboard = getDashboard(node.nodeId, this.state.dataSource);
                 dashboard.then((mappedDashboard: DashboardData | null) => {
 
+                  console.info("mappedDashboard?.title: " + mappedDashboard?.title);
                   console.info("mappedDashboard?.dashKeys?.length: " + mappedDashboard?.dashKeys?.length);
-                  //alert("mappedDashboard2: " + mappedDashboard?.title);
-                  //let mappedDashboard: DashboardData;
+                  console.info("mappedDashboard?.url: " + mappedDashboard?.url);
 
-                  //if (dashboards.length > 0) {
-                  //  mappedDashboard = dashboards[0];
-                    //dashboardUrl = dashboards[0].url;
-                    getLocationSrv().update({
+                  getLocationSrv()?.update({
 
-                      query: {
-                        'var-InstanceDisplayName': node.displayName,
-                        'var-InstanceId': node.nodeId,
-                        //'var_SelectedNodeInfo': JSON.stringify(this.state.selectedNode),
-                        'var-DashboardUrl': mappedDashboard?.url,
-                      },
-                      partial: true,
-                      replace: true,
+                    query: {
+                      'var-InstanceDisplayName': node.displayName,
+                      'var-InstanceId': node.nodeId,
+                      'var-DashboardUrl': mappedDashboard?.url,
+                    },
+                    partial: true,
+                    replace: true,
 
-                    });
-
-                    this.setState({
-                      mappedDashboard: mappedDashboard
-                    });
                   });
+
+                  //console.info("setState mappedDashboard: " + mappedDashboard);
+
+                  this.setState({
+                    selectedNode: node, browsePath: browsepath,
+                    mappedDashboard: mappedDashboard
+                  });
+
+                });
 
                 if (this.props.options.configMode) {
 

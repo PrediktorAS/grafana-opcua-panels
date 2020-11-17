@@ -49,7 +49,6 @@ export class DashMappingPanel extends Component<Props, State> {
 	constructor(props: Props) {
     super(props);
 
-    //alert("mappedDashboard: " + props.mappedDashboard);
     this.state = {
       theme: null,
       typedefinitionChecked: true,
@@ -77,10 +76,12 @@ export class DashMappingPanel extends Component<Props, State> {
 	 */
   render() {
 
+    //console.log("DashMappingPanel start");
     let selectedNode = JSON.parse(this.props.selectedNode) as OpcUaBrowseResults;
     let selectedNodeType = JSON.parse(this.props.selectedNodeType) as OpcUaBrowseResults;
     let mappedDashboard = JSON.parse(this.props.mappedDashboard) as DashboardData;
     let interfaces = JSON.parse(this.props.interfaces) as OpcUaBrowseResults[];
+    let mappedDashboardTitle = this.state.mappedDashboard == null ? "" : this.state.mappedDashboard.title;
 
     let selectionChanged = this.hasSelectionChanged(selectedNode);
     if (selectionChanged) {
@@ -147,7 +148,7 @@ export class DashMappingPanel extends Component<Props, State> {
             </tr>
             <tr >
               <td><Input style={{ margin: "15px" }} css={""} type="text" value={selectedNode?.displayName + " [" + selectedNodeType?.displayName + "]"} readOnly={true} /></td>
-              <td><Input css={""} type="text" value={this.state.mappedDashboard?.title} readOnly={true} /></td>
+              <td><Input css={""} type="text" value={mappedDashboardTitle} readOnly={true} /></td>
             </tr>
             <tr>
               <td>
@@ -237,8 +238,9 @@ export class DashMappingPanel extends Component<Props, State> {
       }
 
       if (isTypeSelected != this.state.typedefinitionChecked) {
-        //alert("typedefinitionChecked: " + isTypeSelected + "  mappedDashboard: " + mappedDashboard);
+
         console.info("setupSelectedNodeType: this.state.typedefinitionChecked: " + this.state.typedefinitionChecked + " => " + isTypeSelected);
+
         this.setState({ typedefinitionChecked: isTypeSelected });
       }
     }
@@ -273,29 +275,32 @@ export class DashMappingPanel extends Component<Props, State> {
 
   private setupCurrentMapping(selectedNode: OpcUaBrowseResults, mappedDashboard: DashboardData) {
 
-      if (selectedNode != null && selectedNode.nodeId != this.state.selectedNode?.nodeId) {
-          this.setState({
-              selectedNode: selectedNode,
-              mappedDashboard: null,
-              mappedDashboardChanged: false
-          });
-      }
+    if (selectedNode != null && selectedNode.nodeId != this.state.selectedNode?.nodeId) {
+        this.setState({
+            selectedNode: selectedNode,
+            mappedDashboard: null,
+            mappedDashboardChanged: false
+        });
+    }
 
-      if (mappedDashboard != null) {
+    //console.log("mappedDashboard: " + mappedDashboard + "  this.state.mappedDashboard: " + this.state.mappedDashboard);
 
-          if (!this.state.mappedDashboardChanged && this.state.mappedDashboard?.id != mappedDashboard.id) {
-              this.setState({
-                  mappedDashboard: mappedDashboard,
-                  selectedDash: mappedDashboard
-              });
-          }
+    if (mappedDashboard != null) {
+
+      if (!this.state.mappedDashboardChanged && this.state.mappedDashboard?.id != mappedDashboard.id) {
+        this.setState({
+          mappedDashboard: mappedDashboard,
+          selectedDash: mappedDashboard
+        });
       }
-      else if (this.state.mappedDashboard != null) {
-          this.setState({
-              mappedDashboard: null,
-              mappedDashboardChanged: false
-          });
-      }
+    }
+    else if (this.state.mappedDashboard != null) {
+      this.setState({
+        mappedDashboard: null,
+        mappedDashboardChanged: false
+      });
+    }
+
   }
 
   private setupDashboards() {
@@ -378,12 +383,14 @@ export class DashMappingPanel extends Component<Props, State> {
 
   private setupInterfaceSelection(iFaces: InterfaceNodeInfo[], mappedDashboard: DashboardData) {
 
-    for (let i = 0; i < iFaces?.length; i++) {
-      let iFace = iFaces[i];
-      for (let j = 0; j < mappedDashboard.dashKeys?.length; j++) {
-        if (iFace.nodeId == mappedDashboard.dashKeys[j]) {
-          iFace.selected = true;
-          break;
+    if (mappedDashboard !== null) {
+      for (let i = 0; i < iFaces?.length; i++) {
+        let iFace = iFaces[i];
+        for (let j = 0; j < mappedDashboard.dashKeys?.length; j++) {
+          if (iFace.nodeId === mappedDashboard.dashKeys[j]) {
+            iFace.selected = true;
+            break;
+          }
         }
       }
     }
