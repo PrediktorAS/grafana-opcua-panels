@@ -1,3 +1,4 @@
+import { DashboardData } from './UaDashboardResolver';
 
 type SeriesSize = 'sm' | 'md' | 'lg';
 type CircleColor = 'red' | 'green' | 'blue';
@@ -41,4 +42,9 @@ export interface InterfaceNodeInfo {
   browseName: QualifiedName;
   nodeId: string;
   selected: boolean;
+}
+
+export interface DashboardDataVm extends DashboardData {
+  isOpen: boolean;
+  dashBoards: DashboardDataVm[] | null;
 }

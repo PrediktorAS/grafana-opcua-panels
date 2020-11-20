@@ -1,12 +1,12 @@
 
 import React, { Component } from "react";
 //import Select from 'react-select';
-import { /*Select,*/ Checkbox, Input, Button } from '@grafana/ui';;
+import { /*Select,*/ Checkbox/*, Input*/, Button, Collapse } from '@grafana/ui';;
 //import { convertRemToPixels } from './ConvertRemToPixels';
 import { ThemeGetter } from './ThemesGetter';
 import { GrafanaTheme } from '@grafana/data';
 import { DashboardData, getAllDashboards, addDashboardMapping } from './UaDashboardResolver';
-import { OpcUaBrowseResults, InterfaceNodeInfo } from './types';
+import { OpcUaBrowseResults, InterfaceNodeInfo, DashboardDataVm } from './types';
 import { DataSourceWithBackend } from '@grafana/runtime';
 //import { Input } from '@grafana/ui';
 
@@ -23,9 +23,10 @@ type Props = {
 
 type State = {
   theme: GrafanaTheme | null;
+  instanceChecked: boolean;
   typedefinitionChecked: boolean;
   selectedPerspective: string | null | undefined;
-  dashboards: DashboardData[] | null;
+  folderboards: DashboardDataVm[] | null;
   selectedNode: OpcUaBrowseResults | null;
   selectedNodeType: OpcUaBrowseResults | null;
   typedefinitionCheckedChanged: boolean;
@@ -35,8 +36,6 @@ type State = {
   mappedDashboardChanged: boolean;
   interfaces: InterfaceNodeInfo[] | null;
 }
-
-const generalFolder: DashboardData = { id: "", title: "General", folderId: "", type: "dash-folder", url: "", dashKeys: [] };
 
 /**
  * Mapping of UA instance/type to dashboard.
@@ -51,13 +50,14 @@ export class DashMappingPanel extends Component<Props, State> {
 
     this.state = {
       theme: null,
+      instanceChecked: false,
       typedefinitionChecked: true,
       typedefinitionCheckedChanged: false,
       selectedPerspective: "General",
-      dashboards: null,
+      folderboards: null,
       selectedNode: null,
       selectedNodeType: null,
-      selectedDashFolder: generalFolder,
+      selectedDashFolder: null,
       selectedDash: null,
       mappedDashboard: null,
       mappedDashboardChanged: false,
@@ -76,50 +76,30 @@ export class DashMappingPanel extends Component<Props, State> {
 	 */
   render() {
 
-    //console.log("DashMappingPanel start");
+    console.log("this.props.selectedNode: " + this.props.selectedNode);
     let selectedNode = JSON.parse(this.props.selectedNode) as OpcUaBrowseResults;
     let selectedNodeType = JSON.parse(this.props.selectedNodeType) as OpcUaBrowseResults;
     let mappedDashboard = JSON.parse(this.props.mappedDashboard) as DashboardData;
     let interfaces = JSON.parse(this.props.interfaces) as OpcUaBrowseResults[];
-    let mappedDashboardTitle = this.state.mappedDashboard == null ? "" : this.state.mappedDashboard.title;
+
+    let selectedNodeDisplayName: string = " ";
+    if (selectedNode != null) {
+      selectedNodeDisplayName = selectedNode.displayName;
+    }
+    let selectedNodeTypeDisplayName: string = " ";
+    if (selectedNode != null) {
+      selectedNodeTypeDisplayName = selectedNodeType.displayName;
+    }
 
     let selectionChanged = this.hasSelectionChanged(selectedNode);
     if (selectionChanged) {
-      //alert("selectionChanged");
-      this.setState({ typedefinitionChecked: true, typedefinitionCheckedChanged: false });
+      this.setState({ typedefinitionChecked: true, typedefinitionCheckedChanged: false, instanceChecked: false });
     }
 
     this.setupSelectedNodeType(selectedNodeType, mappedDashboard);
     this.setupInterfaces(interfaces, mappedDashboard);
     this.setupCurrentMapping(selectedNode, mappedDashboard);
-    this.setupDashboards();
-
-    const dashFolders = [
-      generalFolder
-    ]
-
-    var counter = 1;
-    for (var i = 0; this.state.dashboards != null && i < this.state.dashboards.length; i++) {
-      if (this.state.dashboards[i].type == "dash-folder")
-        dashFolders[counter++] = this.state.dashboards[i];
-    }
-
-    const dashboardsInFolder = [];
-    counter = 0;
-    for (var i = 0; this.state.dashboards != null && i < this.state.dashboards.length; i++) {
-      if (this.state.dashboards[i].type != "dash-folder") {
-
-        if (this.state.selectedDashFolder != null) {
-
-          if (this.state.dashboards[i].folderId == this.state.selectedDashFolder?.id || (this.state.selectedDashFolder?.id == "" && this.state.dashboards[i].folderId == null))
-            dashboardsInFolder[counter++] = this.state.dashboards[i];
-        }
-        else {
-          if (this.state.dashboards[i].folderId == null)
-            dashboardsInFolder[counter++] = this.state.dashboards[i];
-        }
-      }
-    }
+    this.setupDashboards(selectionChanged, mappedDashboard);
 
     if (!this.props.hidden) {
 
@@ -128,90 +108,121 @@ export class DashMappingPanel extends Component<Props, State> {
         bg = this.state.theme.colors.bg2;
       }
 
-      let interfaceText = interfaces?.length > 0 ? <div>Interfaces:</div> : "";
+      let interfaceText = interfaces?.length > 0 ? <div>Interfaces</div> : "";
 
-      console.info("Pre render: this.state.typedefinitionChecked: " + this.state.typedefinitionChecked);
+      //console.info("Pre render: this.state.typedefinitionChecked: " + this.state.typedefinitionChecked);
 
       return (
         <div style={{
           background: bg,
           height: "100%",
-          width: "100%"
+          width: "100%",
+          margin: "0px 0px 0px 0px"
         }}>
           <ThemeGetter onTheme={this.onTheme} />
-          <h2>Dashboard mapping</h2>
+          
+          <h2 style={{ margin: "0px 0px 5px 3px"}}>Dashboard mapping</h2>
 
+          <h5 style={{ color: "#2572F2", margin: "0px 0px 3px 5px" }}>Map from instance, type, interfaces</h5>
           <table style={{ width: "100%"}}>
-            <tr >
-              <th>Selected instance</th>
-              <th>Mapped to Dashboard</th>
-            </tr>
-            <tr >
-              <td><Input style={{ margin: "15px" }} css={""} type="text" value={selectedNode?.displayName + " [" + selectedNodeType?.displayName + "]"} readOnly={true} /></td>
-              <td><Input css={""} type="text" value={mappedDashboardTitle} readOnly={true} /></td>
-            </tr>
+
             <tr>
               <td>
-                <Checkbox css={""} value={this.state.typedefinitionChecked} label={"Apply to Typedefinition"} onChange={() => {
+                <div style={{ background: "#141619", margin: "0px 5px 10px 5px", borderRadius: "3px" }}>
+                  <div style={{ margin: "0px 0px 0px 5px" }}>
+                    <table style={{ width: "100%" }}>
+                      <tr>
+                        <td style={{ verticalAlign: "top" }}>
+                          Instance
+                          <div>
+                            <Checkbox css={""} value={this.state.instanceChecked} label={selectedNodeDisplayName} onChange={() => {
 
-                  console.info("Apply: this.state.typedefinitionChecked: " + !this.state.typedefinitionChecked);
+                            if (!this.state.instanceChecked && this.state.typedefinitionChecked)
+                              this.setState({ instanceChecked: !this.state.instanceChecked, typedefinitionChecked: false, typedefinitionCheckedChanged: true });
+                            else
+                              this.setState({ instanceChecked: !this.state.instanceChecked });
 
-                  this.setState({ typedefinitionChecked: !this.state.typedefinitionChecked, typedefinitionCheckedChanged: true });
-                }}></Checkbox>
-              </td>
-              <td>
+                            }}>
+                            </Checkbox>
+                          </div>
+                          Type
+                          <div>
+                            <Checkbox css={""} value={this.state.typedefinitionChecked} label={selectedNodeTypeDisplayName} onChange={() => {
+
+                              //console.info("Apply: this.state.typedefinitionChecked: " + !this.state.typedefinitionChecked);
+
+                              if (!this.state.typedefinitionChecked && this.state.instanceChecked)
+                                this.setState({ typedefinitionChecked: !this.state.typedefinitionChecked, typedefinitionCheckedChanged: true, instanceChecked: false });
+                              else
+                                this.setState({ typedefinitionChecked: !this.state.typedefinitionChecked, typedefinitionCheckedChanged: true });
+                            }}></Checkbox>
+                          </div>
+                        </td>
+                        <td style={{ verticalAlign: "top" }}>
+                          {interfaceText}
+                          {this.state.interfaces?.map(iface => (
+                            <tr>
+                              <td></td>
+                              <td>
+                                <Checkbox css={""} value={iface.selected} label={iface.displayName} onChange={() => {
+                                  iface.selected = !iface.selected;
+                                  this.setState({ interfaces: this.state.interfaces });
+                                }}></Checkbox>
+                              </td>
+                            </tr>
+                          ))}
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
               </td>
             </tr>
-            
-            {interfaceText}
-            {this.state.interfaces?.map(iface => (
-              <tr>
-                <td>
-                  <Checkbox css={""} value={iface.selected} label={iface.displayName} onChange={() => {
-                    iface.selected = !iface.selected;
-                    this.setState({ interfaces: this.state.interfaces });
-                  }}></Checkbox>
-                </td>
-              </tr>
-            ))}
+
             <tr>
-              <td style={{ verticalAlign: "top" }}>
-                <table style={{ width: "50%"}}>
-                  <tr >
-                    <th>Folders</th>
-                  </tr>
-                  {dashFolders?.map(dBoard => (
-                    <tr>
-                      <td>
-                        <Checkbox css={""} value={this.state.selectedDashFolder?.id == dBoard.id} label={dBoard.title} onChange={() => this.setState({ selectedDashFolder: dBoard })}></Checkbox>
-                      </td>
-                    </tr>
-                  ))}
+              <td>
+                <h5 style={{ color: "#2572F2", margin: "0px 0px 3px 5px" }}>Map to dashboard</h5>
+                {this.state.folderboards?.map(dFolder => (
 
-                </table>
-              </td>
-              <td style={{ verticalAlign: "top" }}>
-                <table style={{ width: "50%"}}>
-                  <tr >
-                    <th>Dashboards</th>
-                  </tr>
-                  {dashboardsInFolder?.map(dBoard => (
-                    <tr>
-                      <td>
-                        <Checkbox css={""} value={this.state.selectedDash?.id == dBoard.id} label={dBoard.title} onChange={() => this.setState({ selectedDash: dBoard })}></Checkbox>
-
-                      </td>
-                    </tr>
-                  ))}
-                </table>
+                  <div style={{ background: "#141619", margin: "0px 5px 10px 5px" }}>
+                    <Collapse collapsible label={dFolder.title} isOpen={dFolder.isOpen}
+                      onToggle={() => this.toggleFolderDashOpen(dFolder.id)} >
+                      {
+                        dFolder.dashBoards?.map(dBoard => (
+                          <p style={{ margin: "0px 0px 5px 25px", height: "35px" }} >
+                            <div style={{ background: "#25272B", height: "35px", borderRadius: "3px" }} >
+                              <table>
+                                <tr>
+                                  <td>
+                                    <div style={{ height: "7px" }} > </div>
+                                  </td>
+                                  <td>
+                                    <div style={{ height: "7px" }} > </div>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <div style={{ width: "7px" }} > </div>
+                                  </td>
+                                  <td>
+                                    <Checkbox style={{ margin: "0px 0px 0px 10px" }} css={""} value={this.state.selectedDash?.id == dBoard.id} label={dBoard.title} onChange={() => this.setState({ selectedDash: dBoard })}></Checkbox>
+                                  </td>
+                                </tr>
+                              </table>
+                            </div>
+                          </p>
+                        ))
+                      }
+                    </Collapse>
+                  </div>
+                ))}
               </td>
             </tr>
             <tr >
-              <td></td>
               <td style={{ textAlign: "right", padding: "5px" }} ><Button disabled={this.isApplyButtonDisabled()} contentEditable={false} onClick={() => this.applyDashboardMapping(selectedNode, selectedNodeType, mappedDashboard)}>Apply Mapping</Button></td>
             </tr>
           </table>
-          
+
         </div>
       );
     }
@@ -222,6 +233,21 @@ export class DashMappingPanel extends Component<Props, State> {
       }}></div>
 
       );
+    }
+  }
+
+  private toggleFolderDashOpen(id:string) {
+
+    if (this.state.folderboards != null) {
+      for (let i = 0; i < this.state.folderboards.length; i++) {
+
+        if (this.state.folderboards[i]?.id == id) {
+          this.state.folderboards[i].isOpen = !this.state.folderboards[i].isOpen;
+
+          this.setState({ folderboards: this.state.folderboards});
+          break;
+        }
+      }
     }
   }
 
@@ -239,9 +265,9 @@ export class DashMappingPanel extends Component<Props, State> {
 
       if (isTypeSelected != this.state.typedefinitionChecked) {
 
-        console.info("setupSelectedNodeType: this.state.typedefinitionChecked: " + this.state.typedefinitionChecked + " => " + isTypeSelected);
+        //console.info("setupSelectedNodeType: this.state.typedefinitionChecked: " + this.state.typedefinitionChecked + " => " + isTypeSelected);
 
-        this.setState({ typedefinitionChecked: isTypeSelected });
+        this.setState({ typedefinitionChecked: isTypeSelected, instanceChecked: !isTypeSelected });
       }
     }
   }
@@ -283,8 +309,6 @@ export class DashMappingPanel extends Component<Props, State> {
         });
     }
 
-    //console.log("mappedDashboard: " + mappedDashboard + "  this.state.mappedDashboard: " + this.state.mappedDashboard);
-
     if (mappedDashboard != null) {
 
       if (!this.state.mappedDashboardChanged && this.state.mappedDashboard?.id != mappedDashboard.id) {
@@ -303,18 +327,78 @@ export class DashMappingPanel extends Component<Props, State> {
 
   }
 
-  private setupDashboards() {
+  private setupDashboards(selectionChanged: boolean, mappedDashboard: DashboardData) {
 
-    if (this.state.dashboards == null) {
+    if (this.state.folderboards == null) {
+
+      let foldersMap = new Map();
+
       let dboards = getAllDashboards();
       let res = dboards.then((dashboards: DashboardData[]) => {
 
+        let generalFolder: DashboardDataVm = { id: "General", title: "General", folderId: "", type: "dash-folder", url: "", dashKeys: [], isOpen: false, dashBoards: [] };
+
+        foldersMap.set(generalFolder.id, generalFolder);
+
+        let fBoards: DashboardDataVm[] = [generalFolder];
+        let dBoards: DashboardDataVm[] = [];
+        for (let i = 0; i < dashboards.length; i++) {
+          let df = dashboards[i];
+          let dashVm: DashboardDataVm = { id: df.id, title: df.title, folderId: df.folderId, type: df.type, url: df.url, dashKeys: df.dashKeys, isOpen: false, dashBoards: [] };
+
+          if (dashVm.type == "dash-folder") {
+            fBoards.push(dashVm);
+            foldersMap.set(dashVm.id, dashVm);
+          }
+
+          dBoards.push(dashVm);
+        }
+
+        for (let i = 0; i < dBoards.length; i++) {
+
+          if (dBoards[i].type != "dash-folder") {
+
+            let folder: DashboardDataVm = foldersMap.get("General");
+
+            if (foldersMap.has(dBoards[i].folderId)) {
+              folder = foldersMap.get(dBoards[i].folderId);
+            }
+
+            folder.dashBoards?.push(dBoards[i]);
+          }
+        }
+
         this.setState({
-          dashboards: dashboards
+          folderboards: fBoards
         })
       });
 
       return res;
+    }
+    else if (selectionChanged) {
+
+      //console.log("Setting up folders");
+      for (let i = 0; this.state.folderboards != null && i < this.state.folderboards.length; i++) {
+
+        let dashboards: DashboardDataVm[] | null = this.state.folderboards[i].dashBoards;
+
+        //console.log("Dashboards in folder " + this.state.folderboards[i].title + ": " + dashboards?.length);
+
+        this.state.folderboards[i].isOpen = false;
+
+        if (dashboards != null) {
+          for (let j = 0; j < dashboards.length; j++) {
+            if (dashboards[j] != null) {
+              //console.log("Testing match: " + mappedDashboard?.id + "  " + dashboards[j].id);
+              if (mappedDashboard?.id == dashboards[j].id) {
+                //console.log("Opening folder " + this.state.folderboards[i].title);
+                this.state.folderboards[i].isOpen = true;
+                break;
+              }
+            }
+          }
+        }
+      }
     }
 
     return null;

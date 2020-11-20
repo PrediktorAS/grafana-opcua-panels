@@ -128,10 +128,10 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
 
               }}>
             </Browser>
-            <div>Perspective: Operator</div>
            </td>
         </tr>
-        <tr style={{ height: "50%" }}>
+        <div style={{ margin: "0px 0px 10px 0px" }}></div>
+        <tr style={{ height: "50%"}}>
           <td>
             <DashMappingPanel selectedNode={JSON.stringify(this.state.selectedNode)} selectedNodeType={JSON.stringify(this.state.selectedNodeType)} mappedDashboard={JSON.stringify(this.state.mappedDashboard)}
               hidden={!this.props.options.configMode} dataSource={this.state.dataSource} interfaces={JSON.stringify(this.state.interfaces)} closeBrowser={() => { }} />
