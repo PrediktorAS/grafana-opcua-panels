@@ -137,7 +137,7 @@ export class Browser extends Component<Props, State> {
 					style={{
 						//border: this.props.theme.colors.border1,
 						cursor: "pointer",
-            padding: convertRemToPixels("0.5rem")
+            padding: convertRemToPixels("0.0rem")
 					}}
 				>
 				</span>
@@ -145,7 +145,7 @@ export class Browser extends Component<Props, State> {
           data-id="Treeview-ScrollDiv"
 
           style={{
-            height: convertRemToPixels("50rem"),
+            height: "100%",
 						overflowX: "hidden",
             overflowY: "auto"
 					}}

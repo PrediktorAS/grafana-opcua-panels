@@ -76,7 +76,8 @@ export class DashMappingPanel extends Component<Props, State> {
 	 */
   render() {
 
-    console.log("this.props.selectedNode: " + this.props.selectedNode);
+    //console.log("DashMappingPanel render START");
+    //console.log("this.props.selectedNode: " + this.props.selectedNode);
     let selectedNode = JSON.parse(this.props.selectedNode) as OpcUaBrowseResults;
     let selectedNodeType = JSON.parse(this.props.selectedNodeType) as OpcUaBrowseResults;
     let mappedDashboard = JSON.parse(this.props.mappedDashboard) as DashboardData;
@@ -96,9 +97,9 @@ export class DashMappingPanel extends Component<Props, State> {
       this.setState({ typedefinitionChecked: true, typedefinitionCheckedChanged: false, instanceChecked: false });
     }
 
-    this.setupSelectedNodeType(selectedNodeType, mappedDashboard);
+    this.setupSelectedNodeInstAndType(selectedNode, selectedNodeType, mappedDashboard);
     this.setupInterfaces(interfaces, mappedDashboard);
-    this.setupCurrentMapping(selectedNode, mappedDashboard);
+    this.setupCurrentMapping(selectedNode, selectedNodeType, mappedDashboard);
     this.setupDashboards(selectionChanged, mappedDashboard);
 
     if (!this.props.hidden) {
@@ -123,7 +124,7 @@ export class DashMappingPanel extends Component<Props, State> {
           
           <h2 style={{ margin: "0px 0px 5px 3px"}}>Dashboard mapping</h2>
 
-          <h5 style={{ color: "#2572F2", margin: "0px 0px 3px 5px" }}>Map from instance, type, interfaces</h5>
+          <h5 style={{ color: "#2572F2", margin: "0px 0px 3px 5px" }}>Map from instance, type or interfaces</h5>
           <table style={{ width: "100%"}}>
 
             <tr>
@@ -251,23 +252,28 @@ export class DashMappingPanel extends Component<Props, State> {
     }
   }
 
-  private setupSelectedNodeType(selectedNodeType: OpcUaBrowseResults, mappedDashboard: DashboardData) {
+  private setupSelectedNodeInstAndType(selectedInstance: OpcUaBrowseResults, selectedNodeType: OpcUaBrowseResults, mappedDashboard: DashboardData) {
 
     if (selectedNodeType != null && mappedDashboard != null && !this.state.typedefinitionCheckedChanged) {
 
       let isTypeSelected: boolean = false;
+      let isInstanceSelected: boolean = false;
       for (let i = 0; i < mappedDashboard?.dashKeys.length; i++) {
+
         if (selectedNodeType.nodeId == mappedDashboard.dashKeys[i]) {
           isTypeSelected = true;
-          break;
+        }
+
+        if (selectedInstance.nodeId == mappedDashboard.dashKeys[i]) {
+          isInstanceSelected = true;
         }
       }
 
-      if (isTypeSelected != this.state.typedefinitionChecked) {
+      if (isTypeSelected != this.state.typedefinitionChecked || isInstanceSelected != this.state.instanceChecked) {
 
         //console.info("setupSelectedNodeType: this.state.typedefinitionChecked: " + this.state.typedefinitionChecked + " => " + isTypeSelected);
 
-        this.setState({ typedefinitionChecked: isTypeSelected, instanceChecked: !isTypeSelected });
+        this.setState({ typedefinitionChecked: isTypeSelected, instanceChecked: isInstanceSelected });
       }
     }
   }
@@ -293,20 +299,77 @@ export class DashMappingPanel extends Component<Props, State> {
     if (this.state.selectedDash?.id != this.state.mappedDashboard?.id)
       return false;
 
-    if (this.state.typedefinitionCheckedChanged)
+    let instanceIsMapped = this.isIdMapped(this.state.selectedNode?.nodeId);
+
+    if (instanceIsMapped != this.state.instanceChecked) {
       return false;
+    }
+
+    let typeIsMapped = this.isIdMapped(this.state.selectedNodeType?.nodeId);
+
+    if (typeIsMapped != this.state.typedefinitionChecked) {
+      return false;
+    }
+
+    if (this.state.interfaces != null && this.state.interfaces.length > 0) {
+
+      for (let i = 0; i < this.state.interfaces.length; i++) {
+
+        let intIsMapped = this.isIdMapped(this.state.interfaces[i].nodeId);
+        if (intIsMapped != this.state.interfaces[i].selected)
+          return false;
+      }
+    }
 
     return true;
   }
 
-  private setupCurrentMapping(selectedNode: OpcUaBrowseResults, mappedDashboard: DashboardData) {
+  private isIdMapped(nodeId: string | undefined) {
 
-    if (selectedNode != null && selectedNode.nodeId != this.state.selectedNode?.nodeId) {
-        this.setState({
-            selectedNode: selectedNode,
-            mappedDashboard: null,
-            mappedDashboardChanged: false
-        });
+    if (nodeId != undefined) {
+      if (this.state.mappedDashboard != null) {
+
+        if (this.state.mappedDashboard.dashKeys != null) {
+
+          for (let i = 0; i < this.state.mappedDashboard.dashKeys.length; i++) {
+
+            if (nodeId == this.state.mappedDashboard.dashKeys[i])
+              return true;
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
+  private setupCurrentMapping(selectedNode: OpcUaBrowseResults, selectedNodeType: OpcUaBrowseResults, mappedDashboard: DashboardData) {
+
+    let setSelectedNodeState = selectedNode != null && selectedNode.nodeId != this.state.selectedNode?.nodeId;
+
+    let setSelectedNodeTypeState = selectedNodeType != null && selectedNodeType.nodeId != this.state.selectedNodeType?.nodeId;
+
+    if (setSelectedNodeState && setSelectedNodeTypeState) {
+      this.setState({
+        selectedNode: selectedNode,
+        selectedNodeType: selectedNodeType,
+        mappedDashboard: null,
+        mappedDashboardChanged: false
+      });
+    }
+    else if (setSelectedNodeState) {
+      this.setState({
+        selectedNode: selectedNode,
+        mappedDashboard: null,
+        mappedDashboardChanged: false
+      });
+    }
+    else if (setSelectedNodeTypeState) {
+      this.setState({
+        selectedNodeType: selectedNodeType,
+        mappedDashboard: null,
+        mappedDashboardChanged: false
+      });
     }
 
     if (mappedDashboard != null) {
@@ -435,41 +498,43 @@ export class DashMappingPanel extends Component<Props, State> {
     let converted = this.convertInterfaces(iFaces);
 
     if (converted != null) {
+
+      let updateState = false;
+
       if (converted.length != this.state.interfaces?.length) {
 
-        this.setupInterfaceSelection(converted, mappedDashboard);
-
-        this.setState({
-          interfaces: converted
-        });
+        updateState = true;
       }
       else {
-        let updateState = false;
         for (let i = 0; i < iFaces?.length; i++) {
 
           if (converted[i].nodeId != iFaces[i].nodeId) {
+
             updateState = true;
             break;
           }
         }
+      }
 
-        if (updateState) {
+      this.setupInterfaceSelection(converted, mappedDashboard);
 
-          this.setupInterfaceSelection(converted, mappedDashboard);
+      if (updateState) {
 
-          this.setState({
-            interfaces: converted
-          });
-        }
+        this.setState({
+          interfaces: converted
+        });
       }
     }
   }
 
   private setupInterfaceSelection(iFaces: InterfaceNodeInfo[], mappedDashboard: DashboardData) {
 
-    if (mappedDashboard !== null) {
-      for (let i = 0; i < iFaces?.length; i++) {
-        let iFace = iFaces[i];
+    //console.log("setupInterfaceSelection: " + iFaces.length + " mappedDashboard: " + mappedDashboard);
+
+    for (let i = 0; i < iFaces?.length; i++) {
+      let iFace = iFaces[i];
+      iFace.selected = false;
+      if (mappedDashboard !== null) {
         for (let j = 0; j < mappedDashboard.dashKeys?.length; j++) {
           if (iFace.nodeId === mappedDashboard.dashKeys[j]) {
             iFace.selected = true;
