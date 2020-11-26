@@ -4,37 +4,30 @@ import { UaDashboardPanel } from './UaDashboardPanel';
 
 export const plugin = new PanelPlugin<SimpleOptions>(UaDashboardPanel).setPanelOptions(builder => {
   return builder
-    .addTextInput({
-      path: 'text',
-      name: 'Simple text option',
-      description: 'Description of panel option',
-      defaultValue: 'Default value of text input option',
-    })
-    .addBooleanSwitch({
-      path: 'showSeriesCount',
-      name: 'Show series counter',
-      defaultValue: false,
-    })
     .addRadio({
-      path: 'seriesCountSize',
-      defaultValue: 'sm',
-      name: 'Series counter size',
+      path: 'dashboardFetch',
+      name: 'Dashboard fetching',
+      defaultValue: 'Instance',
       settings: {
         options: [
           {
-            value: 'sm',
-            label: 'Small',
+            value: 'Instance',
+            label: 'Instance',
           },
           {
-            value: 'md',
-            label: 'Medium',
+            value: 'ChildrenIfNotInstance',
+            label: 'ChildrenIfNotInstance',
           },
           {
-            value: 'lg',
-            label: 'Large',
+            value: 'Children',
+            label: 'Children',
           },
         ],
-      },
-      showIf: config => config.showSeriesCount,
+      }
+    })
+    .addNumberInput({
+      path: 'maxChildren',
+      name: 'Maximum Views',
+      defaultValue: 10,
     });
 });
