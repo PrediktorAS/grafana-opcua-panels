@@ -10,6 +10,8 @@ interface Props extends PanelProps<SimpleOptions> {}
 
 interface State {
   instanceId: string | null,
+  fromDate: string | null,
+  toDate: string | null,
   dataSource: DataSourceWithBackend | null,
   dashboards: DashboardMap[] | null,
 }
@@ -24,6 +26,8 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
     super(props);
     this.state = {
       instanceId: null,
+      fromDate: null,
+      toDate: null,
       dataSource: null,
       dashboards: null
     };
@@ -126,7 +130,7 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
   }
 
 
-  renderDashboardLine(instanceId: string, fromDate: string, toDate: string, dsurl: string, width: number, height: number) {
+  renderDashboardIFrame(instanceId: string, fromDate: string, toDate: string, dsurl: string, width: number, height: number) {
     const styles = this.getStyles();
 
     let url = this.props.replaceVariables(dsurl + '?kiosk&from=' + fromDate + '&to=' + toDate + '&var-ObjectId=' + instanceId + '&viewPanel=2');
@@ -147,6 +151,27 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
   }
 
 
+  renderDashboardEmbed(instanceId: string, fromDate: string, toDate: string, dsurl: string, width: number, height: number) {
+    const styles = this.getStyles();
+
+    let url = this.props.replaceVariables(dsurl + '?kiosk&from=' + fromDate + '&to=' + toDate + '&var-ObjectId=' + instanceId + '&viewPanel=2');
+    return (
+      <div
+        className={cx(
+          styles.wrapper,
+          css`
+            width: ${width}px;
+            height: ${height}px;
+          `
+        )}
+      >
+        <embed src={url} width={width} height={height}>
+        </embed>
+      </div>
+    );
+  }
+
+
   renderDashboards() {
     const fromDate = this.props.replaceVariables('$__from');
     const toDate = this.props.replaceVariables('$__to');
@@ -155,7 +180,7 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
       if (dsCount > 0) {
         let height = this.props.height / dsCount;
         let width = this.props.width;
-        return <>{this.state.dashboards.map((object, i) => this.renderDashboardLine(object.node.nodeId, fromDate, toDate,
+        return <>{this.state.dashboards.map((object, i) => this.renderDashboardIFrame(object.node.nodeId, fromDate, toDate,
           object.dashboard != null ? object.dashboard.url : "", width, height))}</>;
       }
     }
@@ -167,6 +192,13 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
     const instanceId = this.props.replaceVariables('$InstanceId');
     if (this.state.instanceId === null || this.state.instanceId !== instanceId) {
       this.setState({ instanceId: instanceId, dashboards: null });
+    }
+    const fromDate = this.props.replaceVariables('$__from');
+    const toDate = this.props.replaceVariables('$__to');
+
+    if ((this.state.fromDate === null && fromDate !== null) || this.state.fromDate !== fromDate
+      || (this.state.toDate === null && toDate !== null) || this.state.toDate !== toDate) {
+        this.setState({ fromDate: fromDate, toDate: toDate, dashboards: null });
     }
 
     if (this.state.dashboards !== null) {
