@@ -1,0 +1,31 @@
+{
+  "name": "prediktor-a-s-ua-list-view",
+  "version": "1.0.0",
+  "description": "List view for ua variables",
+  "scripts": {
+    "build": "grafana-toolkit plugin:build",
+    "test": "grafana-toolkit plugin:test",
+    "dev": "grafana-toolkit plugin:dev",
+    "watch": "grafana-toolkit plugin:dev --watch"
+  },
+  "repository": "github:grafana/simple-react-panel",
+  "author": "Oddvar Grønning",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/grafana/simple-react-panel/issues",
+    "email": "plugins@grafana.com"
+  },
+  "devDependencies": {
+    "@grafana/data": "^7.0.0",
+    "@grafana/toolkit": "^7.0.0",
+    "@grafana/ui": "^7.0.0",
+    "emotion": "10.0.27"
+  },
+  "engines": {
+    "node": ">=12 <=15"
+  },
+  "dependencies": {
+    "@grafana/runtime": "^7.2.1",
+    "@material-ui/core": "^4.11.1"
+  }
+}
