@@ -59,7 +59,7 @@ export class UaListViewPanel extends PureComponent<Props, State> {
   }
 
 
-  getQueryRequest(nodes: OpcUaBrowseResults[]): DataQueryRequest<OpcUaQuery> {
+  getQueryRequest(nodes: OpcUaNodeInfo[]): DataQueryRequest<OpcUaQuery> {
     let queries: OpcUaQuery[] = [];
     for (let i = 0; i < nodes.length; i++) {
       let bp: QualifiedName[] = [nodes[i].browseName];
@@ -115,7 +115,7 @@ export class UaListViewPanel extends PureComponent<Props, State> {
 
 
 
-  doQuery(nodes: OpcUaBrowseResults[], handleQueryResult: (response: DataQueryResponse) => void) {
+  doQuery(nodes: OpcUaNodeInfo[], handleQueryResult: (response: DataQueryResponse) => void) {
     if (this.state.dataSource != null) {
       let req = this.getQueryRequest(nodes);
       this.state.dataSource.query(req).toPromise().then((res) => handleQueryResult(res));
