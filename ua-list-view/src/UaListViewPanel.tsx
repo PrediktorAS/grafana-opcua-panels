@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { DataFrame, DataQueryRequest, DataQueryResponse, DateTime, PanelProps, ScopedVars, TimeRange, toUtc } from '@grafana/data';
-import { BrowseFilter, ColumnType, NodeClass, NodePath, /*NodeClass,*/ OpcUaBrowseResults, OpcUaNodeInfo, OpcUaQuery, QualifiedName, UAListViewOptions } from 'types';
+import { BrowseFilter, ColumnType, DataFetchType, NodeClass, NodePath, /*NodeClass,*/ OpcUaBrowseResults, OpcUaNodeInfo, OpcUaQuery, QualifiedName, UAListViewOptions } from 'types';
 import { DataSourceWithBackend, getDataSourceSrv } from '@grafana/runtime';
 import { VariableList } from './components/VariableList';
 
@@ -23,7 +23,6 @@ export class UaListViewPanel extends PureComponent<Props, State> {
       toDate: null,
       dataSource: null,
     };
-    
   }
 
   
@@ -61,6 +60,9 @@ export class UaListViewPanel extends PureComponent<Props, State> {
 
   getQueryRequest(nodes: OpcUaNodeInfo[]): DataQueryRequest<OpcUaQuery> {
     let queries: OpcUaQuery[] = [];
+
+    let readType = this.props.options.dataFetch == DataFetchType.Subscribe ? "Subscribe" : "ReadNode";
+
     for (let i = 0; i < nodes.length; i++) {
       let bp: QualifiedName[] = [nodes[i].browseName];
       let nodePath: NodePath = {
@@ -69,7 +71,7 @@ export class UaListViewPanel extends PureComponent<Props, State> {
       };
       var q: OpcUaQuery = {
         nodePath: nodePath,
-        readType: "Subscribe",
+        readType: readType,
         useTemplate: false,
         aggregate: { name: "", nodeId: "" },
         alias: "",
@@ -138,18 +140,14 @@ export class UaListViewPanel extends PureComponent<Props, State> {
     
     if (this.state.instanceId !== null) {
       let columnType = this.getColumnType();
-      return <VariableList depth={this.props.options.browseDepth} columns={columnType} query={(nodes, handle) => this.doQuery(nodes, handle)}
+      return <VariableList refreshRate={this.props.options.refreshRate} depth={this.props.options.browseDepth} columns={columnType} query={(nodes, handle) => this.doQuery(nodes, handle)}
         browse={(parent, nodeClass, browseFilter) => this.browse(parent, nodeClass, browseFilter)}
         parentNode={this.state.instanceId}> </ VariableList>;
     }
     return <></>;
   }
 
-  // Depth
-  // Columns
   // Refresh-rate
-  // Polling / subscription
-
 
   render() {
     const instanceId = this.props.replaceVariables('$ObjectId');

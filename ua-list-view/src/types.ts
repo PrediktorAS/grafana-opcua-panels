@@ -21,6 +21,11 @@ export enum ColumnType {
   Time = 16,
 }
 
+export enum DataFetchType {
+  Polling = 1,
+  Subscribe = 2
+}
+
 export interface OpcUaQuery extends DataQuery {
   useTemplate: boolean;
   templateVariable: string;
@@ -105,6 +110,8 @@ export interface UAListViewOptions {
   displayBrowseName: boolean;
   displayNodeClass: boolean;
   browseDepth: number;
+  dataFetch: DataFetchType;
+  refreshRate: number;
 }
 
 

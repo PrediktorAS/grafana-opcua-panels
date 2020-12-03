@@ -1,3 +1,3 @@
 
 
-copy "C:\Git\grafana-ua-panel\ua-dashboard\dist\*.*" "C:\Program Files\GrafanaLabs\grafana\data\plugins\ua-dashboard" /a
+copy "C:\Users\christian\Source\Repos\Grafana-UA-Panel\ua-dashboard\dist\*.*" "C:\Program Files\GrafanaLabs\grafana\data\plugins\ua-dashboard" /a

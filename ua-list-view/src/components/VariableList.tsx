@@ -12,6 +12,7 @@ type Props = {
   parentNode: OpcUaNodeInfo;
   columns: ColumnType;
   depth: number;
+  refreshRate: number;
 };
 
 type State = {
@@ -71,8 +72,15 @@ export class VariableList extends Component<Props, State> {
       maxResults: 1000,
       browseNameFilter: '',
     };
+
+    let e = this;
+
+    if (this.props.refreshRate > 0)
+      setInterval(() => e.setState({ fetchedValues: false }), this.props.refreshRate * 1000);
   }
 
+
+  
 
   //getBrowsePath(node: OpcUaBrowseResults): QualifiedName[] {
   //  let bp = this.state.browsePath.map(a => copyQualifiedName(a.browseName)).slice();
