@@ -27,11 +27,11 @@ export class UaListViewPanel extends PureComponent<Props, State> {
   }
 
   
-  browse(parentId: string, browseFilter: BrowseFilter): Promise<OpcUaBrowseResults[]> {
+  browse(parentId: string, nodeClassMask: NodeClass, browseFilter: BrowseFilter): Promise<OpcUaBrowseResults[]> {
     this.getDataSource();
 
     if (this.state.dataSource != null) {
-      let res = this.state.dataSource.getResource('browse', { nodeId: parentId, nodeClassMask: NodeClass.Variable });
+      let res = this.state.dataSource.getResource('browse', { nodeId: parentId, nodeClassMask: nodeClassMask });
       return res;
     }
     return new Promise<OpcUaBrowseResults[]>(() => []);
@@ -126,7 +126,7 @@ export class UaListViewPanel extends PureComponent<Props, State> {
   renderChildren() {
     
     if (this.state.instanceId !== null) {
-      return <VariableList query={(nodes, handle) => this.doQuery(nodes, handle)} browse={(parent, browseFilter) => this.browse(parent, browseFilter)} parentNode={this.state.instanceId}> </ VariableList>;
+      return <VariableList query={(nodes, handle) => this.doQuery(nodes, handle)} browse={(parent, nodeClass, browseFilter) => this.browse(parent, nodeClass, browseFilter)} parentNode={this.state.instanceId}> </ VariableList>;
     }
     return <></>;
   }
