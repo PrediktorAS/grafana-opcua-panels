@@ -112,6 +112,7 @@ export interface UAListViewOptions {
   browseDepth: number;
   dataFetch: DataFetchType;
   refreshRate: number;
+  showAllVariablesToDepth: boolean;
 }
 
 

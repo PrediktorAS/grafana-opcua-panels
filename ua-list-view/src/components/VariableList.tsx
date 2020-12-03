@@ -12,6 +12,7 @@ type Props = {
   parentNode: OpcUaNodeInfo;
   columns: ColumnType;
   depth: number;
+  showAllVariablesToDepth: boolean;
   refreshRate: number;
 };
 
@@ -102,7 +103,7 @@ export class VariableList extends Component<Props, State> {
             stack.push({ node: currchildren[i], depth: depth + 1, parentNode: stParent });
           }
         }
-        if (depth == this.props.depth) {
+        if ((depth == this.props.depth || this.props.showAllVariablesToDepth) && stParent.node.node.nodeClass == NodeClass.Variable) {
           let names: string[] = [];
           names.push(stParent.node.node.displayName);
           let p = stParent.parentNode;
