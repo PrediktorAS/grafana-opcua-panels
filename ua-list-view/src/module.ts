@@ -31,6 +31,8 @@ export const plugin = new PanelPlugin<UAListViewOptions>(UaListViewPanel).setPan
       defaultValue: 100,
     })
     .addBooleanSwitch({ path: 'displayBrowseName', defaultValue: false, name: 'Display Browsename' })
-    .addBooleanSwitch({ path: 'displayNodeClass', defaultValue: false, name: 'Display Node Class' });
+    .addBooleanSwitch({ path: 'displayNodeClass', defaultValue: false, name: 'Display Node Class' })
+    .addNumberInput({ path: 'browseDepth', defaultValue: 1, name: 'Depth from selected node to variables to be displayed' });
+  
 
 });

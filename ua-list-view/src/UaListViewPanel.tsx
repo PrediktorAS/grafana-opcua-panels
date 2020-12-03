@@ -138,7 +138,7 @@ export class UaListViewPanel extends PureComponent<Props, State> {
     
     if (this.state.instanceId !== null) {
       let columnType = this.getColumnType();
-      return <VariableList columns={columnType} query={(nodes, handle) => this.doQuery(nodes, handle)}
+      return <VariableList depth={this.props.options.browseDepth} columns={columnType} query={(nodes, handle) => this.doQuery(nodes, handle)}
         browse={(parent, nodeClass, browseFilter) => this.browse(parent, nodeClass, browseFilter)}
         parentNode={this.state.instanceId}> </ VariableList>;
     }

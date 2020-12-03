@@ -104,6 +104,7 @@ export interface UAListViewOptions {
   maxElementsList: number;
   displayBrowseName: boolean;
   displayNodeClass: boolean;
+  browseDepth: number;
 }
 
 

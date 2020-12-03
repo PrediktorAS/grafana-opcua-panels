@@ -11,6 +11,7 @@ type Props = {
   query(nodes: OpcUaNodeInfo[], handleQueryResult: (response: DataQueryResponse) => void) : void;
   parentNode: OpcUaNodeInfo;
   columns: ColumnType;
+  depth: number;
 };
 
 type State = {
@@ -19,7 +20,6 @@ type State = {
   fetchedValues: boolean;
   rootNode: BrowseHierarchy;
   valueList: VariableValue[];
-  depth: number,
   theme: GrafanaTheme | null;
   maxResults: number;
   browseNameFilter: string;
@@ -66,7 +66,6 @@ export class VariableList extends Component<Props, State> {
       fetchedChildren: false,
       fetchedValues: false,
       valueList: [],
-      depth: 2,
       theme: null,
       //browsePath: [],
       maxResults: 1000,
@@ -90,12 +89,12 @@ export class VariableList extends Component<Props, State> {
       if (typeof stParent !== 'undefined') {
         let depth = stParent.depth;
         let currchildren = stParent.node.children;
-        if (currchildren.length > 0 && depth < this.state.depth) {
+        if (currchildren.length > 0 && depth < this.props.depth) {
           for (let i = 0; i < currchildren.length; i++) {
             stack.push({ node: currchildren[i], depth: depth + 1, parentNode: stParent });
           }
         }
-        if (depth == this.state.depth) {
+        if (depth == this.props.depth) {
           let names: string[] = [];
           names.push(stParent.node.node.displayName);
           let p = stParent.parentNode;
@@ -133,7 +132,7 @@ export class VariableList extends Component<Props, State> {
   fetchHierarchy(parent: OpcUaNodeInfo, depth: number): Promise<BrowseHierarchy> {
     let filter: BrowseFilter = { browseName: this.state.browseNameFilter, maxResults: this.state.maxResults };
 
-    let nodeClass: NodeClass = (this.state.depth == depth) ? NodeClass.Variable : NodeClass.Object | NodeClass.Variable;
+    let nodeClass: NodeClass = (this.props.depth == depth) ? NodeClass.Variable : NodeClass.Object | NodeClass.Variable;
     let prom = this.props.browse(parent.nodeId, nodeClass, filter);
     return prom.then(results => {
       const childHi = this.fetchChildHierarchies(results, depth);
@@ -150,7 +149,7 @@ export class VariableList extends Component<Props, State> {
       this.setState({
         fetchingChildren: true
       }, () => {
-          this.fetchHierarchy(this.state.rootNode.node, this.state.depth)
+          this.fetchHierarchy(this.state.rootNode.node, this.props.depth)
             .then(hier => this.setState({ rootNode: hier, fetchingChildren: false, fetchedChildren: true }, () => this.onHierarchyComplete()))
             .catch(() => this.setState({ fetchingChildren: false, fetchedChildren: false }));
       }
@@ -179,7 +178,7 @@ export class VariableList extends Component<Props, State> {
       let time = df.fields[0].values.get(0);
       let val = df.fields[1].values.get(0);
       if (i < vlist.length)
-      vlist[i].value = { time: time, val: val };
+        vlist[i].value = { time: time, val: val };
     }
     this.setState({ valueList: vlist, fetchedValues: true });
   }
