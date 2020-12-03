@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { OpcUaBrowseResults, /*QualifiedName,*/ NodeClass, BrowseFilter, OpcUaNodeInfo } from '../types';
+import { OpcUaBrowseResults, /*QualifiedName,*/ NodeClass, BrowseFilter, OpcUaNodeInfo, ColumnType } from '../types';
 import { ThemeGetter } from './ThemesGetter';
 import { DataFrame, DataQueryResponse, GrafanaTheme } from '@grafana/data';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
@@ -10,6 +10,7 @@ type Props = {
   browse: (nodeId: string, nodeclass: NodeClass, browseFilter: BrowseFilter) => Promise<OpcUaBrowseResults[]>;
   query(nodes: OpcUaNodeInfo[], handleQueryResult: (response: DataQueryResponse) => void) : void;
   parentNode: OpcUaNodeInfo;
+  columns: ColumnType;
 };
 
 type State = {
@@ -212,31 +213,51 @@ export class VariableList extends Component<Props, State> {
           <Table>
             <TableHead style={{ backgroundColor: bg, color: txt }}>
               <TableRow style={{ height: 20 }}>
-                <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap' }}>DisplayName</TableCell>
-                <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap' }}>Browse name</TableCell>
-                <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap' }}>Node Class</TableCell>
-                <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap' }}>Value</TableCell>
-                <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap' }}>Time</TableCell>
+                {(this.props.columns & ColumnType.DisplayNamePath) == ColumnType.DisplayNamePath &&
+                  <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap' }}>DisplayName</TableCell>
+                }
+                {(this.props.columns & ColumnType.BrowseName) == ColumnType.BrowseName &&
+                  <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap' }}>Browse name</TableCell>
+                }
+                {(this.props.columns & ColumnType.NodeClass) == ColumnType.NodeClass &&
+                  <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap' }}>Node Class</TableCell>
+                }
+                {(this.props.columns & ColumnType.Value) == ColumnType.Value &&
+                  <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap' }}>Value</TableCell>
+                }
+                {(this.props.columns & ColumnType.Time) == ColumnType.Time &&
+                  <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap' }}>Time</TableCell>
+                }
               </TableRow>
             </TableHead>
             <TableBody style={{ backgroundColor: bg, color: txt }}>
               {this.state.valueList.map((row: VariableValue, index: number) => (
                 <TableRow style={{ height: 14 }} key={index}>
-                  <TableCell style={{ color: txt, border: 0, padding: 2 }} >
-                    {row.name}
-                  </TableCell>
-                  <TableCell style={{ color: txt, border: 0, padding: 2 }} >
-                    {qualifiedNameToString(row.node.browseName)}
-                  </TableCell>
-                  <TableCell style={{ color: txt, border: 0, padding: 2 }} >
-                    {nodeClassToString(row.node.nodeClass as NodeClass)}
-                  </TableCell>
-                  <TableCell style={{ color: txt, border: 0, padding: 2 }} >
-                    {row.value?.val}
-                  </TableCell>
-                  <TableCell style={{ color: txt, border: 0, padding: 2 }} >
-                    {row.value?.time}
-                  </TableCell>
+                  {(this.props.columns & ColumnType.DisplayNamePath) == ColumnType.DisplayNamePath &&
+                    <TableCell style={{ color: txt, border: 0, padding: 2 }} >
+                      {row.name}
+                    </TableCell>
+                  }
+                  {(this.props.columns & ColumnType.BrowseName) == ColumnType.BrowseName &&
+                    <TableCell style={{ color: txt, border: 0, padding: 2 }} >
+                      {qualifiedNameToString(row.node.browseName)}
+                    </TableCell>
+                  }
+                  {(this.props.columns & ColumnType.NodeClass) == ColumnType.NodeClass &&
+                    <TableCell style={{ color: txt, border: 0, padding: 2 }} >
+                      {nodeClassToString(row.node.nodeClass as NodeClass)}
+                    </TableCell>
+                  }
+                  {(this.props.columns & ColumnType.Value) == ColumnType.Value &&
+                    <TableCell style={{ color: txt, border: 0, padding: 2 }} >
+                      {row.value?.val}
+                    </TableCell>
+                  }
+                  {(this.props.columns & ColumnType.Time) == ColumnType.Time &&
+                    <TableCell style={{ color: txt, border: 0, padding: 2 }} >
+                      {row.value?.time}
+                    </TableCell>
+                  }
                 </TableRow>
               ))}
             </TableBody>

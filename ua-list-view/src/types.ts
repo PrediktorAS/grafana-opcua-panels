@@ -1,9 +1,5 @@
 import { DataQuery } from '@grafana/data';
 
-
-type DashboardFetch = 'Instance' | 'ChildrenIfNotInstance' | 'Children';
-
-
 export enum NodeClass {
   Unspecified = 0,
   Object = 1,
@@ -14,6 +10,15 @@ export enum NodeClass {
   ReferenceType = 32,
   DataType = 64,
   View = 128,
+}
+
+export enum ColumnType {
+  Unspecified = 0,
+  DisplayNamePath = 1,
+  BrowseName = 2,
+  NodeClass = 4,
+  Value = 8,
+  Time = 16,
 }
 
 export interface OpcUaQuery extends DataQuery {
@@ -95,9 +100,10 @@ export interface BrowseFilter {
   browseName: string;
 }
 
-export interface SimpleOptions {
-  dashboardFetch: DashboardFetch;
-  maxChildren: number;
+export interface UAListViewOptions {
+  maxElementsList: number;
+  displayBrowseName: boolean;
+  displayNodeClass: boolean;
 }
 
 

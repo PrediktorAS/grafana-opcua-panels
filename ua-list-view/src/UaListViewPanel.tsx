@@ -1,10 +1,10 @@
 import React, { PureComponent } from 'react';
 import { DataFrame, DataQueryRequest, DataQueryResponse, DateTime, PanelProps, ScopedVars, TimeRange, toUtc } from '@grafana/data';
-import { BrowseFilter, NodeClass, NodePath, /*NodeClass,*/ OpcUaBrowseResults, OpcUaNodeInfo, OpcUaQuery, QualifiedName, SimpleOptions } from 'types';
+import { BrowseFilter, ColumnType, NodeClass, NodePath, /*NodeClass,*/ OpcUaBrowseResults, OpcUaNodeInfo, OpcUaQuery, QualifiedName, UAListViewOptions } from 'types';
 import { DataSourceWithBackend, getDataSourceSrv } from '@grafana/runtime';
 import { VariableList } from './components/VariableList';
 
-interface Props extends PanelProps<SimpleOptions> { }
+interface Props extends PanelProps<UAListViewOptions> { }
 
 interface State {
   instanceId: OpcUaNodeInfo | null,
@@ -93,7 +93,7 @@ export class UaListViewPanel extends PureComponent<Props, State> {
     let req: DataQueryRequest<OpcUaQuery> = {
       requestId: "test",
       interval: "10",
-      intervalMs: 100,
+      intervalMs: 1000,
       range: range,
       scopedVars: sv,
       targets: queries,
@@ -122,14 +122,33 @@ export class UaListViewPanel extends PureComponent<Props, State> {
     }
   }
 
+  getColumnType(): ColumnType {
+    let c: ColumnType = ColumnType.DisplayNamePath | ColumnType.Value | ColumnType.Time;
+    if (this.props.options.displayBrowseName) {
+      c |= ColumnType.BrowseName;
+    }
+    if (this.props.options.displayNodeClass) {
+      c |= ColumnType.NodeClass;
+    }
+    return c;
+  }
+
 
   renderChildren() {
     
     if (this.state.instanceId !== null) {
-      return <VariableList query={(nodes, handle) => this.doQuery(nodes, handle)} browse={(parent, nodeClass, browseFilter) => this.browse(parent, nodeClass, browseFilter)} parentNode={this.state.instanceId}> </ VariableList>;
+      let columnType = this.getColumnType();
+      return <VariableList columns={columnType} query={(nodes, handle) => this.doQuery(nodes, handle)}
+        browse={(parent, nodeClass, browseFilter) => this.browse(parent, nodeClass, browseFilter)}
+        parentNode={this.state.instanceId}> </ VariableList>;
     }
     return <></>;
   }
+
+  // Depth
+  // Columns
+  // Refresh-rate
+  // Polling / subscription
 
 
   render() {
