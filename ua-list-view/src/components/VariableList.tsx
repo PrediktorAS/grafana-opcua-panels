@@ -141,7 +141,7 @@ export class VariableList extends Component<Props, State> {
   fetchHierarchy(parent: OpcUaNodeInfo, depth: number): Promise<BrowseHierarchy> {
     let filter: BrowseFilter = { browseName: this.state.browseNameFilter, maxResults: this.state.maxResults };
 
-    let nodeClass: NodeClass = (this.props.depth == depth) ? NodeClass.Variable : NodeClass.Object | NodeClass.Variable;
+    let nodeClass: NodeClass = (depth === 0) ? NodeClass.Variable : NodeClass.Object | NodeClass.Variable;
     let prom = this.props.browse(parent.nodeId, nodeClass, filter);
     return prom.then(results => {
       const childHi = this.fetchChildHierarchies(results, depth);

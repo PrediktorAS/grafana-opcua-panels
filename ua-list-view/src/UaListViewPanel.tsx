@@ -155,7 +155,7 @@ export class UaListViewPanel extends PureComponent<Props, State> {
 
   render() {
     const instanceId = this.props.replaceVariables('$ObjectId');
-    if (this.state.instanceId === null || this.state.instanceId.nodeId !== instanceId) {
+    if (this.state.instanceId === null || this.state.instanceId.nodeId !== instanceId && instanceId !== '') {
       this.readNode(instanceId).then((res) => this.setState({ instanceId: res }));
     }
     return this.renderChildren();
