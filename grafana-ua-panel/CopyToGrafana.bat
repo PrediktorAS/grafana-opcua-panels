@@ -1,1 +1,1 @@
-copy "C:\Users\christian\Source\Repos\Grafana-UA-Panel\grafana-ua-panel\dist\*.*" "C:\Program Files\GrafanaLabs\grafana\data\plugins\grafana-ua-panel" /a
+xcopy "dist\*.*" "C:\Program Files\GrafanaLabs\grafana\data\plugins\grafana-ua-panel" /E/H /Y

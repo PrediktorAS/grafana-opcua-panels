@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { OpcUaBrowseResults, /*QualifiedName,*/ NodeClass, BrowseFilter, OpcUaNodeInfo, ColumnType } from '../types';
 import { ThemeGetter } from './ThemesGetter';
-import { DataFrame, DataQueryResponse, GrafanaTheme } from '@grafana/data';
+import { DataFrame, DataQueryResponse, dateTime, GrafanaTheme, localTimeFormat } from '@grafana/data';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
 import { /*copyQualifiedName,*/ qualifiedNameToString } from '../utils/QualifiedName';
 import { nodeClassToString } from '../utils/Nodeclass';
@@ -108,7 +108,7 @@ export class VariableList extends Component<Props, State> {
           names.push(stParent.node.node.displayName);
           let p = stParent.parentNode;
           while (p != null) {
-            names.push(p.node.node.displayName);
+            names.push(p.node.node.displayName); 
             p = p.parentNode;
           }
           let varVal: VariableValue = { node: stParent.node.node, value: null, name: names.reverse().join("/")};
@@ -141,7 +141,7 @@ export class VariableList extends Component<Props, State> {
   fetchHierarchy(parent: OpcUaNodeInfo, depth: number): Promise<BrowseHierarchy> {
     let filter: BrowseFilter = { browseName: this.state.browseNameFilter, maxResults: this.state.maxResults };
 
-    let nodeClass: NodeClass = (this.props.depth == depth) ? NodeClass.Variable : NodeClass.Object | NodeClass.Variable;
+    let nodeClass: NodeClass = (depth === 0) ? NodeClass.Variable : NodeClass.Object | NodeClass.Variable;
     let prom = this.props.browse(parent.nodeId, nodeClass, filter);
     return prom.then(results => {
       const childHi = this.fetchChildHierarchies(results, depth);
@@ -184,10 +184,24 @@ export class VariableList extends Component<Props, State> {
     let vlist = this.state.valueList.slice();
     for (let i = 0; i < result.data.length; i++) {
       var df = result.data[i] as DataFrame;
-      let time = df.fields[0].values.get(0);
-      let val = df.fields[1].values.get(0);
-      if (i < vlist.length)
-        vlist[i].value = { time: time, val: val };
+      if (df.refId !== undefined) {
+        let idx = parseInt(df.refId);
+        let timeMs = parseInt(df.fields[0].values.get(0));
+        if (!isNaN(timeMs)) {
+
+          let time = dateTime(timeMs).format(localTimeFormat({
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          }));
+          let val = df.fields[1].values.get(0);
+          if (idx < vlist.length)
+            vlist[idx].value = { time: time, val: val };
+        }
+      }
     }
     this.setState({ valueList: vlist, fetchedValues: true });
   }
@@ -215,10 +229,20 @@ export class VariableList extends Component<Props, State> {
     }
     return (
 
-      <div className="panel-container">
+      <div className="panel-container" style={{ position: "relative", height: "100%", width: "100%" }}>
         <ThemeGetter onTheme={this.onTheme} />
-        <Paper >
-          <Table>
+        <Paper style={{ position: "relative", height: "100%", width: "100%" }}>
+          <div
+            data-id="Treeview-ScrollDiv"
+
+            style={{
+              background: bg,
+              height: "100%",
+              overflowX: "auto",
+              overflowY: "auto"
+            }}
+          >
+          <Table style={{ position: "relative", height: "100%", width: "100%" }}>
             <TableHead style={{ backgroundColor: bg, color: txt }}>
               <TableRow style={{ height: 20 }}>
                 {(this.props.columns & ColumnType.DisplayNamePath) == ColumnType.DisplayNamePath &&
@@ -269,7 +293,8 @@ export class VariableList extends Component<Props, State> {
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
+            </Table>
+            </div>
         </Paper>
       </div>);
   }
