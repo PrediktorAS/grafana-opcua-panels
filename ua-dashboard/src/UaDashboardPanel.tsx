@@ -86,6 +86,11 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
   fetchChildrenDashboards() : void  {
     this.getDataSource();
     const instanceId = this.props.replaceVariables('$InstanceId');
+
+    //http://localhost:3000/api/dashboards/db/pumplooptype
+    //DashboardModel
+
+
     this.browse(instanceId).then((result) => {
       var promises = new Array();
       var dbs: DashboardMap[] = [];
@@ -130,10 +135,10 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
   }
 
 
-  renderDashboardIFrame(instanceId: string, fromDate: string, toDate: string, dsurl: string, width: number, height: number) {
+  renderDashboardIFrame(instanceId: string, fromDate: string | null, toDate: string | null, dsurl: string, width: number, height: number) {
     const styles = this.getStyles();
 
-    let url = this.props.replaceVariables(dsurl + '?kiosk&from=' + fromDate + '&to=' + toDate + '&var-ObjectId=' + instanceId + '&viewPanel=2');
+    let url = this.props.replaceVariables(dsurl + '?kiosk&from=' + fromDate + '&to=' + toDate + '&var-ObjectId=' + instanceId);
     return (
       <div
         className={cx(
@@ -154,7 +159,7 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
   renderDashboardEmbed(instanceId: string, fromDate: string, toDate: string, dsurl: string, width: number, height: number) {
     const styles = this.getStyles();
 
-    let url = this.props.replaceVariables(dsurl + '?kiosk&from=' + fromDate + '&to=' + toDate + '&var-ObjectId=' + instanceId + '&viewPanel=2');
+    let url = this.props.replaceVariables(dsurl + '?kiosk&from=' + fromDate + '&to=' + toDate + '&var-ObjectId=' + instanceId);
     return (
       <div
         className={cx(
@@ -173,14 +178,15 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
 
 
   renderDashboards() {
-    const fromDate = this.props.replaceVariables('$__from');
-    const toDate = this.props.replaceVariables('$__to');
+    //const fromDate = this.props.replaceVariables('$__from');
+    //const toDate = this.props.replaceVariables('$__to');
+
     if (this.state.dashboards !== null) {
       let dsCount = this.state.dashboards.length;
       if (dsCount > 0) {
         let height = this.props.height / dsCount;
         let width = this.props.width;
-        return <>{this.state.dashboards.map((object, i) => this.renderDashboardIFrame(object.node.nodeId, fromDate, toDate,
+        return <>{this.state.dashboards.map((object, i) => this.renderDashboardIFrame(object.node.nodeId, this.state.fromDate, this.state.toDate,
           object.dashboard != null ? object.dashboard.url : "", width, height))}</>;
       }
     }
@@ -190,11 +196,21 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
   render() {
 
     const instanceId = this.props.replaceVariables('$InstanceId');
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    const fromDate = this.getRelativeFromTime(urlParams);
+    const toDate = this.getRelativeToTime(urlParams);
+
+    console.log("toDate: " + toDate + " to: " + toDate);
+
+
     if (this.state.instanceId === null || this.state.instanceId !== instanceId) {
       this.setState({ instanceId: instanceId, dashboards: null });
     }
-    const fromDate = this.props.replaceVariables('$__from');
-    const toDate = this.props.replaceVariables('$__to');
+    //const fromDate = this.props.replaceVariables('$__from');
+    //const toDate = this.props.replaceVariables('$__to');
 
     if ((this.state.fromDate === null && fromDate !== null) || this.state.fromDate !== fromDate
       || (this.state.toDate === null && toDate !== null) || this.state.toDate !== toDate) {
@@ -211,6 +227,24 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
         this.fetchDashboard();
       return <></>;
     }
+  }
+
+  private getRelativeFromTime(urlParams: URLSearchParams) {
+
+    var value = urlParams.get('from');
+    if (value != null)
+      return value;
+
+    return 'now-6h';
+  }
+
+  private getRelativeToTime(urlParams: URLSearchParams) {
+
+    var value = urlParams.get('to');
+    if (value != null)
+      return value;
+
+    return 'now';
   }
 }
 
