@@ -14,6 +14,7 @@ type Props = {
   depth: number;
   showAllVariablesToDepth: boolean;
   refreshRate: number;
+  maxResults: number;
 };
 
 type State = {
@@ -23,8 +24,6 @@ type State = {
   rootNode: BrowseHierarchy;
   valueList: VariableValue[];
   theme: GrafanaTheme | null;
-  maxResults: number;
-  browseNameFilter: string;
 };
 
 interface VariableValue {
@@ -49,6 +48,10 @@ interface TreeNode {
   depth: number,
 }
 
+interface BrowseContext {
+  variableCount: number,
+}
+
 
 export class VariableList extends Component<Props, State> {
 
@@ -69,9 +72,6 @@ export class VariableList extends Component<Props, State> {
       fetchedValues: false,
       valueList: [],
       theme: null,
-      //browsePath: [],
-      maxResults: 1000,
-      browseNameFilter: '',
     };
 
     let e = this;
@@ -124,12 +124,18 @@ export class VariableList extends Component<Props, State> {
 
 
 
-  fetchChildHierarchies(nodes: OpcUaBrowseResults[], depth: number): Promise<BrowseHierarchy[]> {
+  fetchChildHierarchies(nodes: OpcUaBrowseResults[], depth: number, browseContext: BrowseContext): Promise<BrowseHierarchy[]> {
     if (depth > 0) {
       let promises: Promise<BrowseHierarchy>[] = [];
       depth--;
       for (let i = 0; i < nodes.length; i++) {
-        promises.push(this.fetchHierarchy(nodes[i], depth));
+        if (browseContext.variableCount < this.getMaxElements()) {
+          if (nodes[i].nodeClass == NodeClass.Variable)
+            browseContext.variableCount++;
+          promises.push(this.fetchHierarchy(nodes[i], depth, browseContext));
+        }
+        else
+          break;
       }
       return Promise.all(promises);
     }
@@ -137,19 +143,29 @@ export class VariableList extends Component<Props, State> {
     return new Promise<BrowseHierarchy[]>((res, rej) => res(empty));
   }
 
+  getMaxElements(): number {
+    if (this.props.maxResults > 0)
+      return this.props.maxResults;
+    return 2147483647;
+  }
 
-  fetchHierarchy(parent: OpcUaNodeInfo, depth: number): Promise<BrowseHierarchy> {
-    let filter: BrowseFilter = { browseName: this.state.browseNameFilter, maxResults: this.state.maxResults };
+
+  fetchHierarchy(parent: OpcUaNodeInfo, depth: number, browseContext: BrowseContext): Promise<BrowseHierarchy> {
+    let filter: BrowseFilter = { browseName: "", maxResults: this.props.maxResults }; // Not actually used right now.
 
     let nodeClass: NodeClass = (depth === 0) ? NodeClass.Variable : NodeClass.Object | NodeClass.Variable;
-    let prom = this.props.browse(parent.nodeId, nodeClass, filter);
-    return prom.then(results => {
-      const childHi = this.fetchChildHierarchies(results, depth);
-      return childHi.then(h => {
-        let bh: BrowseHierarchy = { node: parent, children: h };
-        return bh;
-      })
-    });
+    if (browseContext.variableCount < this.getMaxElements()) {
+      let prom = this.props.browse(parent.nodeId, nodeClass, filter);
+      return prom.then(results => {
+        const childHi = this.fetchChildHierarchies(results, depth, browseContext);
+        return childHi.then(h => {
+          let bh: BrowseHierarchy = { node: parent, children: h };
+          return bh;
+        })
+      });
+    }
+    let empty: BrowseHierarchy = { children: [], node: parent };
+    return new Promise<BrowseHierarchy>((res, rej) => res(empty));
   }
 
 
@@ -158,7 +174,9 @@ export class VariableList extends Component<Props, State> {
       this.setState({
         fetchingChildren: true
       }, () => {
-          this.fetchHierarchy(this.state.rootNode.node, this.props.depth)
+          
+          let browseContext: BrowseContext = { variableCount: 0 };
+          this.fetchHierarchy(this.state.rootNode.node, this.props.depth, browseContext)
             .then(hier => this.setState({ rootNode: hier, fetchingChildren: false, fetchedChildren: true }, () => this.onHierarchyComplete()))
             .catch(() => this.setState({ fetchingChildren: false, fetchedChildren: false }));
       }
@@ -229,7 +247,7 @@ export class VariableList extends Component<Props, State> {
     }
     return (
 
-      <div className="panel-container" style={{ position: "relative", height: "100%", width: "100%" }}>
+      <div className="panel-container">
         <ThemeGetter onTheme={this.onTheme} />
         <Paper style={{ position: "relative", height: "100%", width: "100%" }}>
           <div
@@ -242,7 +260,7 @@ export class VariableList extends Component<Props, State> {
               overflowY: "auto"
             }}
           >
-          <Table style={{ position: "relative", height: "100%", width: "100%" }}>
+          <Table>
             <TableHead style={{ backgroundColor: bg, color: txt }}>
               <TableRow style={{ height: 20 }}>
                 {(this.props.columns & ColumnType.DisplayNamePath) == ColumnType.DisplayNamePath &&

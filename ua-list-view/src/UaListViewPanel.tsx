@@ -141,6 +141,7 @@ export class UaListViewPanel extends PureComponent<Props, State> {
     if (this.state.instanceId !== null) {
       let columnType = this.getColumnType();
       return <VariableList refreshRate={this.props.options.refreshRate}
+        maxResults={this.props.options.maxElementsList}
         showAllVariablesToDepth={this.props.options.showAllVariablesToDepth}
         depth={this.props.options.browseDepth}
         columns={columnType}
@@ -150,8 +151,6 @@ export class UaListViewPanel extends PureComponent<Props, State> {
     }
     return <></>;
   }
-
-  // Refresh-rate
 
   render() {
     const instanceId = this.props.replaceVariables('$ObjectId');
