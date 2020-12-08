@@ -322,7 +322,7 @@ export class DashMappingPanel extends Component<Props, State> {
   private isMappedAsPersisted(): boolean {
 
     if (this.state.selectedDash?.id != this.state.mappedDashboard?.id) {
-      //console.log("isMappedAsPersisted: false, selected dash changed");
+      console.log("isMappedAsPersisted: false, selected dash changed");
       return false;
     }
 
@@ -330,7 +330,7 @@ export class DashMappingPanel extends Component<Props, State> {
       let instanceIsMapped = this.isIdMapped(this.state.selectedNode?.nodeId);
 
       if (instanceIsMapped != this.state.instanceChecked) {
-        //console.log("isMappedAsPersisted: false, instanceIsMapped changed. selectedNodeType: " + this.state.selectedNodeType?.displayName);
+        console.log("isMappedAsPersisted: false, instanceIsMapped changed. selectedNodeType: " + this.state.selectedNodeType?.displayName);
         return false;
       }
     }
@@ -338,7 +338,7 @@ export class DashMappingPanel extends Component<Props, State> {
     let typeIsMapped = this.state.isType ? this.isIdMapped(this.state.selectedNode?.nodeId) : this.isIdMapped(this.state.selectedNodeType?.nodeId);
 
     if (typeIsMapped != this.state.typedefinitionChecked) {
-      //console.log("isMappedAsPersisted: false, typeIsMapped changed");
+      console.log("isMappedAsPersisted: false, typeIsMapped changed");
       return false;
     }
 
@@ -352,7 +352,7 @@ export class DashMappingPanel extends Component<Props, State> {
       }
     }
 
-    //console.log("isMappedAsPersisted: true");
+   console.log("isMappedAsPersisted: true");
 
     return true;
   }
@@ -529,10 +529,11 @@ export class DashMappingPanel extends Component<Props, State> {
           .then((success: boolean) => {
             if (success) {
 
+              console.log("AddDashMap: this.state.selectedDash: " + this.state.selectedDash?.title);
+
               this.setState({
 
                 mappedDashboardChanged: true,
-                mappedDashboard: this.state.selectedDash
               });
             }
 
@@ -547,7 +548,8 @@ export class DashMappingPanel extends Component<Props, State> {
               this.setState({
 
                 mappedDashboardChanged: true,
-                mappedDashboard: this.state.selectedDash
+                mappedDashboard: null,
+                selectedDash: null
               });
             }
 
