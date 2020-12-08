@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import { PanelProps } from '@grafana/data';
-import { SimpleOptions, OpcUaBrowseResults, QualifiedName, OpcUaNodeInfo } from 'types';
+import { SimpleOptions, OpcUaBrowseResults, QualifiedName, OpcUaNodeInfo, NodeClass } from 'types';
 import { getLocationSrv } from '@grafana/runtime';
 import { getDataSourceSrv } from '@grafana/runtime';
 import { DataSourceWithBackend } from '@grafana/runtime';
@@ -42,18 +42,10 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
 
   render() {
 
-    let rootNodeId: OpcUaBrowseResults = {
-      nodeId: "i=85", browseName: { name: "Objects", namespaceUrl: "http://opcfoundation.org/UA/" },
-      displayName: "Objects", isForward: true, nodeClass: 1
-    };
-
-    //<SplitPane split="vertical" primary="first" minSize={50} defaultSize={100} resizerClassName={styles.resizerH}>
-    //  <div>Ola</div>
-    //  <div>Dunk</div>
-    //</SplitPane>
+    let rootNodeId: OpcUaBrowseResults = this.getRootNodeId();
 
     if (this.props.height != this.state.panelHeight) {
-      console.log("Panel Height init: " + this.props.height);
+      //console.log("Panel Height init: " + this.props.height);
       this.setInitHeights();
     }
 
@@ -79,74 +71,7 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
             <Browser closeBrowser={() => { }} closeOnSelect={false}
               browse={a => this.browse(a)}
               ignoreRootNode={true} rootNodeId={rootNodeId}
-              onNodeSelectedChanged={(node, browsepath) => {
-
-                let browseType = this.browseReferenceTargets(node.nodeId, "i=40");
-                browseType.then((browseTypes: OpcUaBrowseResults[]) => {
-
-                  if (browseTypes?.length > 0) {
-
-                    let selectedNodeType = browseTypes[0];
-                    this.setState({
-                      selectedNodeType: selectedNodeType
-                    });
-                  }
-                });
-
-                let dashboard = getDashboard(node.nodeId, this.state.dataSource);
-                dashboard.then((mappedDashboard: DashboardData | null) => {
-
-                  console.info("mappedDashboard?.title: " + mappedDashboard?.title);
-                  console.info("mappedDashboard?.dashKeys?.length: " + mappedDashboard?.dashKeys?.length);
-                  console.info("mappedDashboard?.url: " + mappedDashboard?.url);
-
-                  getLocationSrv()?.update({
-
-                    query: {
-                      'var-InstanceDisplayName': node.displayName,
-                      'var-InstanceId': node.nodeId,
-                      'var-DashboardUrl': mappedDashboard?.url,
-                    },
-                    partial: true,
-                    replace: true,
-
-                  });
-
-                  this.setState({
-                    selectedNode: node, browsePath: browsepath,
-                    mappedDashboard: mappedDashboard
-                  });
-
-                });
-
-                if (this.props.options.configMode) {
-
-                  let interfaceList = new Array<OpcUaBrowseResults>();
-
-                  let hasInterface = "i=17603";
-                  let interfaces = this.browseReferenceTargets(node.nodeId, hasInterface);
-                  interfaces.then((interfaces: OpcUaBrowseResults[]) => {
-
-                    for (let i = 0; i < interfaces?.length; i++) {
-                      interfaceList.push(interfaces[i]);
-                    }
-                  })
-
-                  let definedByEquipmentClass = "{\"namespaceUrl\":\"http://www.OPCFoundation.org/UA/2013/01/ISA95\",\"id\":\"i=4919\"}";
-                  let eqClasses = this.browseReferenceTargets(node.nodeId, definedByEquipmentClass);
-                  eqClasses.then((eqClasses: OpcUaBrowseResults[]) => {
-
-                    for (let i = 0; i < eqClasses?.length; i++) {
-                      interfaceList.push(eqClasses[i]);
-                    }
-                  })
-
-                  this.setState({
-                    interfaces: interfaceList
-                  });
-                }
-
-              }}>
+              onNodeSelectedChanged={(node, browsepath) => this.nodeSelectedChanged(node, browsepath) }>
             </Browser>
           </div>
           <div data-id="Treeview-ScrollDiv" style={{ height: this.state.dashMappingHeight, width: "100%", overflowY: "auto", margin: "5px 0px 0px 0px" }} >
@@ -162,79 +87,105 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
           <div style={{ height: "100%", width: "100%" }}>
             <Browser closeBrowser={() => { }} closeOnSelect={false}
               browse={a => this.browse(a)}
-              ignoreRootNode={true} rootNodeId={rootNodeId}
-              onNodeSelectedChanged={(node, browsepath) => {
-
-                let browseType = this.browseReferenceTargets(node.nodeId, "i=40");
-                browseType.then((browseTypes: OpcUaBrowseResults[]) => {
-
-                  if (browseTypes?.length > 0) {
-
-                    let selectedNodeType = browseTypes[0];
-                    this.setState({
-                      selectedNodeType: selectedNodeType
-                    });
-                  }
-                });
-
-                let dashboard = getDashboard(node.nodeId, this.state.dataSource);
-                dashboard.then((mappedDashboard: DashboardData | null) => {
-
-                  console.info("mappedDashboard?.title: " + mappedDashboard?.title);
-                  console.info("mappedDashboard?.dashKeys?.length: " + mappedDashboard?.dashKeys?.length);
-                  console.info("mappedDashboard?.url: " + mappedDashboard?.url);
-
-                  getLocationSrv()?.update({
-
-                    query: {
-                      'var-InstanceDisplayName': node.displayName,
-                      'var-InstanceId': node.nodeId,
-                      'var-DashboardUrl': mappedDashboard?.url,
-                    },
-                    partial: true,
-                    replace: true,
-
-                  });
-
-                  this.setState({
-                    selectedNode: node, browsePath: browsepath,
-                    mappedDashboard: mappedDashboard
-                  });
-
-                });
-
-                if (this.props.options.configMode) {
-
-                  let interfaceList = new Array<OpcUaBrowseResults>();
-
-                  let hasInterface = "i=17603";
-                  let interfaces = this.browseReferenceTargets(node.nodeId, hasInterface);
-                  interfaces.then((interfaces: OpcUaBrowseResults[]) => {
-
-                    for (let i = 0; i < interfaces?.length; i++) {
-                      interfaceList.push(interfaces[i]);
-                    }
-                  })
-
-                  let definedByEquipmentClass = "{\"namespaceUrl\":\"http://www.OPCFoundation.org/UA/2013/01/ISA95\",\"id\":\"i=4919\"}";
-                  let eqClasses = this.browseReferenceTargets(node.nodeId, definedByEquipmentClass);
-                  eqClasses.then((eqClasses: OpcUaBrowseResults[]) => {
-
-                    for (let i = 0; i < eqClasses?.length; i++) {
-                      interfaceList.push(eqClasses[i]);
-                    }
-                  })
-
-                  this.setState({
-                    interfaces: interfaceList
-                  });
-                }
-
-              }}>
+            ignoreRootNode={true} rootNodeId={rootNodeId}
+            onNodeSelectedChanged={(node, browsepath) => this.nodeSelectedChanged(node, browsepath) }>
             </Browser>
           </div>
       </div>;
     }
+  }
+
+  private nodeSelectedChanged(node: OpcUaBrowseResults, browsepath: QualifiedName[]) {
+
+    console.log("nodeSelectedChanged: " + node?.displayName);
+    let browseType = this.browseReferenceTargets(node.nodeId, "i=40");
+    browseType.then((browseTypes: OpcUaBrowseResults[]) => {
+
+      if (browseTypes?.length > 0) {
+
+        let selectedNodeType = browseTypes[0];
+        this.setState({
+          selectedNodeType: selectedNodeType
+        });
+      }
+      else if (this.state.selectedNodeType != null) {
+        this.setState({
+          selectedNodeType: null
+        });
+      }
+    });
+
+    let dashboard = getDashboard(node.nodeId, this.state.dataSource);
+    dashboard.then((mappedDashboard: DashboardData | null) => {
+
+      console.info("mappedDashboard?.title: " + mappedDashboard?.title);
+      console.info("mappedDashboard?.dashKeys?.length: " + mappedDashboard?.dashKeys?.length);
+      console.info("mappedDashboard?.url: " + mappedDashboard?.url);
+
+      getLocationSrv()?.update({
+
+        query: {
+          'var-InstanceDisplayName': node.displayName,
+          'var-InstanceId': node.nodeId,
+          'var-DashboardUrl': mappedDashboard?.url,
+        },
+        partial: true,
+        replace: true,
+
+      });
+
+      this.setState({
+        selectedNode: node, browsePath: browsepath,
+        mappedDashboard: mappedDashboard
+      });
+
+    });
+
+    if (this.props.options.configMode) {
+
+      let interfaceList = new Array<OpcUaBrowseResults>();
+
+      let hasInterface = "i=17603";
+      let interfaces = this.browseReferenceTargets(node.nodeId, hasInterface);
+      interfaces.then((interfaces: OpcUaBrowseResults[]) => {
+
+        for (let i = 0; i < interfaces?.length; i++) {
+          interfaceList.push(interfaces[i]);
+        }
+      })
+
+      let definedByEquipmentClass = "{\"namespaceUrl\":\"http://www.OPCFoundation.org/UA/2013/01/ISA95\",\"id\":\"i=4919\"}";
+      let eqClasses = this.browseReferenceTargets(node.nodeId, definedByEquipmentClass);
+      eqClasses.then((eqClasses: OpcUaBrowseResults[]) => {
+
+        for (let i = 0; i < eqClasses?.length; i++) {
+          interfaceList.push(eqClasses[i]);
+        }
+      })
+
+      this.setState({
+        interfaces: interfaceList
+      });
+    }
+
+  }
+
+  private getRootNodeId(): OpcUaBrowseResults {
+
+    let browseRoot = this.props.options.root;
+
+    //console.log("browseRoot: " + browseRoot);
+
+    if (browseRoot == 'Objects')
+        return {
+            nodeId: "i=85", browseName: { name: "Objects", namespaceUrl: "http://opcfoundation.org/UA/" },
+            displayName: "Objects", isForward: true, nodeClass: 1
+        };
+
+    return {
+      nodeId: "i=86", browseName: { name: "Types", namespaceUrl: "http://opcfoundation.org/UA/" },
+      displayName: "Types", isForward: true, nodeClass: 1
+    };
   }
 
   splitbarChanged(height: number) {
@@ -273,8 +224,16 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
 
     if (this.state.dataSource != null) {
 
-      let res = this.state.dataSource.getResource('browse', { nodeId: parentId });
-      return res;
+      if (this.props.options.root == "Types") {
+        let nodeClassMask: NodeClass = NodeClass.ObjectType | NodeClass.Object;
+
+        let res = this.state.dataSource.getResource('browse', { nodeId: parentId, nodeClassMask: nodeClassMask });
+        return res;
+      }
+      else {
+        let res = this.state.dataSource.getResource('browse', { nodeId: parentId });
+        return res;
+      }
     }
 
     return new Promise<OpcUaBrowseResults[]>(() => [] );

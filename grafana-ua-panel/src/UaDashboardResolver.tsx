@@ -12,8 +12,8 @@ export function getDashboard(nodeId: string, dataSource: DataSourceWithBackend |
 
     let dashQueryResult = dashInfo.then(dashInfo => {
 
-      console.log("dashInfo?.name: " + dashInfo?.name);
-      console.log("dashInfo?.dashKeys?.length: " + dashInfo?.dashKeys?.length);
+      //console.log("dashInfo?.name: " + dashInfo?.name);
+      //console.log("dashInfo?.dashKeys?.length: " + dashInfo?.dashKeys?.length);
       if (dashInfo?.name != null && dashInfo.name?.length > 0) {
         return fetch('/api/search?query=' + encodeURI(dashInfo.name));
       }
@@ -122,6 +122,17 @@ export function addDashboardMapping(nodeId: string, typeNodeId: string, useType:
   if (dataSource != null && dashboard != undefined) {
 
     return dataSource.getResource('adddashboardmapping', { nodeId: nodeId, typeNodeId: typeNodeId, useType: useType, interfaces: JSON.stringify(interfaces), dashboard: dashboard, existingDashboard: existingDashboard, perspective: "Operator" })
+      .then((d: UaResult) => { return d.success })
+  }
+
+  return new Promise<boolean>(() => false);
+}
+
+export function removeDashboardMapping(nodeId: string, typeNodeId: string, useType: boolean, interfaces: string[], dataSource: DataSourceWithBackend | null): Promise<boolean> {
+
+  if (dataSource != null) {
+
+    return dataSource.getResource('removedashboardmapping', { nodeId: nodeId, typeNodeId: typeNodeId, useType: useType, interfaces: JSON.stringify(interfaces), perspective: "Operator" })
       .then((d: UaResult) => { return d.success })
   }
 

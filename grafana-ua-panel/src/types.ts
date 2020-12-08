@@ -1,14 +1,11 @@
 import { DashboardData } from './UaDashboardResolver';
 
-type SeriesSize = 'sm' | 'md' | 'lg';
-type CircleColor = 'red' | 'green' | 'blue';
+type BrowseRoot = 'Objects' | 'Types';
 
 export interface SimpleOptions {
-  text: string;
-  showSeriesCount: boolean;
-  seriesCountSize: SeriesSize;
-  color: CircleColor;
+
   configMode: boolean;
+  root: BrowseRoot;
 }
 
 export interface QualifiedName {
@@ -47,4 +44,16 @@ export interface InterfaceNodeInfo {
 export interface DashboardDataVm extends DashboardData {
   isOpen: boolean;
   dashBoards: DashboardDataVm[] | null;
+}
+
+export enum NodeClass {
+  Unspecified = 0,
+  Object = 1,
+  Variable = 2,
+  Method = 4,
+  ObjectType = 8,
+  VariableType = 16,
+  ReferenceType = 32,
+  DataType = 64,
+  View = 128,
 }

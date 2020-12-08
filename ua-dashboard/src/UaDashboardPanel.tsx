@@ -203,7 +203,7 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
     const fromDate = this.getRelativeFromTime(urlParams);
     const toDate = this.getRelativeToTime(urlParams);
 
-    console.log("toDate: " + toDate + " to: " + toDate);
+    //console.log("toDate: " + toDate + " to: " + toDate);
 
 
     if (this.state.instanceId === null || this.state.instanceId !== instanceId) {
