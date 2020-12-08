@@ -40,7 +40,7 @@ export class UaListViewPanel extends PureComponent<Props, State> {
 
   readNode(nodeId: string): Promise<OpcUaNodeInfo> {
     this.getDataSource();
-    if (this.state.dataSource != null) {
+    if (this.state.dataSource != null && nodeId != null && nodeId.length > 0) {
       return this.state.dataSource.getResource('readNode', { nodeId: nodeId });
     }
     return new Promise<OpcUaNodeInfo>(() => null);
@@ -155,7 +155,7 @@ export class UaListViewPanel extends PureComponent<Props, State> {
 
   render() {
     const instanceId = this.props.replaceVariables('$ObjectId');
-    if (this.state.instanceId === null || this.state.instanceId.nodeId !== instanceId && instanceId !== '') {
+    if (this.state.instanceId === null || this.state.instanceId.nodeId !== instanceId && instanceId !== null && instanceId.length > 0) {
       this.readNode(instanceId).then((res) => this.setState({ instanceId: res }));
     }
     return this.renderChildren();
