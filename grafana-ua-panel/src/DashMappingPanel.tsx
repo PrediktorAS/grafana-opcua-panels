@@ -102,6 +102,7 @@ export class DashMappingPanel extends Component<Props, State> {
     }
 
     console.log("selectedNodeTypeDisplayName: " + selectedNodeTypeDisplayName + "  isType: " + isType);
+    console.log("this.state.selectedDash?.title: " + this.state.selectedDash?.title);
 
     let selectionChanged = this.hasSelectionChanged(selectedNode);
     if (selectionChanged) {
@@ -338,7 +339,7 @@ export class DashMappingPanel extends Component<Props, State> {
     let typeIsMapped = this.state.isType ? this.isIdMapped(this.state.selectedNode?.nodeId) : this.isIdMapped(this.state.selectedNodeType?.nodeId);
 
     if (typeIsMapped != this.state.typedefinitionChecked) {
-      console.log("isMappedAsPersisted: false, typeIsMapped changed");
+      console.log("isMappedAsPersisted: false, typeIsMapped changed. typeIsMapped: " + typeIsMapped + "  this.state.typedefinitionChecked: " + this.state.typedefinitionChecked);
       return false;
     }
 
@@ -534,6 +535,7 @@ export class DashMappingPanel extends Component<Props, State> {
               this.setState({
 
                 mappedDashboardChanged: true,
+                mappedDashboard: this.state.selectedDash
               });
             }
 
@@ -545,6 +547,7 @@ export class DashMappingPanel extends Component<Props, State> {
           .then((success: boolean) => {
             if (success) {
 
+              //console.log("removeDashboardMapping: success");
               this.setState({
 
                 mappedDashboardChanged: true,
