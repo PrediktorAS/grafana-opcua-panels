@@ -5,6 +5,7 @@ import { css, cx } from 'emotion';
 import { stylesFactory} from '@grafana/ui';
 import { DataSourceWithBackend, getDataSourceSrv } from '@grafana/runtime';
 import { getDashboard } from './UaDashboardResolver';
+//import { getDashboardSrv } from "@grafana/runtime/services/backendSrv";
 
 interface Props extends PanelProps<SimpleOptions> {}
 
@@ -64,9 +65,11 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
   }
 
   readNode(nodeId: string): Promise<OpcUaNodeInfo> {
-    this.getDataSource();
-    if (this.state.dataSource != null) {
-      return this.state.dataSource.getResource('readNode', { nodeId: nodeId });
+    if (nodeId !== null && nodeId.length > 0) {
+      this.getDataSource();
+      if (this.state.dataSource != null) {
+        return this.state.dataSource.getResource('readNode', { nodeId: nodeId });
+      }
     }
     return new Promise<OpcUaNodeInfo>(() => null);
   }
@@ -89,7 +92,6 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
 
     //http://localhost:3000/api/dashboards/db/pumplooptype
     //DashboardModel
-
 
     this.browse(instanceId).then((result) => {
       var promises = new Array();
@@ -114,23 +116,24 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
     this.getDataSource();
     if (this.state.dataSource !== null) {
       const instanceId = this.props.replaceVariables('$InstanceId');
-      getDashboard(instanceId, this.state.dataSource).then((dashboard) =>
-      {
-        if (dashboard === null) {
-          if (this.props.options.dashboardFetch === "ChildrenIfNotInstance") {
-            this.fetchChildrenDashboards();
-          }
-        }
-        else {
-          this.readNode(instanceId).then((node) => {
-            if (node !== null) {
-              var dbs: DashboardMap[] = [];
-              dbs.push({ dashboard: dashboard, node: node });
-              this.setState({ dashboards: dbs });
+      if (instanceId !== null && instanceId.length > 0) {
+        getDashboard(instanceId, this.state.dataSource).then((dashboard) => {
+          if (dashboard === null) {
+            if (this.props.options.dashboardFetch === "ChildrenIfNotInstance") {
+              this.fetchChildrenDashboards();
             }
-          });
-        }
-      });
+          }
+          else {
+            this.readNode(instanceId).then((node) => {
+              if (node !== null) {
+                var dbs: DashboardMap[] = [];
+                dbs.push({ dashboard: dashboard, node: node });
+                this.setState({ dashboards: dbs });
+              }
+            });
+          }
+        });
+      }
     }
   }
 
@@ -203,8 +206,7 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
     const fromDate = this.getRelativeFromTime(urlParams);
     const toDate = this.getRelativeToTime(urlParams);
 
-    //console.log("toDate: " + toDate + " to: " + toDate);
-
+    //console.log("DashboardPanel: instanceId: " + instanceId + " fromDate: " + fromDate + " toDate: " + toDate);
 
     if (this.state.instanceId === null || this.state.instanceId !== instanceId) {
       this.setState({ instanceId: instanceId, dashboards: null });

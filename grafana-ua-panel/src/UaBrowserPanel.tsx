@@ -146,28 +146,73 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
       let interfaceList = new Array<OpcUaBrowseResults>();
 
       let hasInterface = "i=17603";
-      let interfaces = this.browseReferenceTargets(node.nodeId, hasInterface);
-      interfaces.then((interfaces: OpcUaBrowseResults[]) => {
+      let hasInterfacePresent = this.isNodePresentAtServer(hasInterface);
+      hasInterfacePresent.then((present: boolean) => {
 
-        for (let i = 0; i < interfaces?.length; i++) {
-          interfaceList.push(interfaces[i]);
+        if (present) {
+
+          console.log("Server supports interfaces");
+
+          let interfaces = this.browseReferenceTargets(node.nodeId, hasInterface);
+          interfaces.then((interfaces: OpcUaBrowseResults[]) => {
+
+            for (let i = 0; i < interfaces?.length; i++) {
+              interfaceList.push(interfaces[i]);
+            }
+          });
         }
-      })
+        else {
+          console.warn("Server does not support interfaces");
+        }
+
+      });
 
       let definedByEquipmentClass = "{\"namespaceUrl\":\"http://www.OPCFoundation.org/UA/2013/01/ISA95\",\"id\":\"i=4919\"}";
-      let eqClasses = this.browseReferenceTargets(node.nodeId, definedByEquipmentClass);
-      eqClasses.then((eqClasses: OpcUaBrowseResults[]) => {
+      let defByEqClass = this.isNodePresentAtServer(definedByEquipmentClass);
+      defByEqClass.then((present: boolean) => {
 
-        for (let i = 0; i < eqClasses?.length; i++) {
-          interfaceList.push(eqClasses[i]);
+        if (present) {
+
+          console.log("ISA95 is present");
+          let eqClasses = this.browseReferenceTargets(node.nodeId, definedByEquipmentClass);
+          eqClasses.then((eqClasses: OpcUaBrowseResults[]) => {
+
+            for (let i = 0; i < eqClasses?.length; i++) {
+              interfaceList.push(eqClasses[i]);
+            }
+          });
+
         }
-      })
+        else {
+          console.log("ISA95 not present");
+        }
+      });
+
 
       this.setState({
         interfaces: interfaceList
       });
     }
 
+  }
+
+  private isNodePresentAtServer(nodeId:string): Promise<boolean> {
+
+    if (this.state.dataSource != null) {
+
+      return this.state.dataSource.getResource('isnodepresent', { nodeId: nodeId })
+        .then(res => {
+
+          if (res) {
+            let present = res as boolean;
+            return present;
+          }
+
+          return false;
+        });
+    }
+
+    return new Promise<boolean>(() => false);
   }
 
   private getRootNodeId(): OpcUaBrowseResults {
@@ -237,6 +282,26 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
     }
 
     return new Promise<OpcUaBrowseResults[]>(() => [] );
+  }
+
+  getNamespaces(): Promise<string[]> {
+
+    if (this.state.dataSource != null) {
+
+      return this.state.dataSource.getResource('getnamespaces')
+        .then(res => {
+
+          if (res) {
+            let namespaces = res as string[];
+            return namespaces;
+          }
+
+          return [];
+        });
+    }
+
+    return new Promise<string[]>(() => []);
+
   }
 
   browseReferenceTargets(nodeId: string, referenceId: string): Promise<OpcUaBrowseResults[]> {
