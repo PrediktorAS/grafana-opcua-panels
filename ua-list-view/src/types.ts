@@ -120,7 +120,6 @@ export interface UAListViewOptions {
   displayNodeClass: boolean;
   browseDepth: number;
   dataFetch: string;
-  refreshRate: number;
   showAllVariablesToDepth: boolean;
   numberFormat: string;
   decimalPrecision: number;
