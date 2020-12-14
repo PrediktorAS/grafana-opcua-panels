@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { PanelProps } from '@grafana/data';
-import { DashboardData, OpcUaBrowseResults, OpcUaNodeInfo, SimpleOptions } from 'types';
+import { DashboardData, OpcUaBrowseResults, OpcUaNodeInfo, SimpleOptions, RelativeTime } from 'types';
 import { css, cx } from 'emotion';
 import { stylesFactory} from '@grafana/ui';
 import { DataSourceWithBackend, getDataSourceSrv } from '@grafana/runtime';
@@ -13,8 +13,9 @@ interface State {
   instanceId: string | null,
   fromDate: string | null,
   toDate: string | null,
+  refresh: string | null,
   dataSource: DataSourceWithBackend | null,
-  dashboards: DashboardMap[] | null,
+  dashboards: DashboardMap[] | null
 }
 
 interface DashboardMap {
@@ -29,9 +30,14 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
       instanceId: null,
       fromDate: null,
       toDate: null,
+      refresh:null,
       dataSource: null,
       dashboards: null
     };
+
+    //EventBus in PanelProps (Publish panelqueries changed event, panel options changed event)
+    //SystemJS.load('app/core/app_events').then((appEvents: any) => { appEvents.on('graph-hover', (e: any) => console.log(e)) })
+
   }
 
   getStyles = stylesFactory(() => {
@@ -138,10 +144,16 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
   }
 
 
-  renderDashboardIFrame(instanceId: string, fromDate: string | null, toDate: string | null, dsurl: string, width: number, height: number) {
+  renderDashboardIFrame(instanceId: string, fromDate: string | null, toDate: string | null, refresh: string | null, dsurl: string, width: number, height: number) {
     const styles = this.getStyles();
 
     let url = this.props.replaceVariables(dsurl + '?kiosk&from=' + fromDate + '&to=' + toDate + '&var-ObjectId=' + instanceId);
+
+    if (refresh != null && refresh.length > 0)
+      url = url + "&refresh=" + refresh;
+
+    console.log("IFrame url: " + url);
+
     return (
       <div
         className={cx(
@@ -189,7 +201,7 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
       if (dsCount > 0) {
         let height = this.props.height / dsCount;
         let width = this.props.width;
-        return <>{this.state.dashboards.map((object, i) => this.renderDashboardIFrame(object.node.nodeId, this.state.fromDate, this.state.toDate,
+        return <>{this.state.dashboards.map((object, i) => this.renderDashboardIFrame(object.node.nodeId, this.state.fromDate, this.state.toDate, this.state.refresh,
           object.dashboard != null ? object.dashboard.url : "", width, height))}</>;
       }
     }
@@ -198,25 +210,33 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
 
   render() {
 
+
     const instanceId = this.props.replaceVariables('$InstanceId');
 
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
 
-    const fromDate = this.getRelativeFromTime(urlParams);
-    const toDate = this.getRelativeToTime(urlParams);
+    const fromToTime = this.getFromToTime(urlParams);
+
+    //console.log("fromToTime.from: " + fromToTime.from + " fromToTime.to: " + fromToTime.to);
+
+    const fromDate = fromToTime.from;
+    const toDate = fromToTime.to;
+
+    const refresh = this.getRefresh(urlParams);
 
     //console.log("DashboardPanel: instanceId: " + instanceId + " fromDate: " + fromDate + " toDate: " + toDate);
 
     if (this.state.instanceId === null || this.state.instanceId !== instanceId) {
       this.setState({ instanceId: instanceId, dashboards: null });
     }
-    //const fromDate = this.props.replaceVariables('$__from');
-    //const toDate = this.props.replaceVariables('$__to');
 
-    if ((this.state.fromDate === null && fromDate !== null) || this.state.fromDate !== fromDate
-      || (this.state.toDate === null && toDate !== null) || this.state.toDate !== toDate) {
-        this.setState({ fromDate: fromDate, toDate: toDate, dashboards: null });
+    if ((this.state.fromDate === null && fromDate !== null)
+      || this.state.fromDate !== fromDate
+      || (this.state.toDate === null && toDate !== null)
+      || this.state.toDate !== toDate
+      || this.state.refresh !== refresh) {
+      this.setState({ fromDate: fromDate, toDate: toDate, dashboards: null, refresh: refresh });
     }
 
     if (this.state.dashboards !== null) {
@@ -231,22 +251,55 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
     }
   }
 
-  private getRelativeFromTime(urlParams: URLSearchParams) {
+  private getFromToTime(urlParams: URLSearchParams) {
 
-    var value = urlParams.get('from');
-    if (value != null)
-      return value;
+    const relTime: RelativeTime = new RelativeTime();
 
-    return 'now-6h';
+    var fromValue = urlParams.get('from');
+    if (fromValue != null)
+      relTime.from = fromValue;
+
+    var toValue = urlParams.get('to');
+    if (toValue != null) {
+      relTime.to = toValue;
+      return relTime;
+    }
+
+    console.log("No relative time found, falling back to absolute and converting");
+
+    const fromDateAbsolute = this.props.replaceVariables('$__from');
+    const toDateAbsolute = this.props.replaceVariables('$__to');
+
+    console.log("fromDateAbsolute: " + fromDateAbsolute + "  toDateAbsolute: " + toDateAbsolute);
+
+    if (fromDateAbsolute != null && fromDateAbsolute != undefined) {
+
+      let periodSecs = Math.floor((parseInt(toDateAbsolute) - parseInt(fromDateAbsolute)) / 1000);
+
+      //console.log("periodSecs: " + periodSecs);
+
+      relTime.from = "now-" + periodSecs + "s";
+      relTime.to = "now";
+
+      return relTime;
+    }
+
+    console.log("No absolute time found, falling back to default last 6 hours");
+
+    relTime.from = "now-6H";
+    relTime.to = "now";
+
+    return relTime;
+
   }
 
-  private getRelativeToTime(urlParams: URLSearchParams) {
+  private getRefresh(urlParams: URLSearchParams) {
 
-    var value = urlParams.get('to');
-    if (value != null)
-      return value;
+    var refreshValue = urlParams.get('refresh');
+    if (refreshValue != null)
+      return refreshValue;
 
-    return 'now';
+    return "";
   }
 }
 

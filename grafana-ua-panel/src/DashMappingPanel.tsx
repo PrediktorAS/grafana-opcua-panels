@@ -5,7 +5,7 @@ import { /*Select,*/ Checkbox/*, Input*/, Button, Collapse } from '@grafana/ui';
 //import { convertRemToPixels } from './ConvertRemToPixels';
 import { ThemeGetter } from './ThemesGetter';
 import { GrafanaTheme } from '@grafana/data';
-import { DashboardData, getAllDashboards, addDashboardMapping, removeDashboardMapping } from './UaDashboardResolver';
+import { DashboardData, getAllDashboards, addDashboardMapping, removeDashboardMappingByKeys } from './UaDashboardResolver';
 import { OpcUaBrowseResults, InterfaceNodeInfo, DashboardDataVm } from './types';
 import { DataSourceWithBackend } from '@grafana/runtime';
 //import { Input } from '@grafana/ui';
@@ -84,6 +84,8 @@ export class DashMappingPanel extends Component<Props, State> {
     let mappedDashboard = JSON.parse(this.props.mappedDashboard) as DashboardData;
     let interfaces = JSON.parse(this.props.interfaces) as OpcUaBrowseResults[];
 
+    let dashKey1 = mappedDashboard?.dashKeys?.length > 0 ? mappedDashboard.dashKeys[0] : "";
+    console.log("mappedDashboard: " + mappedDashboard?.title + " keys: " + mappedDashboard?.dashKeys?.length + " key1: " + dashKey1);
     //console.log("selectedNodeType: " + selectedNodeType?.displayName);
 
     let selectedNodeDisplayName: string = " ";
@@ -101,8 +103,8 @@ export class DashMappingPanel extends Component<Props, State> {
       }
     }
 
-    console.log("selectedNodeTypeDisplayName: " + selectedNodeTypeDisplayName + "  isType: " + isType);
-    console.log("this.state.selectedDash?.title: " + this.state.selectedDash?.title);
+    //console.log("selectedNodeTypeDisplayName: " + selectedNodeTypeDisplayName + "  isType: " + isType);
+    //console.log("this.state.selectedDash?.title: " + this.state.selectedDash?.title);
 
     let selectionChanged = this.hasSelectionChanged(selectedNode);
     if (selectionChanged) {
@@ -221,7 +223,7 @@ export class DashMappingPanel extends Component<Props, State> {
                                     <div style={{ width: "7px" }} > </div>
                                   </td>
                                   <td>
-                                    <Checkbox style={{ margin: "0px 0px 0px 10px" }} css={""} value={this.state.selectedDash?.id == dBoard.id} label={dBoard.title} onChange={() => this.setState({ selectedDash: dBoard })}></Checkbox>
+                                    <Checkbox style={{ margin: "0px 0px 0px 10px" }} css={""} value={this.state.selectedDash?.id == dBoard.id} label={dBoard.title} onChange={() => this.selectedDashChanged(dBoard) }></Checkbox>
                                   </td>
                                 </tr>
                               </table>
@@ -236,8 +238,7 @@ export class DashMappingPanel extends Component<Props, State> {
             </tr>
             <tr >
               <td style={{ textAlign: "right", padding: "5px" }} >
-                <Button disabled={!this.isMappedAsPersisted()} contentEditable={false} onClick={() => this.changeDashboardMapping(false, selectedNode, selectedNodeType, mappedDashboard)}>Remove Mapping</Button>
-                <Button style={{ marginLeft: "5px" }} disabled={this.isApplyButtonDisabled()} contentEditable={false} onClick={() => this.changeDashboardMapping(true, selectedNode, selectedNodeType, mappedDashboard)}>Apply Mapping</Button>
+                <Button style={{ marginLeft: "5px" }} disabled={this.isApplyButtonDiabled()} contentEditable={false} onClick={() => this.changeDashboardMapping(true, selectedNode, selectedNodeType, mappedDashboard)}>Apply</Button>
               </td>
             </tr>
           </table>
@@ -252,6 +253,21 @@ export class DashMappingPanel extends Component<Props, State> {
       }}></div>
 
       );
+    }
+  }
+
+  private selectedDashChanged(dBoard: DashboardDataVm) {
+
+    //console.log("selectedDashChanged: current: " + this.state.selectedDash?.title + "  new: " + dBoard.title);
+
+    if (this.state.selectedDash == null) {
+      this.setState({ selectedDash: dBoard })
+    }
+    else {
+      if (this.state.selectedDash?.id == dBoard.id)
+        this.setState({ selectedDash: null })
+      else
+        this.setState({ selectedDash: dBoard })
     }
   }
 
@@ -320,10 +336,18 @@ export class DashMappingPanel extends Component<Props, State> {
 
   }
 
+  private isApplyButtonDiabled() {
+
+    //if (this.state.selectedDash == null)
+    //  return true;
+
+    return this.isMappedAsPersisted();
+  }
+
   private isMappedAsPersisted(): boolean {
 
     if (this.state.selectedDash?.id != this.state.mappedDashboard?.id) {
-      console.log("isMappedAsPersisted: false, selected dash changed");
+      //console.log("isMappedAsPersisted: false, selected dash changed");
       return false;
     }
 
@@ -331,17 +355,23 @@ export class DashMappingPanel extends Component<Props, State> {
       let instanceIsMapped = this.isIdMapped(this.state.selectedNode?.nodeId);
 
       if (instanceIsMapped != this.state.instanceChecked) {
-        console.log("isMappedAsPersisted: false, instanceIsMapped changed. selectedNodeType: " + this.state.selectedNodeType?.displayName);
+        //console.log("isMappedAsPersisted: false, instanceIsMapped changed. selectedNodeType: " + this.state.selectedNodeType?.displayName);
         return false;
       }
     }
 
-    let typeIsMapped = this.state.isType ? this.isIdMapped(this.state.selectedNode?.nodeId) : this.isIdMapped(this.state.selectedNodeType?.nodeId);
+    //console.log("this.state.isType: " + this.state.isType);
+    //if (this.state.isType)
+    //  console.log("this.state.selectedNode?.nodeId: " + this.state.selectedNode?.nodeId);
+    //else
+    //  console.log("this.state.selectedNodeType?.nodeId: " + this.state.selectedNodeType?.nodeId);
 
-    if (typeIsMapped != this.state.typedefinitionChecked) {
-      console.log("isMappedAsPersisted: false, typeIsMapped changed. typeIsMapped: " + typeIsMapped + "  this.state.typedefinitionChecked: " + this.state.typedefinitionChecked);
-      return false;
-    }
+    //let typeIsMapped = this.state.isType ? this.isIdMapped(this.state.selectedNode?.nodeId) : this.isIdMapped(this.state.selectedNodeType?.nodeId);
+
+    //if (typeIsMapped != this.state.typedefinitionChecked) {
+    //  console.log("isMappedAsPersisted: false, typeIsMapped changed. typeIsMapped: " + typeIsMapped + "  this.state.typedefinitionChecked: " + this.state.typedefinitionChecked);
+    //  return false;
+    //}
 
     if (this.state.interfaces != null && this.state.interfaces.length > 0) {
 
@@ -353,19 +383,9 @@ export class DashMappingPanel extends Component<Props, State> {
       }
     }
 
-   console.log("isMappedAsPersisted: true");
+   //console.log("isMappedAsPersisted: true");
 
     return true;
-  }
-
-  private isApplyButtonDisabled() {
-
-    //console.log("this.state.selectedDash: " + this.state.selectedDash);
-
-    if (this.state.selectedDash == null)
-      return true;
-
-    return this.isMappedAsPersisted();
   }
 
   private isIdMapped(nodeId: string | undefined) {
@@ -376,7 +396,7 @@ export class DashMappingPanel extends Component<Props, State> {
         if (this.state.mappedDashboard.dashKeys != null) {
 
           for (let i = 0; i < this.state.mappedDashboard.dashKeys.length; i++) {
-
+            //console.log("isIdMapped: " + nodeId + " key: " + this.state.mappedDashboard.dashKeys[i]);
             if (nodeId == this.state.mappedDashboard.dashKeys[i])
               return true;
           }
@@ -388,6 +408,8 @@ export class DashMappingPanel extends Component<Props, State> {
   }
 
   private setupCurrentMapping(selectedNode: OpcUaBrowseResults, selectedNodeType: OpcUaBrowseResults, mappedDashboard: DashboardData) {
+
+    //console.log("setupCurrentMapping: mappedDashboard: " + mappedDashboard?.title);
 
     let setSelectedNodeState = selectedNode != null && selectedNode.nodeId != this.state.selectedNode?.nodeId;
 
@@ -428,7 +450,7 @@ export class DashMappingPanel extends Component<Props, State> {
     else if (this.state.mappedDashboard != null) {
       this.setState({
         mappedDashboard: null,
-        selectedDash: null,
+        //selectedDash: null,
         mappedDashboardChanged: false
       });
     }
@@ -514,7 +536,7 @@ export class DashMappingPanel extends Component<Props, State> {
 
   private changeDashboardMapping(add:boolean, selectedNode: OpcUaBrowseResults, selectedNodeType: OpcUaBrowseResults, existingDashboard: DashboardData) {
 
-    if (this.props.dataSource != null && this.state.selectedDash != null) {
+    if (this.props.dataSource != null) {
 
       let selectedInterfaces = this.state.interfaces?.filter(x => x.selected);
       let interfaces = new Array<string>();
@@ -523,14 +545,27 @@ export class DashMappingPanel extends Component<Props, State> {
         interfaces.push(selectedInterfaces[i].nodeId);
       }
 
+      let add = this.state.selectedDash != null;
+
+      //console.log("changeDashboardMapping: add = " + add);
+
       if (add) {
+
+        if (this.state.mappedDashboard?.dashKeys != null && this.state.mappedDashboard.dashKeys.length > 0)
+          removeDashboardMappingByKeys(this.state.mappedDashboard.dashKeys, this.props.dataSource);
 
         let typedefinitionChecked = selectedNodeType == null ? false : this.state.typedefinitionChecked; // selectedNodeType == null means that selected node is a type and will be treated as an instance in the following
         addDashboardMapping(selectedNode?.nodeId, selectedNodeType?.nodeId, typedefinitionChecked, interfaces, this.state.selectedDash?.title, existingDashboard?.title, this.props.dataSource)
           .then((success: boolean) => {
             if (success) {
 
-              console.log("AddDashMap: this.state.selectedDash: " + this.state.selectedDash?.title);
+              //console.log("AddDashMap: this.state.selectedDash: " + this.state.selectedDash?.title);
+
+
+              if (this.state.selectedDash != null) {
+                let newDashKeys = this.gatherKeys(selectedNode?.nodeId, selectedNodeType?.nodeId, typedefinitionChecked, interfaces);
+                this.state.selectedDash.dashKeys = newDashKeys;
+              }
 
               this.setState({
 
@@ -538,27 +573,68 @@ export class DashMappingPanel extends Component<Props, State> {
                 mappedDashboard: this.state.selectedDash
               });
             }
+            else {
+              console.error("addDashboardMapping failed");
+            }
 
           });
       }
       else {
 
-        removeDashboardMapping(selectedNode.nodeId, selectedNodeType.nodeId, this.state.typedefinitionChecked, interfaces, this.props.dataSource)
-          .then((success: boolean) => {
-            if (success) {
+        if (this.state.mappedDashboard?.dashKeys != null && this.state.mappedDashboard.dashKeys.length > 0) {
+          removeDashboardMappingByKeys(this.state.mappedDashboard.dashKeys, this.props.dataSource)
+            .then((success: boolean) => {
 
-              //console.log("removeDashboardMapping: success");
+            if (success) {
               this.setState({
 
                 mappedDashboardChanged: true,
-                mappedDashboard: null,
-                selectedDash: null
+                mappedDashboard: null
               });
+            }
+            else {
+              console.error("removeDashboardMappingByKeys failed");
             }
 
           });
+        }
+
+        //removeDashboardMapping(selectedNode.nodeId, selectedNodeType.nodeId, this.state.typedefinitionChecked, interfaces, this.props.dataSource)
+        //  .then((success: boolean) => {
+        //    if (success) {
+
+        //      //console.log("removeDashboardMapping: success");
+        //      this.setState({
+
+        //        mappedDashboardChanged: true,
+        //        mappedDashboard: null
+        //      });
+        //    }
+
+        //  });
       }
     }
+  }
+
+  private gatherKeys(nodeId: string | null, selectedNodeType: string | null, typedefinitionChecked: boolean, interfaces: string[] | null) {
+
+    let dashKeys = new Array<string>();
+
+    if (typedefinitionChecked) {
+      if (selectedNodeType != null)
+        dashKeys.push(selectedNodeType);
+    }
+    else {
+      if (nodeId != null)
+        dashKeys.push(nodeId);
+    }
+
+    if (interfaces != null && interfaces.length > 0)
+      for (let i = 0; i < interfaces.length; i++) {
+        dashKeys.push(interfaces[i]);
+      }
+
+    return dashKeys;
   }
 
   private setupInterfaces(iFaces: OpcUaBrowseResults[], mappedDashboard: DashboardData) {
