@@ -3,6 +3,8 @@ import { DataFrame, DataQueryRequest, DataQueryResponse, DateTime, PanelProps, S
 import { BrowseFilter, ColumnType, DataFetchType, NodeClass, NodePath, /*NodeClass,*/ OpcUaBrowseResults, OpcUaNodeInfo, OpcUaQuery, QualifiedName, UAListViewOptions } from 'types';
 import { DataSourceWithBackend, getDataSourceSrv } from '@grafana/runtime';
 import { VariableList } from './components/VariableList';
+import { toFormatOptions } from './utils/Number';
+import { toDataFetchType } from './utils/DataFetch';
 
 interface Props extends PanelProps<UAListViewOptions> { }
 
@@ -61,7 +63,7 @@ export class UaListViewPanel extends PureComponent<Props, State> {
   getQueryRequest(nodes: OpcUaNodeInfo[]): DataQueryRequest<OpcUaQuery> {
     let queries: OpcUaQuery[] = [];
 
-    let readType = this.props.options.dataFetch == DataFetchType.Subscribe ? "Subscribe" : "ReadNode";
+    let readType = toDataFetchType(this.props.options.dataFetch) == DataFetchType.Subscribe ? "Subscribe" : "ReadNode";
 
     for (let i = 0; i < nodes.length; i++) {
       let bp: QualifiedName[] = [nodes[i].browseName];
@@ -141,10 +143,14 @@ export class UaListViewPanel extends PureComponent<Props, State> {
     if (this.state.instanceId !== null) {
       let columnType = this.getColumnType();
       return <VariableList refreshRate={this.props.options.refreshRate}
+        decimalPoints={this.props.options.decimalPrecision}
+        numberFormat={toFormatOptions(this.props.options.numberFormat)}
         maxResults={this.props.options.maxElementsList}
         showAllVariablesToDepth={this.props.options.showAllVariablesToDepth}
         depth={this.props.options.browseDepth}
         columns={columnType}
+        headerFontSize={this.props.options.headerFontSize}
+        bodyFontSize={this.props.options.bodyFontSize}
         query={(nodes, handle) => this.doQuery(nodes, handle)}
         browse={(parent, nodeClass, browseFilter) => this.browse(parent, nodeClass, browseFilter)}
         parentNode={this.state.instanceId}> </ VariableList>;

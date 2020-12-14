@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { OpcUaBrowseResults, /*QualifiedName,*/ NodeClass, BrowseFilter, OpcUaNodeInfo, ColumnType } from '../types';
+import { OpcUaBrowseResults, /*QualifiedName,*/ NodeClass, BrowseFilter, OpcUaNodeInfo, ColumnType, NumberFormatOptions } from '../types';
 import { ThemeGetter } from './ThemesGetter';
 import { DataFrame, DataQueryResponse, dateTime, GrafanaTheme, localTimeFormat } from '@grafana/data';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
 import { /*copyQualifiedName,*/ qualifiedNameToString } from '../utils/QualifiedName';
 import { nodeClassToString } from '../utils/Nodeclass';
+import { formatValue } from '../utils/Number';
 
 type Props = {
   browse: (nodeId: string, nodeclass: NodeClass, browseFilter: BrowseFilter) => Promise<OpcUaBrowseResults[]>;
@@ -15,6 +16,10 @@ type Props = {
   showAllVariablesToDepth: boolean;
   refreshRate: number;
   maxResults: number;
+  decimalPoints: number;
+  numberFormat: NumberFormatOptions;
+  headerFontSize: number;
+  bodyFontSize: number;
 };
 
 type State = {
@@ -224,6 +229,10 @@ export class VariableList extends Component<Props, State> {
     this.setState({ valueList: vlist, fetchedValues: true });
   }
 
+
+
+
+
   render() {
 
     const rootNodeId = this.props.parentNode;
@@ -261,22 +270,22 @@ export class VariableList extends Component<Props, State> {
             }}
           >
           <Table>
-            <TableHead style={{ backgroundColor: bg, color: txt }}>
-              <TableRow style={{ height: 20 }}>
-                {(this.props.columns & ColumnType.DisplayNamePath) == ColumnType.DisplayNamePath &&
-                  <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap' }}>DisplayName</TableCell>
+              <TableHead style={{ backgroundColor: bg, color: txt }}>
+                <TableRow style={{ height: 20}}>
+                  {(this.props.columns & ColumnType.DisplayNamePath) == ColumnType.DisplayNamePath &&
+                    <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap', fontWeight: 700, fontSize: this.props.headerFontSize }}>Name</TableCell>
                 }
                 {(this.props.columns & ColumnType.BrowseName) == ColumnType.BrowseName &&
-                  <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap' }}>Browse name</TableCell>
+                    <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap', fontWeight: 700, fontSize: this.props.headerFontSize }}>Browse name</TableCell>
                 }
                 {(this.props.columns & ColumnType.NodeClass) == ColumnType.NodeClass &&
-                  <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap' }}>Node Class</TableCell>
+                    <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap', fontWeight: 700, fontSize: this.props.headerFontSize }}>Node Class</TableCell>
                 }
                 {(this.props.columns & ColumnType.Value) == ColumnType.Value &&
-                  <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap' }}>Value</TableCell>
+                    <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap', fontWeight: 700, fontSize: this.props.headerFontSize }}>Value</TableCell>
                 }
                 {(this.props.columns & ColumnType.Time) == ColumnType.Time &&
-                  <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap' }}>Time</TableCell>
+                    <TableCell style={{ color: txt, border: 0, padding: 2, whiteSpace: 'nowrap', fontWeight: 700, fontSize: this.props.headerFontSize }}>Time</TableCell>
                 }
               </TableRow>
             </TableHead>
@@ -284,27 +293,27 @@ export class VariableList extends Component<Props, State> {
               {this.state.valueList.map((row: VariableValue, index: number) => (
                 <TableRow style={{ height: 14 }} key={index}>
                   {(this.props.columns & ColumnType.DisplayNamePath) == ColumnType.DisplayNamePath &&
-                    <TableCell style={{ color: txt, border: 0, padding: 2 }} >
+                    <TableCell style={{ color: txt, border: 0, padding: 2, fontSize: this.props.bodyFontSize }} >
                       {row.name}
                     </TableCell>
                   }
                   {(this.props.columns & ColumnType.BrowseName) == ColumnType.BrowseName &&
-                    <TableCell style={{ color: txt, border: 0, padding: 2 }} >
+                    <TableCell style={{ color: txt, border: 0, padding: 2, fontSize: this.props.bodyFontSize }} >
                       {qualifiedNameToString(row.node.browseName)}
                     </TableCell>
                   }
                   {(this.props.columns & ColumnType.NodeClass) == ColumnType.NodeClass &&
-                    <TableCell style={{ color: txt, border: 0, padding: 2 }} >
+                    <TableCell style={{ color: txt, border: 0, padding: 2, fontSize: this.props.bodyFontSize }} >
                       {nodeClassToString(row.node.nodeClass as NodeClass)}
                     </TableCell>
                   }
                   {(this.props.columns & ColumnType.Value) == ColumnType.Value &&
-                    <TableCell style={{ color: txt, border: 0, padding: 2 }} >
-                      {row.value?.val}
+                    <TableCell style={{ color: txt, border: 0, padding: 2, fontSize: this.props.bodyFontSize }} >
+                      {formatValue(row.value?.val, this.props.decimalPoints, this.props.numberFormat)}
                     </TableCell>
                   }
                   {(this.props.columns & ColumnType.Time) == ColumnType.Time &&
-                    <TableCell style={{ color: txt, border: 0, padding: 2 }} >
+                    <TableCell style={{ color: txt, border: 0, padding: 2, fontSize: this.props.bodyFontSize }} >
                       {row.value?.time}
                     </TableCell>
                   }

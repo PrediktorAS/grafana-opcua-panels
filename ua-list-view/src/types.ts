@@ -1,5 +1,14 @@
 import { DataQuery } from '@grafana/data';
 
+
+export enum NumberFormatOptions {
+  None = 0,
+  Fixed = 1,
+  Precision = 2,
+  Exponential = 3,
+  LocaleString = 4
+}
+
 export enum NodeClass {
   Unspecified = 0,
   Object = 1,
@@ -110,9 +119,13 @@ export interface UAListViewOptions {
   displayBrowseName: boolean;
   displayNodeClass: boolean;
   browseDepth: number;
-  dataFetch: DataFetchType;
+  dataFetch: string;
   refreshRate: number;
   showAllVariablesToDepth: boolean;
+  numberFormat: string;
+  decimalPrecision: number;
+  headerFontSize: number;
+  bodyFontSize: number;
 }
 
 

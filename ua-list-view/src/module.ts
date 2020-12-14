@@ -4,27 +4,50 @@ import { UaListViewPanel } from './UaListViewPanel';
 
 export const plugin = new PanelPlugin<UAListViewOptions>(UaListViewPanel).setPanelOptions(builder => {
   return builder
-    //.addRadio({
-    //  path: 'dashboardFetch',
-    //  name: 'Dashboard fetching',
-    //  defaultValue: 'Instance',
-    //  settings: {
-    //    options: [
-    //      {
-    //        value: 'Instance',
-    //        label: 'Instance',
-    //      },
-    //      {
-    //        value: 'ChildrenIfNotInstance',
-    //        label: 'ChildrenIfNotInstance',
-    //      },
-    //      {
-    //        value: 'Children',
-    //        label: 'Children',
-    //      },
-    //    ],
-    //  }
-    //})
+    .addRadio({
+      path: 'numberFormat',
+      name: 'Number Format',
+      defaultValue: 'Fixed',
+      settings: {
+        options: [
+          {
+            value: 'None',
+            label: 'None',
+          },
+          {
+            value: 'Fixed',
+            label: 'Fixed',
+          },
+          {
+            value: 'Precision',
+            label: 'Precision',
+          },
+          {
+            value: 'Exponential',
+            label: 'Exponential',
+          },
+          {
+            value: 'LocaleString',
+            label: 'LocaleString',
+          },
+        ],
+      }
+    })
+    .addNumberInput({
+      path: 'decimalPrecision',
+      name: 'Decimal Precision',
+      defaultValue: 2,
+    })
+    .addNumberInput({
+      path: 'headerFontSize',
+      name: 'Header Font Size',
+      defaultValue: 14,
+    })
+    .addNumberInput({
+      path: 'bodyFontSize',
+      name: 'Body Font Size',
+      defaultValue: 12,
+    })
     .addNumberInput({
       path: 'maxElementsList',
       name: 'Maximum elements in list',
