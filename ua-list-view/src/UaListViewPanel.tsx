@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { DataFrame, DataQueryRequest, DataQueryResponse, DateTime, PanelProps, ScopedVars, TimeRange, toUtc } from '@grafana/data';
+import { DataQueryRequest, DataQueryResponse, DateTime, PanelProps, ScopedVars, TimeRange, toUtc } from '@grafana/data';
 import { BrowseFilter, ColumnType, DataFetchType, NodeClass, NodePath, /*NodeClass,*/ OpcUaBrowseResults, OpcUaNodeInfo, OpcUaQuery, QualifiedName, UAListViewOptions } from 'types';
 import { DataSourceWithBackend, getDataSourceSrv } from '@grafana/runtime';
 import { VariableList } from './components/VariableList';
@@ -13,6 +13,7 @@ interface State {
   fromDate: string | null,
   toDate: string | null,
   dataSource: DataSourceWithBackend | null,
+  refreshRate: number,
 }
 
 
@@ -24,6 +25,7 @@ export class UaListViewPanel extends PureComponent<Props, State> {
       fromDate: null,
       toDate: null,
       dataSource: null,
+      refreshRate: 0,
     };
   }
 
@@ -43,7 +45,9 @@ export class UaListViewPanel extends PureComponent<Props, State> {
   readNode(nodeId: string): Promise<OpcUaNodeInfo> {
     this.getDataSource();
     if (this.state.dataSource != null && nodeId != null && nodeId.length > 0) {
-      return this.state.dataSource.getResource('readNode', { nodeId: nodeId });
+      return this.state.dataSource.getResource('readNode', { nodeId: nodeId }).catch(e => {
+        console.error("readNode failed: " + e);
+      });
     }
     return new Promise<OpcUaNodeInfo>(() => null);
   }
@@ -109,20 +113,19 @@ export class UaListViewPanel extends PureComponent<Props, State> {
     return req;
   }
 
-  handleQueryResponse(response: DataQueryResponse): void{
-    for (let i = 0; i < response.data.length; i++) {
-      let df = response.data[i] as DataFrame;
-      let v = df.fields[1].values.get(0);
-      console.log("value: " + v);
-    }
-  }
-
-
-
   doQuery(nodes: OpcUaNodeInfo[], handleQueryResult: (response: DataQueryResponse) => void) {
+
     if (this.state.dataSource != null) {
       let req = this.getQueryRequest(nodes);
-      this.state.dataSource.query(req).toPromise().then((res) => handleQueryResult(res));
+      this.state.dataSource.query(req).toPromise().then((res) => {
+
+        //if (res?.error != null) {
+        //  console.error("doQuery failed: " + res.error?.message);
+        //}
+
+        handleQueryResult(res);
+
+      }).catch(e => { console.error("doQuery: " + e); });
     }
   }
 
@@ -137,12 +140,46 @@ export class UaListViewPanel extends PureComponent<Props, State> {
     return c;
   }
 
+  private getRefresh(urlParams: URLSearchParams) {
+
+    var refreshValue = urlParams.get('refresh');
+    if (refreshValue != null) {
+
+      let value = parseInt(refreshValue.substring(0, refreshValue.length - 1));
+
+      if (refreshValue.endsWith('s')) {
+        return value;
+      }
+      else if (refreshValue.endsWith('m')) {
+        return value * 60;
+      }
+      else if (refreshValue.endsWith('h')) {
+        return value * 3600;
+      }
+      else if (refreshValue.endsWith('d')) {
+        return value * 3600 * 24;
+      }
+      else if (refreshValue.endsWith('w')) {
+        return value * 3600 * 24 * 7;
+      }
+      else {
+        console.error("Unable to parse refresh-rate: " + refreshValue);
+      }
+
+    }
+
+    return 0;
+  }
+
+  private getRefreshRate() {
+    return this.state.refreshRate;
+  }
 
   renderChildren() {
     
     if (this.state.instanceId !== null) {
       let columnType = this.getColumnType();
-      return <VariableList refreshRate={this.props.options.refreshRate}
+      return <VariableList refreshRate={() => this.getRefreshRate()}
         decimalPoints={this.props.options.decimalPrecision}
         numberFormat={toFormatOptions(this.props.options.numberFormat)}
         maxResults={this.props.options.maxElementsList}
@@ -160,6 +197,16 @@ export class UaListViewPanel extends PureComponent<Props, State> {
 
   render() {
     const instanceId = this.props.replaceVariables('$ObjectId');
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    let refresh = this.getRefresh(urlParams);
+
+    if (this.state.refreshRate != refresh) {
+      this.setState({ refreshRate: refresh })
+    }
+
     if (this.state.instanceId === null || this.state.instanceId.nodeId !== instanceId && instanceId !== null && instanceId.length > 0) {
       this.readNode(instanceId).then((res) => this.setState({ instanceId: res }));
     }

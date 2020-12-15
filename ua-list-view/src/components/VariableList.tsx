@@ -10,11 +10,11 @@ import { formatValue } from '../utils/Number';
 type Props = {
   browse: (nodeId: string, nodeclass: NodeClass, browseFilter: BrowseFilter) => Promise<OpcUaBrowseResults[]>;
   query(nodes: OpcUaNodeInfo[], handleQueryResult: (response: DataQueryResponse) => void) : void;
+  refreshRate(): number;
   parentNode: OpcUaNodeInfo;
   columns: ColumnType;
   depth: number;
   showAllVariablesToDepth: boolean;
-  refreshRate: number;
   maxResults: number;
   decimalPoints: number;
   numberFormat: NumberFormatOptions;
@@ -29,6 +29,8 @@ type State = {
   rootNode: BrowseHierarchy;
   valueList: VariableValue[];
   theme: GrafanaTheme | null;
+  intervalId: any;
+  refreshRate: number;
 };
 
 interface VariableValue {
@@ -77,12 +79,10 @@ export class VariableList extends Component<Props, State> {
       fetchedValues: false,
       valueList: [],
       theme: null,
+      intervalId: null,
+      refreshRate: 0,
     };
 
-    let e = this;
-
-    if (this.props.refreshRate > 0)
-      setInterval(() => e.setState({ fetchedValues: false }), this.props.refreshRate * 1000);
   }
 
 
@@ -240,6 +240,27 @@ export class VariableList extends Component<Props, State> {
 
       this.setState({ fetchingChildren: false, fetchedChildren: false, rootNode: { node: rootNodeId, children: [] }, fetchedValues: false });
     }
+
+    let refreshRate = this.props.refreshRate();
+    if (refreshRate != this.state.refreshRate) {
+
+      if (this.state.intervalId != null) {
+        clearInterval(this.state.intervalId);
+      }
+
+      let e = this;
+
+      if (refreshRate > 0) {
+        let intervalId = setInterval(() => e.setState({ fetchedValues: false }), refreshRate * 1000);
+
+        this.setState({ intervalId: intervalId, refreshRate: refreshRate });
+      }
+      else {
+        this.setState({ intervalId: null, refreshRate: 0 });
+      }
+
+    }
+
 
     let bg = '';
     let txt = '';

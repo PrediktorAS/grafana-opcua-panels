@@ -3,6 +3,7 @@ import { SimpleOptions } from './types';
 import { UaBrowserPanel } from './UaBrowserPanel';
 
 export const plugin = new PanelPlugin<SimpleOptions>(UaBrowserPanel).setPanelOptions(builder => {
+
   return builder
     .addBooleanSwitch({
       path: 'configMode',
@@ -27,4 +28,3 @@ export const plugin = new PanelPlugin<SimpleOptions>(UaBrowserPanel).setPanelOpt
       }
     });
 });
-

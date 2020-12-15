@@ -1,8 +1,10 @@
 import { NumberFormatOptions } from '../types';
 
-export function formatValue(val: any, decimalPoints: number, formatOptions: NumberFormatOptions): any {
-  if (formatOptions === NumberFormatOptions.None)
-    return val;
+export function formatValue(val: any, decimalPoints: number, formatOptions: NumberFormatOptions): string {
+  if (formatOptions === NumberFormatOptions.None) {
+    if (val != null)
+      return val.toString();
+  }
   if (Number.isFinite(val) && decimalPoints >= 0) {
     let n: number = val;
     if (formatOptions === NumberFormatOptions.Precision)
@@ -14,7 +16,11 @@ export function formatValue(val: any, decimalPoints: number, formatOptions: Numb
     if (formatOptions === NumberFormatOptions.LocaleString)
       return n.toLocaleString();
   }
-  return val;
+
+  if (val != null)
+    return val.toString();
+
+  return "";
 }
 
 

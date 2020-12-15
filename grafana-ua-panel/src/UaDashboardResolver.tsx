@@ -139,6 +139,17 @@ export function removeDashboardMapping(nodeId: string, typeNodeId: string, useTy
   return new Promise<boolean>(() => false);
 }
 
+export function removeDashboardMappingByKeys(dashKeys: string[], dataSource: DataSourceWithBackend | null): Promise<boolean> {
+
+  if (dataSource != null) {
+
+    return dataSource.getResource('removedashboardmappingbykeys', { dashKeys: JSON.stringify(dashKeys), perspective: "Operator" })
+      .then((d: UaResult) => { return d.success })
+  }
+
+  return new Promise<boolean>(() => false);
+}
+
 export function getAllDashboards(): Promise<DashboardData[]> {
 
   return fetch('/api/search?query=')

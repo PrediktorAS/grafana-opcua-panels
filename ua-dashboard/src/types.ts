@@ -54,3 +54,8 @@ export interface DashboardDataVm extends DashboardData {
   isOpen: boolean;
   dashBoards: DashboardDataVm[] | null;
 }
+
+export class RelativeTime {
+  from!: string;
+  to!: string;
+}
