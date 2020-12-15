@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Configurations>Debug;Release;Setup_Release</Configurations>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="..\dist\**\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="'$(Configuration)' == 'Setup_Release'">
+    <Exec Command="yarn build" WorkingDirectory="..\" />
+  </Target>
+
+</Project>
