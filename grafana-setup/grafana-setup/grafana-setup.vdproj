@@ -90,6 +90,18 @@
         }
         "Folder"
         {
+            "{994432C3-9487-495D-8656-3E829A8DBDDE}:_491B00627989422E88C266B94F9E6A00"
+            {
+            "DefaultLocation" = "8:[TARGETDIR]\\grafana-ua-panel"
+            "Name" = "8:grafana-ua-panel"
+            "AlwaysCreate" = "11:FALSE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Property" = "8:NEWPROPERTY4"
+                "Folders"
+                {
+                }
+            }
             "{994432C3-9487-495D-8656-3E829A8DBDDE}:_9ECE9BBBCB8C4925A21E45C9CDED30E3"
             {
             "DefaultLocation" = "8:[TARGETDIR]\\ua-list-view"
@@ -155,7 +167,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:grafana-plugins"
         "ProductCode" = "8:{A973B58C-BA88-44F2-815A-C6AF7CC0358D}"
-        "PackageCode" = "8:{D289A9DA-63B1-4BFA-9755-A818B73A7732}"
+        "PackageCode" = "8:{13B4A966-5A45-437D-957D-A285E16550E9}"
         "UpgradeCode" = "8:{C9BDBCF0-997C-4C76-A194-6E87C9AFA8AD}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -697,6 +709,34 @@
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:PublishItems"
             "OutputProjectGuid" = "8:{F4324FE7-D08E-4444-819A-E2F8868A808D}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_CCDF927B57564F8C8EFBE9C6A61FE8DB"
+            {
+            "SourcePath" = "8:"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_491B00627989422E88C266B94F9E6A00"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:ContentFiles"
+            "OutputProjectGuid" = "8:{FF658FA1-DDB3-4931-BB0C-BF6F28C5F77E}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {

@@ -13,5 +13,4 @@
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="'$(Configuration)' == 'Setup_Release'">
     <Exec Command="yarn build" WorkingDirectory="..\" />
   </Target>
-
 </Project>
