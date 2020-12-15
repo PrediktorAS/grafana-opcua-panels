@@ -36,6 +36,7 @@ type State = {
   mappedDashboard: DashboardData | null;
   mappedDashboardChanged: boolean;
   interfaces: InterfaceNodeInfo[] | null;
+  applyPressed: boolean;
 }
 
 /**
@@ -64,6 +65,7 @@ export class DashMappingPanel extends Component<Props, State> {
       mappedDashboard: null,
       mappedDashboardChanged: false,
       interfaces: null,
+      applyPressed: false,
 		}
 	}
 
@@ -78,7 +80,6 @@ export class DashMappingPanel extends Component<Props, State> {
 	 */
   render() {
 
-    //console.log("DashMappingPanel render START");
     let selectedNode = JSON.parse(this.props.selectedNode) as OpcUaBrowseResults;
     let selectedNodeType = JSON.parse(this.props.selectedNodeType) as OpcUaBrowseResults;
     let mappedDashboard = JSON.parse(this.props.mappedDashboard) as DashboardData;
@@ -86,7 +87,6 @@ export class DashMappingPanel extends Component<Props, State> {
 
     let dashKey1 = mappedDashboard?.dashKeys?.length > 0 ? mappedDashboard.dashKeys[0] : "";
     console.log("mappedDashboard: " + mappedDashboard?.title + " keys: " + mappedDashboard?.dashKeys?.length + " key1: " + dashKey1);
-    //console.log("selectedNodeType: " + selectedNodeType?.displayName);
 
     let selectedNodeDisplayName: string = " ";
     let selectedNodeTypeDisplayName: string = " ";
@@ -155,10 +155,19 @@ export class DashMappingPanel extends Component<Props, State> {
                           <div>
                             <Checkbox css={""} value={this.state.instanceChecked} label={selectedNodeDisplayName} disabled={this.state.isType} onChange={() => {
 
-                            if (!this.state.instanceChecked && this.state.typedefinitionChecked)
-                              this.setState({ instanceChecked: !this.state.instanceChecked, typedefinitionChecked: false, typedefinitionCheckedChanged: true });
-                            else
-                              this.setState({ instanceChecked: !this.state.instanceChecked });
+                              if (!this.state.instanceChecked && this.state.typedefinitionChecked)
+                                this.setState({
+                                  instanceChecked: !this.state.instanceChecked,
+                                  typedefinitionChecked: false,
+                                  typedefinitionCheckedChanged: true,
+                                  applyPressed: false,
+                                });
+                              else
+                                this.setState({
+                                  instanceChecked: !this.state.instanceChecked,
+                                  typedefinitionCheckedChanged: true,
+                                  applyPressed: false,
+                                });
 
                             }}>
                             </Checkbox>
@@ -170,9 +179,18 @@ export class DashMappingPanel extends Component<Props, State> {
                               //console.info("Apply: this.state.typedefinitionChecked: " + !this.state.typedefinitionChecked);
 
                               if (!this.state.typedefinitionChecked && this.state.instanceChecked)
-                                this.setState({ typedefinitionChecked: !this.state.typedefinitionChecked, typedefinitionCheckedChanged: true, instanceChecked: false });
+                                this.setState({
+                                  typedefinitionChecked: !this.state.typedefinitionChecked,
+                                  typedefinitionCheckedChanged: true,
+                                  instanceChecked: false,
+                                  applyPressed: false,
+                                });
                               else
-                                this.setState({ typedefinitionChecked: !this.state.typedefinitionChecked, typedefinitionCheckedChanged: true });
+                                this.setState({
+                                  typedefinitionChecked: !this.state.typedefinitionChecked,
+                                  typedefinitionCheckedChanged: true,
+                                  applyPressed: false,
+                                });
                             }}></Checkbox>
                           </div>
                         </td>
@@ -184,7 +202,10 @@ export class DashMappingPanel extends Component<Props, State> {
                               <td>
                                 <Checkbox css={""} value={iface.selected} label={iface.displayName} onChange={() => {
                                   iface.selected = !iface.selected;
-                                  this.setState({ interfaces: this.state.interfaces });
+                                  this.setState({
+                                    interfaces: this.state.interfaces,
+                                    applyPressed: false,
+                                  });
                                 }}></Checkbox>
                               </td>
                             </tr>
@@ -238,7 +259,7 @@ export class DashMappingPanel extends Component<Props, State> {
             </tr>
             <tr >
               <td style={{ textAlign: "right", padding: "5px" }} >
-                <Button style={{ marginLeft: "5px" }} disabled={this.isApplyButtonDiabled()} contentEditable={false} onClick={() => this.changeDashboardMapping(true, selectedNode, selectedNodeType, mappedDashboard)}>Apply</Button>
+                <Button style={{ marginLeft: "5px" }} disabled={this.isMappedAsPersisted()} contentEditable={false} onClick={() => this.changeDashboardMapping(true, selectedNode, selectedNodeType, mappedDashboard)}>Apply</Button>
               </td>
             </tr>
           </table>
@@ -261,13 +282,22 @@ export class DashMappingPanel extends Component<Props, State> {
     //console.log("selectedDashChanged: current: " + this.state.selectedDash?.title + "  new: " + dBoard.title);
 
     if (this.state.selectedDash == null) {
-      this.setState({ selectedDash: dBoard })
+      this.setState({
+        selectedDash: dBoard,
+        applyPressed: false,
+      })
     }
     else {
       if (this.state.selectedDash?.id == dBoard.id)
-        this.setState({ selectedDash: null })
+        this.setState({
+          selectedDash: null,
+          applyPressed: false,
+        })
       else
-        this.setState({ selectedDash: dBoard })
+        this.setState({
+          selectedDash: dBoard,
+          applyPressed: false,
+        })
     }
   }
 
@@ -289,7 +319,6 @@ export class DashMappingPanel extends Component<Props, State> {
   private setupSelectedNodeInstAndType(selectedInstance: OpcUaBrowseResults, selectedNodeType: OpcUaBrowseResults, mappedDashboard: DashboardData) {
 
     if (mappedDashboard != null && !this.state.typedefinitionCheckedChanged) {
-
       
       let isTypeSelected: boolean = false;
       let isInstanceSelected: boolean = false;
@@ -336,15 +365,12 @@ export class DashMappingPanel extends Component<Props, State> {
 
   }
 
-  private isApplyButtonDiabled() {
-
-    //if (this.state.selectedDash == null)
-    //  return true;
-
-    return this.isMappedAsPersisted();
-  }
-
   private isMappedAsPersisted(): boolean {
+
+    if (this.state.applyPressed) {
+      //console.log("isMappedAsPersisted: true, applyPressed");
+      return true;
+    }
 
     if (this.state.selectedDash?.id != this.state.mappedDashboard?.id) {
       //console.log("isMappedAsPersisted: false, selected dash changed");
@@ -360,26 +386,22 @@ export class DashMappingPanel extends Component<Props, State> {
       }
     }
 
-    //console.log("this.state.isType: " + this.state.isType);
-    //if (this.state.isType)
-    //  console.log("this.state.selectedNode?.nodeId: " + this.state.selectedNode?.nodeId);
-    //else
-    //  console.log("this.state.selectedNodeType?.nodeId: " + this.state.selectedNodeType?.nodeId);
+    let typeIsMapped = this.state.isType ? this.isIdMapped(this.state.selectedNode?.nodeId) : this.isIdMapped(this.state.selectedNodeType?.nodeId);
 
-    //let typeIsMapped = this.state.isType ? this.isIdMapped(this.state.selectedNode?.nodeId) : this.isIdMapped(this.state.selectedNodeType?.nodeId);
-
-    //if (typeIsMapped != this.state.typedefinitionChecked) {
-    //  console.log("isMappedAsPersisted: false, typeIsMapped changed. typeIsMapped: " + typeIsMapped + "  this.state.typedefinitionChecked: " + this.state.typedefinitionChecked);
-    //  return false;
-    //}
+    if (typeIsMapped != this.state.typedefinitionChecked) {
+      //console.log("isMappedAsPersisted: false, typeIsMapped changed. typeIsMapped: " + typeIsMapped + "  this.state.typedefinitionChecked: " + this.state.typedefinitionChecked);
+      return false;
+    }
 
     if (this.state.interfaces != null && this.state.interfaces.length > 0) {
 
       for (let i = 0; i < this.state.interfaces.length; i++) {
 
         let intIsMapped = this.isIdMapped(this.state.interfaces[i].nodeId);
-        if (intIsMapped != this.state.interfaces[i].selected)
+        if (intIsMapped != this.state.interfaces[i].selected) {
+          //console.log("isMappedAsPersisted: false, selected interfaces changed");
           return false;
+        }
       }
     }
 
@@ -416,25 +438,31 @@ export class DashMappingPanel extends Component<Props, State> {
     let setSelectedNodeTypeState = selectedNodeType != null && selectedNodeType.nodeId != this.state.selectedNodeType?.nodeId;
 
     if (setSelectedNodeState && setSelectedNodeTypeState) {
+      //console.log("Reset 1");
       this.setState({
         selectedNode: selectedNode,
         selectedNodeType: selectedNodeType,
         mappedDashboard: null,
-        mappedDashboardChanged: false
+        mappedDashboardChanged: false,
+        applyPressed: false,
       });
     }
     else if (setSelectedNodeState) {
+      //console.log("Reset 2");
       this.setState({
         selectedNode: selectedNode,
         mappedDashboard: null,
-        mappedDashboardChanged: false
+        mappedDashboardChanged: false,
+        applyPressed: false,
       });
     }
     else if (setSelectedNodeTypeState) {
+      //console.log("Reset 3");
       this.setState({
         selectedNodeType: selectedNodeType,
         mappedDashboard: null,
-        mappedDashboardChanged: false
+        mappedDashboardChanged: false,
+        applyPressed: false,
       });
     }
 
@@ -448,10 +476,10 @@ export class DashMappingPanel extends Component<Props, State> {
       }
     }
     else if (this.state.mappedDashboard != null) {
+      //console.log("Reset 4");
       this.setState({
         mappedDashboard: null,
-        //selectedDash: null,
-        mappedDashboardChanged: false
+        mappedDashboardChanged: false,
       });
     }
 
@@ -570,7 +598,8 @@ export class DashMappingPanel extends Component<Props, State> {
               this.setState({
 
                 mappedDashboardChanged: true,
-                mappedDashboard: this.state.selectedDash
+                mappedDashboard: this.state.selectedDash,
+                applyPressed: true,
               });
             }
             else {
@@ -585,33 +614,26 @@ export class DashMappingPanel extends Component<Props, State> {
           removeDashboardMappingByKeys(this.state.mappedDashboard.dashKeys, this.props.dataSource)
             .then((success: boolean) => {
 
-            if (success) {
-              this.setState({
+              if (success) {
+                this.setState({
 
-                mappedDashboardChanged: true,
-                mappedDashboard: null
-              });
-            }
-            else {
-              console.error("removeDashboardMappingByKeys failed");
-            }
+                  mappedDashboardChanged: true,
+                  mappedDashboard: null,
+                  applyPressed: true,
+                });
+              }
+              else {
+                console.error("removeDashboardMappingByKeys failed");
+              }
 
+            });
+        }
+        else {
+          this.setState({
+            applyPressed: true,
           });
         }
 
-        //removeDashboardMapping(selectedNode.nodeId, selectedNodeType.nodeId, this.state.typedefinitionChecked, interfaces, this.props.dataSource)
-        //  .then((success: boolean) => {
-        //    if (success) {
-
-        //      //console.log("removeDashboardMapping: success");
-        //      this.setState({
-
-        //        mappedDashboardChanged: true,
-        //        mappedDashboard: null
-        //      });
-        //    }
-
-        //  });
       }
     }
   }
