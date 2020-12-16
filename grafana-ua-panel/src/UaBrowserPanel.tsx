@@ -118,9 +118,7 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
     let dashboard = getDashboard(node.nodeId, this.state.dataSource);
     dashboard.then((mappedDashboard: DashboardData | null) => {
 
-      console.info("mappedDashboard?.title: " + mappedDashboard?.title);
-      console.info("mappedDashboard?.dashKeys?.length: " + mappedDashboard?.dashKeys?.length);
-      console.info("mappedDashboard?.url: " + mappedDashboard?.url);
+      console.info("mappedDashboard?.title: " + mappedDashboard?.title + " dachKeys: " + mappedDashboard?.dashKeys?.length);
 
       getLocationSrv()?.update({
 
@@ -151,7 +149,7 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
 
         if (present) {
 
-          console.log("Server supports interfaces");
+          //console.log("Server supports interfaces");
 
           let interfaces = this.browseReferenceTargets(node.nodeId, hasInterface);
           interfaces.then((interfaces: OpcUaBrowseResults[]) => {
@@ -165,33 +163,34 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
           console.warn("Server does not support interfaces");
         }
 
-      });
+      })
+        .then(() => {
+          let definedByEquipmentClass = "{\"namespaceUrl\":\"http://www.OPCFoundation.org/UA/2013/01/ISA95\",\"id\":\"i=4919\"}";
+          let defByEqClass = this.isNodePresentAtServer(definedByEquipmentClass);
+          defByEqClass.then((present: boolean) => {
 
-      let definedByEquipmentClass = "{\"namespaceUrl\":\"http://www.OPCFoundation.org/UA/2013/01/ISA95\",\"id\":\"i=4919\"}";
-      let defByEqClass = this.isNodePresentAtServer(definedByEquipmentClass);
-      defByEqClass.then((present: boolean) => {
+            if (present) {
 
-        if (present) {
+              //console.log("ISA95 is present");
+              let eqClasses = this.browseReferenceTargets(node.nodeId, definedByEquipmentClass);
+              eqClasses.then((eqClasses: OpcUaBrowseResults[]) => {
 
-          console.log("ISA95 is present");
-          let eqClasses = this.browseReferenceTargets(node.nodeId, definedByEquipmentClass);
-          eqClasses.then((eqClasses: OpcUaBrowseResults[]) => {
+                for (let i = 0; i < eqClasses?.length; i++) {
+                  interfaceList.push(eqClasses[i]);
+                }
+              });
 
-            for (let i = 0; i < eqClasses?.length; i++) {
-              interfaceList.push(eqClasses[i]);
+            }
+            else {
+              console.log("ISA95 not present");
             }
           });
+        }).then(() => {
+          this.setState({
+            interfaces: interfaceList
+          });
+        });
 
-        }
-        else {
-          console.log("ISA95 not present");
-        }
-      });
-
-
-      this.setState({
-        interfaces: interfaceList
-      });
     }
 
   }
