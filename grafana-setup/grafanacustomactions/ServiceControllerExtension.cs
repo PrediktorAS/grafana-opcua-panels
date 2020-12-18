@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration.Install;
+using System.IO;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading.Tasks;
@@ -34,6 +35,12 @@ namespace grafanacustomactions
 		{
 			return GetImagePath(sc.ServiceName);
 		}
-	}
+
+        public static string GetDirectoryName(this ServiceController sc)
+        {
+            var imagePath = GetImagePath(sc.ServiceName);
+            return Path.GetDirectoryName(imagePath);
+        }
+    }
 }
 

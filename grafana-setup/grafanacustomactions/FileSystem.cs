@@ -55,5 +55,39 @@ namespace grafanacustomactions
             }
         }
 
+        public static void DeleteDirectory(string dir, Func<string, bool> shallDelete, Func<string, bool> shallDeleteContent, StreamWriter log)
+		{
+            if (Directory.Exists(dir))
+            {
+                if (shallDelete == null)
+                {
+                    log.WriteLine("Deleting directory: " + dir);
+                    Directory.Delete(dir, true);
+                }
+                else
+                {
+                    if (shallDelete(dir))
+                    {
+                        log.WriteLine("Deleting directory: " + dir);
+                        Directory.Delete(dir, true);
+                    }
+                    else
+                    {
+                        if (shallDeleteContent(dir))
+                        {
+                            var files = Directory.GetFiles(dir);
+                            for (int i = 0; i < files.Length; i++)
+                                File.Delete(files[i]);
+                        }
+
+                        var dirs = Directory.EnumerateDirectories(dir).ToArray();
+                        for (int i = 0; i < dirs.Length; i++)
+                        {
+                            DeleteDirectory(dirs[i], shallDelete, shallDeleteContent, log);
+                        }
+                    }
+                }
+            }
+		}
     }
 }
