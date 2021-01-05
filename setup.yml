@@ -13,12 +13,20 @@ schedules:
     - master
 
 resources:
+  repositories:
+  - repository: opcau-datasource # The name used to reference this repository in the checkout step
+    type: github
+    endpoint: cfjeld
+    name: srclosson/grafana-opcua-datasource
+    ref: prediktor-opc-ae
 - repo: self
   clean: true
 pool:
   name: apis-foundation-master
 
 steps:
+- checkout: self
+- checkout: opcau-datasource
 - task: NuGetCommand@2
   displayName: 'NuGet restore grafana-setup.sln'
   inputs:
