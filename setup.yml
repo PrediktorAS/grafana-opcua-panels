@@ -24,6 +24,10 @@ pool:
   name: apis-foundation-master
 
 steps:
+- task: NuGetToolInstaller@1
+  inputs:
+    versionSpec: '5.8.0' #From SWA with love!
+
 - checkout: self
 - checkout: opcau-datasource
 - task: NuGetCommand@2
