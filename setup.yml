@@ -34,6 +34,7 @@ steps:
   displayName: Restore
   inputs:
     command: restore
+    workingDirectory: 'Grafana-UA-Panel/grafana-setup/''
 
 
 - task: VSBuild@1
