@@ -29,13 +29,13 @@ steps:
 - task: NuGetCommand@2
   displayName: 'NuGet restore grafana-setup.sln'
   inputs:
-    restoreSolution: 'grafana-setup/grafana-setup.sln'
+    restoreSolution: 'Grafana-UA-Panel/grafana-setup/grafana-setup.sln'
 
 
 - task: VSBuild@1
   displayName: 'Build solution grafana-setup.sln'
   inputs:
-    solution: 'grafana-setup/grafana-setup.sln'
+    solution: 'Grafana-UA-Panel/grafana-setup/grafana-setup.sln'
 
     platform: 'Any CPU'
 
