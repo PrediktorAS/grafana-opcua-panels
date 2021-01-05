@@ -41,7 +41,7 @@ steps:
 
 - task: CmdLine@2
   inputs:
-    script: '"C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\devenv.com" Grafana-UA-Panel/grafana-setup/grafana-setup.sln /build /project Grafana-UA-Panel/grafana-setup/grafana-setup/grafana-setup.vdproj' 
+    script: '"C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\devenv.com" Grafana-UA-Panel/grafana-setup/grafana-setup.sln /build "Release Any CPU" /project Grafana-UA-Panel/grafana-setup/grafana-setup/grafana-setup.vdproj' 
 
 
 
