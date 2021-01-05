@@ -39,7 +39,7 @@ steps:
 
     platform: 'Any CPU'
 
-    configuration: Setup_Release
+    configuration: Release
 
     createLogFile: true
 
