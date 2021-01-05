@@ -37,16 +37,13 @@ steps:
     projects: '**/*.csproj'
 
 
-- task: VSBuild@1
-  displayName: 'Build solution grafana-setup.sln'
+#devenv mysln.sln /build
+
+- task: CmdLine@2
   inputs:
-    solution: 'Grafana-UA-Panel/grafana-setup/grafana-setup.sln'
+    script: 'devenv Grafana-UA-Panel/grafana-setup/grafana-setup.sln /build' 
 
-    platform: 'Any CPU'
 
-    configuration: Release
-
-    createLogFile: true
 
   timeoutInMinutes: 60
 
