@@ -30,10 +30,10 @@ steps:
 
 - checkout: self
 - checkout: opcau-datasource
-- task: NuGetCommand@2
-  displayName: 'NuGet restore grafana-setup.sln'
+- task: DotNetCoreCLI@2
+  displayName: Restore
   inputs:
-    restoreSolution: 'grafana-setup/grafana-setup.sln'
+    command: restore
 
 
 - task: VSBuild@1
