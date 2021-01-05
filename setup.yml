@@ -1,0 +1,40 @@
+variables:
+  ArtifactPath: '\\nofresbld002\tfsdrops\$(Build.SourceBranchName)_$(Build.DefinitionName)\$(Build.BuildNumber)'
+
+trigger: none
+
+# NOTE! in UTC !!!
+schedules:
+- cron: "0 2 * * *"
+  #always: true
+  displayName: Daily build master
+  branches:
+    include:
+    - master
+
+resources:
+- repo: self
+  clean: true
+pool:
+  name: apis-foundation-master
+
+steps:
+- task: NuGetCommand@2
+  displayName: 'NuGet restore grafana-setup.sln'
+  inputs:
+    restoreSolution: 'grafana-setup/grafana-setup.sln'
+
+
+- task: VSBuild@1
+  displayName: 'Build solution grafana-setup.sln'
+  inputs:
+    solution: 'grafana-setup/grafana-setup.sln'
+
+    platform: 'Any CPU'
+
+    configuration: Setup_Release
+
+    createLogFile: true
+
+  timeoutInMinutes: 60
+
