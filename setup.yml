@@ -19,8 +19,7 @@ resources:
     endpoint: cfjeld
     name: srclosson/grafana-opcua-datasource
     ref: prediktor-opc-ae
-- repo: self
-  clean: true
+
 pool:
   name: apis-foundation-master
 
