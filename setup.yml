@@ -29,7 +29,7 @@ steps:
 - task: NuGetCommand@2
   displayName: 'NuGet restore grafana-setup.sln'
   inputs:
-    restoreSolution: 'Grafana-UA-Panel/grafana-setup/grafana-setup.sln'
+    restoreSolution: 'grafana-setup/grafana-setup.sln'
 
 
 - task: VSBuild@1
