@@ -38,18 +38,6 @@ steps:
   displayName: 'grafana-ua-panel install pkgs'
 
 - task: Yarn@3
-  inputs:
-    projectDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
-    arguments: 'lint'
-  displayName: 'yarn lint'
-
-- task: Yarn@3
-  inputs:
-    projectDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
-    arguments: 'jest --coverage'
-  displayName: 'yarn test'
-
-- task: Yarn@3
   displayName: 'grafana-ua-panel build'
   inputs:
    projectDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
