@@ -123,10 +123,10 @@ steps:
     command: restore
     projects: '**/*.csproj'
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    projects: 'grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
+# - task: DotNetCoreCLI@2
+#   inputs:
+#     command: 'publish'
+#     projects: 'grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
 
 # - task: MSBuild@1
 #   displayName: 'Build backend plugin'
@@ -157,12 +157,13 @@ steps:
     Contents: '**'
     TargetFolder: '$(build.artifactstagingdirectory)/setup'
 
-- task: PublishPipelineArtifact@1
-  displayName: Publish the artifact
-  inputs:
-    path: '$(build.artifactstagingdirectory)'
-    artifact: '$(Build.Repository.Name)'
 
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'grafana'
+    publishLocation: 'FilePath'
+    TargetPath: $(ArtifactPath)
 
   timeoutInMinutes: 60
 
