@@ -31,10 +31,11 @@ steps:
   inputs:
     versionSpec: '1.x'
 
-- script: yarn install
-  workingDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
-- script: yarn build
-  workingDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
+- script: |
+     cd Grafana-UA-Panel/grafana-ua-panel
+     yarn install
+     yarn build
+  displayName: 'grafana-ua-panel'
 
 - task: NuGetToolInstaller@1
   inputs:
