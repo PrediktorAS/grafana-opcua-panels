@@ -110,11 +110,6 @@ steps:
     Contents: '**'
     TargetFolder: '$(build.artifactstagingdirectory)/binaries/opcua'
 
-- task: PublishPipelineArtifact@1
-  displayName: Publish the artifact
-  inputs:
-    path: '$(build.artifactstagingdirectory)'
-    artifact: '$(Build.Repository.Name)'
 
 - task: NuGetToolInstaller@1
   inputs:
@@ -122,15 +117,30 @@ steps:
 
 
 - task: DotNetCoreCLI@2
-  displayName: Restore
+  displayName: 'Restore setup kit solution'
   inputs:
     command: restore
     projects: '**/*.csproj'
 
 - task: DevEnvBuild@2
+  displayName: 'Build setupkit'
   inputs:
     solution: 'Grafana-UA-Panel/grafana-setup/grafana-setup.sln'
     vsVersion: 'latest'
+    buildCfg: 'Release'
+    buildPlatform: 'Any CPU'
+- task: CopyFiles@2
+  displayName: 'Copy setupkit'
+  inputs:
+    SourceFolder: '$(agent.builddirectory)/s/Grafana-UA-Panel/grafana-setup/grafana-setup/Release'
+    Contents: '**'
+    TargetFolder: '$(build.artifactstagingdirectory)/setup'
+
+- task: PublishPipelineArtifact@1
+  displayName: Publish the artifact
+  inputs:
+    path: '$(build.artifactstagingdirectory)'
+    artifact: '$(Build.Repository.Name)'
 
 
   timeoutInMinutes: 60
