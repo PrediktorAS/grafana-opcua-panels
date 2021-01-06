@@ -33,9 +33,10 @@ steps:
 
 - task: Yarn@3
   inputs:
-    ProjectDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
-    ProductionMode: true
+   ProjectDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
+   arguments: install
   displayName: 'grafana-ua-panel install pkgs'
+  
 - task: Yarn@3
   displayName: 'grafana-ua-panel build'
   inputs:
