@@ -126,7 +126,6 @@ steps:
   inputs:
     command: 'publish'
     projects: 'grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
-    arguments: '--configuration $(BuildConfiguration)'
 
 # - task: MSBuild@1
 #   displayName: 'Build backend plugin'
