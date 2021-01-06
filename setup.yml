@@ -117,10 +117,24 @@ steps:
 
 
 - task: DotNetCoreCLI@2
-  displayName: 'Restore setup kit solution'
+  displayName: 'Restore vs solutions'
   inputs:
     command: restore
     projects: '**/*.csproj'
+
+- task: MSBuild@1
+  displayName: 'Build backend plugin'
+  inputs:
+    solution: 'grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
+    platform: 'Any CPU'
+    configuration: 'Release'
+
+- task: CopyFiles@2
+  displayName: 'Copy setupkit'
+  inputs:
+    SourceFolder: '$(agent.builddirectory)/s/grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/bin/Release/netcoreapp3.1/publish'
+    Contents: '**'
+    TargetFolder: '$(build.artifactstagingdirectory)/binaries/opcua'
 
 - task: DevEnvBuild@2
   displayName: 'Build setupkit'
@@ -129,6 +143,7 @@ steps:
     vsVersion: 'latest'
     buildCfg: 'Release'
     buildPlatform: 'Any CPU'
+
 - task: CopyFiles@2
   displayName: 'Copy setupkit'
   inputs:
