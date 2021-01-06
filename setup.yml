@@ -43,11 +43,18 @@ steps:
    projectDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
    arguments: 'build'
   
+
+
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(agent.builddirectory)/s/Grafana-UA-Panel/grafana-ua-panel/dist'
     Contents: '**'
-    TargetFolder: '$(agent.builddirectory)/s/Grafana-UA-Panel/grafana-ua-panel/dvdist'
+    TargetFolder: '$(build.artifactstagingdirectory)/grafana-ua-panel'
+- task: PublishPipelineArtifact@1
+  displayName: Publish the artifact
+  inputs:
+    path: '$(build.artifactstagingdirectory)'
+    artifact: '$(Build.Repository.Name)'
 
 - task: NuGetToolInstaller@1
   inputs:
