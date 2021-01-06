@@ -108,7 +108,7 @@ steps:
   inputs:
     SourceFolder: '$(agent.builddirectory)/s/grafana-opcua-datasource/dist'
     Contents: '**'
-    TargetFolder: '$(build.artifactstagingdirectory)/binaries/grafana-opcua-datasource'
+    TargetFolder: '$(build.artifactstagingdirectory)/binaries/opcua'
 
 - task: PublishPipelineArtifact@1
   displayName: Publish the artifact
