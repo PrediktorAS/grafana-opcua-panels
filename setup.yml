@@ -5,7 +5,7 @@ trigger: none
 
 # NOTE! in UTC !!!
 schedules:
-- cron: "0 2 * * *"
+- cron: "0 4 * * *"
   #always: true
   displayName: Daily build master
   branches:
@@ -21,7 +21,8 @@ resources:
     ref: prediktor-opc-ae
 
 pool:
-  name: apis-foundation-master
+  name: apis-foundation-master 
+  #nofresbld002
 
 steps:
 - checkout: self
