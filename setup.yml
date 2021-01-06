@@ -35,10 +35,14 @@ steps:
      cd Grafana-UA-Panel/grafana-ua-panel
      yarn install
   displayName: 'grafana-ua-panel install pkgs'
-- script: |
-     cd Grafana-UA-Panel/grafana-ua-panel
-     yarn dev
+- task: CmdLine@2
   displayName: 'grafana-ua-panel build'
+  inputs:
+   workingDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
+   script: |
+      yarn dev
+
+  
 
 - task: NuGetToolInstaller@1
   inputs:
