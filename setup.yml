@@ -31,6 +31,7 @@ steps:
   inputs:
     versionSpec: '1.x'
 
+#grafana-ua-panel
 - task: Yarn@3
   inputs:
    ProjectDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
@@ -43,13 +44,47 @@ steps:
    projectDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
    arguments: 'build'
   
-
-
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(agent.builddirectory)/s/Grafana-UA-Panel/grafana-ua-panel/dist'
     Contents: '**'
     TargetFolder: '$(build.artifactstagingdirectory)/grafana-ua-panel'
+#ua-dashboard
+- task: Yarn@3
+  inputs:
+   ProjectDirectory: 'Grafana-UA-Panel/ua-dashboard'
+   arguments: install
+  displayName: 'ua-dashboard install pkgs'
+
+- task: Yarn@3
+  displayName: 'ua-dashboard build'
+  inputs:
+   projectDirectory: 'Grafana-UA-Panel/ua-dashboard'
+   arguments: 'build'
+  
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(agent.builddirectory)/s/Grafana-UA-Panel/ua-dashboard/dist'
+    Contents: '**'
+    TargetFolder: '$(build.artifactstagingdirectory)/ua-dashboard'
+#ua-list-view
+- task: Yarn@3
+  inputs:
+   ProjectDirectory: 'Grafana-UA-Panel/ua-list-view'
+   arguments: install
+  displayName: 'ua-list-view install pkgs'
+
+- task: Yarn@3
+  displayName: 'ua-list-view build'
+  inputs:
+   projectDirectory: 'Grafana-UA-Panel/ua-list-view'
+   arguments: 'build'
+  
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(agent.builddirectory)/s/Grafana-UA-Panel/ua-list-view/dist'
+    Contents: '**'
+    TargetFolder: '$(build.artifactstagingdirectory)/ua-list-view'    
 - task: PublishPipelineArtifact@1
   displayName: Publish the artifact
   inputs:
