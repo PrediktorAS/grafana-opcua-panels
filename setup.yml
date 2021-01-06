@@ -122,12 +122,17 @@ steps:
     command: restore
     projects: '**/*.csproj'
 
-- task: MSBuild@1
-  displayName: 'Build backend plugin'
+- task: DotNetCoreCLI@2
   inputs:
-    solution: 'grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
-    platform: 'Any CPU'
-    configuration: 'Release'
+    command: 'build'
+    projects: 'grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
+    arguments: 'publish'
+# - task: MSBuild@1
+#   displayName: 'Build backend plugin'
+#   inputs:
+#     solution: 'grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
+#     platform: 'Any CPU'
+#     configuration: 'Release'
 
 - task: CopyFiles@2
   displayName: 'Copy setupkit'
