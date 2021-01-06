@@ -33,7 +33,8 @@ steps:
 
 - script: yarn install
   workingDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
-
+- script: yarn build
+  workingDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
 
 - task: NuGetToolInstaller@1
   inputs:
