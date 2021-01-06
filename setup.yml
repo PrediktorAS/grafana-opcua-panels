@@ -45,9 +45,9 @@ steps:
   
 - task: CopyFiles@2
   inputs:
-    SourceFolder: '$(agent.builddirectory)/s/dist'
+    SourceFolder: '$(agent.builddirectory)/s/Grafana-UA-Panel/grafana-ua-panel/dist'
     Contents: '**'
-    TargetFolder: 'Grafana-UA-Panel/grafana-ua-panel/dvdist'
+    TargetFolder: '$(agent.builddirectory)/s/Grafana-UA-Panel/grafana-ua-panel/dvdist'
 
 - task: NuGetToolInstaller@1
   inputs:
