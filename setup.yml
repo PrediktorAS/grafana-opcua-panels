@@ -34,11 +34,10 @@ steps:
 - script: |
      cd Grafana-UA-Panel/grafana-ua-panel
      yarn install
-     yarn build
   displayName: 'grafana-ua-panel install pkgs'
 - script: |
      cd Grafana-UA-Panel/grafana-ua-panel
-     yarn build
+     yarn dev
   displayName: 'grafana-ua-panel build'
 
 - task: NuGetToolInstaller@1
