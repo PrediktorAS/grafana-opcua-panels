@@ -31,17 +31,16 @@ steps:
   inputs:
     versionSpec: '1.x'
 
-- script: |
-     cd Grafana-UA-Panel/grafana-ua-panel
-     yarn install
+- task: Yarn@3
+  inputs:
+    ProjectDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
+    ProductionMode: true
   displayName: 'grafana-ua-panel install pkgs'
-- task: CmdLine@2
+- task: Yarn@3
   displayName: 'grafana-ua-panel build'
   inputs:
-   workingDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
-   script: |
-      yarn dev
-
+   projectDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
+   arguments: 'build'
   
 
 - task: NuGetToolInstaller@1
