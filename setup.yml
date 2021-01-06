@@ -41,7 +41,7 @@ steps:
 
 - task: DevEnvBuild@2
   inputs:
-    solution: '**\*.sln'
+    solution: 'Grafana-UA-Panel/grafana-setup/grafana-setup.sln'
     vsVersion: 'latest'
 
 #- task: CmdLine@2
