@@ -24,6 +24,13 @@ pool:
   name: apis-foundation-master
 
 steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '14.5'
+- script: yarn install
+  workingDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
+
+
 - task: NuGetToolInstaller@1
   inputs:
     versionSpec: '5.8.0' #From SWA with love!
