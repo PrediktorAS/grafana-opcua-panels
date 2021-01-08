@@ -6,12 +6,23 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "grafana-setup", "grafana-setup\grafana-setup.vdproj", "{785C7A14-8182-4FC8-85C0-909E9632E174}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ualistviewsetup", "..\ua-list-view\ualistviewsetup\ualistviewsetup.csproj", "{A03BFEB9-5204-4B8F-92FE-6B6DC338BD3B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7947D8D9-DE25-4D65-B35F-781FB4271357} = {7947D8D9-DE25-4D65-B35F-781FB4271357}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uadashboardsetup", "..\ua-dashboard\uadashboardsetup\uadashboardsetup.csproj", "{7947D8D9-DE25-4D65-B35F-781FB4271357}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F4324FE7-D08E-4444-819A-E2F8868A808D} = {F4324FE7-D08E-4444-819A-E2F8868A808D}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "plugin-dotnet", "..\..\grafana-opcua-datasource\pkg\dotnet\plugin-dotnet\plugin-dotnet.csproj", "{F4324FE7-D08E-4444-819A-E2F8868A808D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uapanelsetup", "..\grafana-ua-panel\uapanelsetup\uapanelsetup.csproj", "{FF658FA1-DDB3-4931-BB0C-BF6F28C5F77E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uapanelsetup", "..\grafana-ua-panel\uapanelsetup\uapanelsetup.csproj", "{FF658FA1-DDB3-4931-BB0C-BF6F28C5F77E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A03BFEB9-5204-4B8F-92FE-6B6DC338BD3B} = {A03BFEB9-5204-4B8F-92FE-6B6DC338BD3B}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "grafanacustomactions", "grafanacustomactions\grafanacustomactions.csproj", "{BBB51DEA-F49D-48BB-9F3A-67EA21CDDFC5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +61,12 @@ Global
 		{FF658FA1-DDB3-4931-BB0C-BF6F28C5F77E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FF658FA1-DDB3-4931-BB0C-BF6F28C5F77E}.Setup_Release|Any CPU.ActiveCfg = Setup_Release|Any CPU
 		{FF658FA1-DDB3-4931-BB0C-BF6F28C5F77E}.Setup_Release|Any CPU.Build.0 = Setup_Release|Any CPU
+		{BBB51DEA-F49D-48BB-9F3A-67EA21CDDFC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBB51DEA-F49D-48BB-9F3A-67EA21CDDFC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBB51DEA-F49D-48BB-9F3A-67EA21CDDFC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBB51DEA-F49D-48BB-9F3A-67EA21CDDFC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBB51DEA-F49D-48BB-9F3A-67EA21CDDFC5}.Setup_Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBB51DEA-F49D-48BB-9F3A-67EA21CDDFC5}.Setup_Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
