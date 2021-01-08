@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "grafana-setup", "grafana-setup\grafana-setup.vdproj", "{785C7A14-8182-4FC8-85C0-909E9632E174}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8AFAA706-2EFD-43DA-8367-1ECEC46F1CCC} = {8AFAA706-2EFD-43DA-8367-1ECEC46F1CCC}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ualistviewsetup", "..\ua-list-view\ualistviewsetup\ualistviewsetup.csproj", "{A03BFEB9-5204-4B8F-92FE-6B6DC338BD3B}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -23,6 +26,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uapanelsetup", "..\grafana-
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "grafanacustomactions", "grafanacustomactions\grafanacustomactions.csproj", "{BBB51DEA-F49D-48BB-9F3A-67EA21CDDFC5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uaeventviewsetup", "..\ua-event-view\uaeventviewsetup\uaeventviewsetup.csproj", "{8AFAA706-2EFD-43DA-8367-1ECEC46F1CCC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FF658FA1-DDB3-4931-BB0C-BF6F28C5F77E} = {FF658FA1-DDB3-4931-BB0C-BF6F28C5F77E}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,6 +75,12 @@ Global
 		{BBB51DEA-F49D-48BB-9F3A-67EA21CDDFC5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BBB51DEA-F49D-48BB-9F3A-67EA21CDDFC5}.Setup_Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBB51DEA-F49D-48BB-9F3A-67EA21CDDFC5}.Setup_Release|Any CPU.Build.0 = Release|Any CPU
+		{8AFAA706-2EFD-43DA-8367-1ECEC46F1CCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AFAA706-2EFD-43DA-8367-1ECEC46F1CCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AFAA706-2EFD-43DA-8367-1ECEC46F1CCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AFAA706-2EFD-43DA-8367-1ECEC46F1CCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AFAA706-2EFD-43DA-8367-1ECEC46F1CCC}.Setup_Release|Any CPU.ActiveCfg = Setup_Release|Any CPU
+		{8AFAA706-2EFD-43DA-8367-1ECEC46F1CCC}.Setup_Release|Any CPU.Build.0 = Setup_Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
