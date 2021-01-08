@@ -34,13 +34,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B20D4C85175EF67BF17924053B847B33"
+        "OwnerKey" = "8:_3165C976644141AD942A292055E71E50"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3165C976644141AD942A292055E71E50"
+        "OwnerKey" = "8:_B20D4C85175EF67BF17924053B847B33"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -260,6 +260,18 @@
                 {
                 }
             }
+            "{994432C3-9487-495D-8656-3E829A8DBDDE}:_E09D93E9D79445C99EA26D0531CAAD29"
+            {
+            "DefaultLocation" = "8:[TARGETDIR]\\ua-event-view"
+            "Name" = "8:ua-event-view"
+            "AlwaysCreate" = "11:FALSE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Property" = "8:NEWPROPERTY1"
+                "Folders"
+                {
+                }
+            }
         }
         "LaunchCondition"
         {
@@ -277,7 +289,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:grafana-plugins"
         "ProductCode" = "8:{A973B58C-BA88-44F2-815A-C6AF7CC0358D}"
-        "PackageCode" = "8:{85D8D6B4-DD6A-4691-82B6-6DBDEFBDF419}"
+        "PackageCode" = "8:{4750D73C-FC47-4984-92B2-3445C898CD38}"
         "UpgradeCode" = "8:{C9BDBCF0-997C-4C76-A194-6E87C9AFA8AD}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -826,7 +838,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_4E9C9A4C95614F2C99259CFB0E583870"
             {
-            "SourcePath" = "8:..\\..\\..\\grafana-opcua-datasource\\pkg\\dotnet\\plugin-dotnet\\obj\\Setup_Release\\netcoreapp3.1\\apphost.exe"
+            "SourcePath" = "8:..\\..\\..\\grafana-opcua-datasource\\pkg\\dotnet\\plugin-dotnet\\obj\\Setup_Release\\netcoreapp3.1\\win-x64\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B03E88E211784DC7935C9C36A31768E1"
@@ -849,6 +861,34 @@
             "OutputProjectGuid" = "8:{F4324FE7-D08E-4444-819A-E2F8868A808D}"
             "ShowKeyOutput" = "11:TRUE"
             "PublishProfilePath" = "8:Properties\\PublishProfiles\\SetupProfile.pubxml"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_6309A356ED4F4BFE8A39C6EC1DE3EA1C"
+            {
+            "SourcePath" = "8:"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_E09D93E9D79445C99EA26D0531CAAD29"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:ContentFiles"
+            "OutputProjectGuid" = "8:{8AFAA706-2EFD-43DA-8367-1ECEC46F1CCC}"
+            "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {
                 }
