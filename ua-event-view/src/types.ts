@@ -1,7 +1,5 @@
-type SeriesSize = 'sm' | 'md' | 'lg';
+type PanelType = 'realtime' | 'history';
 
-export interface SimpleOptions {
-  text: string;
-  showSeriesCount: boolean;
-  seriesCountSize: SeriesSize;
+export interface UAAEPanelOptions {
+  panelType: PanelType;
 }
