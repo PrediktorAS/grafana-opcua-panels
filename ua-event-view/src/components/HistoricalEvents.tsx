@@ -1,5 +1,6 @@
 import { PureComponent } from 'react';
 import React from 'react';
+import { ColDef, DataGrid, RowProps } from '@material-ui/data-grid';
 //import { css, cx } from 'emotion';
 //import { stylesFactory, useTheme } from '@grafana/ui';
 
@@ -17,6 +18,13 @@ export class HistoricalEvents extends PureComponent<Props, State> {
 
   render() {
     //const instanceId = this.props.replaceVariables('$ObjectId');
-    return (<></>);
+    let cols: ColDef[] = [{ headerName: "Name", field: "name" }];
+    let row: any = { rowIndex: 0, id: "name", selected: false, className:"", name: "hallo" };
+
+    let rows: RowProps[] = [row];
+    return (<DataGrid
+      columns={cols}
+      rows={rows}
+    />);
   }
 }
