@@ -26,6 +26,10 @@
   },
   "dependencies": {
     "@material-ui/core": "^4.11.2",
-    "@material-ui/data-grid": "^4.0.0-alpha.15"
+    "@material-ui/data-grid": "^4.0.0-alpha.15",
+    "@types/react-window": "^1.8.2",
+    "@types/tinycolor2": "^1.4.2",
+    "react-window": "^1.8.6",
+    "tinycolor2": "^1.4.2"
   }
 }
