@@ -4,7 +4,7 @@ import { DisplayValue, Field, formattedValueToString, LinkModel } from '@grafana
 import { TableCellDisplayMode, TableCellProps } from './types';
 import tinycolor from 'tinycolor2';
 import { TableStyles } from './styles';
-//import { FilterActions } from './FilterActions';
+import { FilterActions } from './FilterActions';
 import { getTextColorForBackground } from './colors';
 
 export const DefaultCell: FC<TableCellProps> = props => {
@@ -20,7 +20,7 @@ export const DefaultCell: FC<TableCellProps> = props => {
   } 
 
   const cellStyle = getCellStyle(tableStyles, field, displayValue);
-  //const showFilters = field.config.filterable;
+  const showFilters = field.config.filterable;
 
   let link: LinkModel<any> | undefined;
   let onClick: MouseEventHandler<HTMLAnchorElement> | undefined;
@@ -50,7 +50,7 @@ export const DefaultCell: FC<TableCellProps> = props => {
           {value}
         </a>
       )}
-      {/*showFilters && cell.value !== undefined && <FilterActions {...props} />*/}
+      {showFilters && cell.value !== undefined && <FilterActions {...props} />}
     </div>
   );
 };

@@ -26,7 +26,7 @@ import { getTableStyles, TableStyles } from './styles';
 import { Icon } from '@grafana/ui';
 import { CustomScrollbar } from '@grafana/ui';
 import { DataGridCell } from './DataGridCell';
-//import { Filter } from './Filter';
+import { Filter } from './Filter';
 //import { TableCell } from './TableCell';
 
 const COLUMN_MIN_WIDTH = 150;
@@ -248,11 +248,11 @@ function renderHeaderCell(column: any, tableStyles: TableStyles, field?: Field) 
               {column.isSorted && (column.isSortedDesc ? <Icon name="arrow-down" /> : <Icon name="arrow-up" />)}
             </div>
           </div>
-          {/*column.canFilter && <Filter column={column} tableStyles={tableStyles} field={field} />*/}
+          {column.canFilter && <Filter column={column} tableStyles={tableStyles} field={field} />}
         </>
       )}
       {!column.canSort && column.render('Header')}
-      {/*!column.canSort && column.canFilter && <Filter column={column} tableStyles={tableStyles} field={field} />*/}
+      {!column.canSort && column.canFilter && <Filter column={column} tableStyles={tableStyles} field={field} />}
       {column.canResize && <div {...column.getResizerProps()} className={tableStyles.resizeHandle} />}
     </div>
   );
