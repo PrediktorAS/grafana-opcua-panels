@@ -19,14 +19,19 @@ export class UAAEPanel extends PureComponent<Props, State> {
   }
 
   render() {
-    //const instanceId = this.props.replaceVariables('$ObjectId');
-    return <div className="panel-container" style={{ width: '100' }}>
+
+    let dsCount = this.props.data.series.length;
+
+    let height = dsCount > 0 ? (this.props.height) / dsCount - 10 : this.props.height;
+    let width = this.props.width - 3;
+
+    return <div className="panel-container" >
       {this.props.data.series.map((dFrame, index) => {
         if (this.props.options.panelType === 'realtime') {
           return (<RealtimeEvents></RealtimeEvents>);
         }
         else {
-          return (<HistoricalEvents dataframe={ dFrame } ></HistoricalEvents>);
+          return (<HistoricalEvents dataframe={dFrame} height={height} width={width} ></HistoricalEvents>);
         }
 
       })}

@@ -124,7 +124,7 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
 
         query: {
           'var-InstanceDisplayName': node.displayName,
-          'var-InstanceId': node.nodeId,
+          'var-ObjectId': node.nodeId,
           'var-DashboardUrl': mappedDashboard?.url,
         },
         partial: true,

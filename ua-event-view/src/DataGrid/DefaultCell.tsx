@@ -5,7 +5,7 @@ import { TableCellDisplayMode, TableCellProps } from './types';
 import tinycolor from 'tinycolor2';
 import { TableStyles } from './styles';
 import { FilterActions } from './FilterActions';
-import { getTextColorForBackground } from './colors';
+import { getTextColorForBackground } from '../utils/colors';
 
 export const DefaultCell: FC<TableCellProps> = props => {
   const { field, cell, tableStyles, row, cellProps } = props;

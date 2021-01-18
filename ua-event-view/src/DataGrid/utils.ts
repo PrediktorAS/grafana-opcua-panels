@@ -14,7 +14,7 @@ import { DefaultCell } from './DefaultCell';
 //import { BarGaugeCell } from './BarGaugeCell';
 import { TableCellDisplayMode, TableFieldOptions } from './types';
 //import { JSONViewCell } from './JSONViewCell';
-//import { ImageCell } from './ImageCell';
+import { ImageCell } from './ImageCell';
 
 export function getTextAlign(field?: Field): ContentPosition {
   if (!field) {
@@ -95,24 +95,26 @@ export function getColumns(data: DataFrame, availableWidth: number, columnMinWid
 }
 
 function getCellComponent(displayMode: TableCellDisplayMode, field: Field) {
-  //switch (displayMode) {
-  //  case TableCellDisplayMode.ColorText:
-  //  case TableCellDisplayMode.ColorBackground:
-  //    return DefaultCell;
-  //  case TableCellDisplayMode.Image:
-  //    return ImageCell;
-  //  case TableCellDisplayMode.LcdGauge:
-  //  case TableCellDisplayMode.BasicGauge:
-  //  case TableCellDisplayMode.GradientGauge:
-  //    return BarGaugeCell;
-  //  case TableCellDisplayMode.JSONView:
-  //    return JSONViewCell;
-  //}
 
-  //// Default or Auto
+  switch (displayMode) {
+    case TableCellDisplayMode.ColorText:
+    case TableCellDisplayMode.ColorBackground:
+      return DefaultCell;
+    case TableCellDisplayMode.Image:
+      return ImageCell;
+    case TableCellDisplayMode.LcdGauge:
+    case TableCellDisplayMode.BasicGauge:
+    //case TableCellDisplayMode.GradientGauge:
+    //  return BarGaugeCell;
+    //case TableCellDisplayMode.JSONView:
+    //  return JSONViewCell;
+  }
+
+  // Default or Auto
   //if (field.type === FieldType.other) {
   //  return JSONViewCell;
   //}
+
   return DefaultCell;
 }
 

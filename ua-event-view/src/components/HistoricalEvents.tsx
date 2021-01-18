@@ -7,6 +7,8 @@ import { DataGrid } from '../DataGrid/DataGrid';
 
 interface Props {
   dataframe: DataFrame
+  height: number
+  width: number
 }
 interface State {
 }
@@ -19,7 +21,8 @@ export class HistoricalEvents extends PureComponent<Props, State> {
   }
 
   render() {
-    //const instanceId = this.props.replaceVariables('$ObjectId');
-    return (<DataGrid data={this.props.dataframe} width={600} height={600} />);
+
+
+    return (<DataGrid data={this.props.dataframe} width={this.props.width} height={this.props.height} />);
   }
 }

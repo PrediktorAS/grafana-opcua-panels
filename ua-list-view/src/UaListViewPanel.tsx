@@ -9,7 +9,7 @@ import { toDataFetchType } from './utils/DataFetch';
 interface Props extends PanelProps<UAListViewOptions> { }
 
 interface State {
-  instanceId: OpcUaNodeInfo | null,
+  objectId: OpcUaNodeInfo | null,
   fromDate: string | null,
   toDate: string | null,
   dataSource: DataSourceWithBackend | null,
@@ -21,7 +21,7 @@ export class UaListViewPanel extends PureComponent<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      instanceId: null,
+      objectId: null,
       fromDate: null,
       toDate: null,
       dataSource: null,
@@ -177,7 +177,7 @@ export class UaListViewPanel extends PureComponent<Props, State> {
 
   renderChildren() {
     
-    if (this.state.instanceId !== null) {
+    if (this.state.objectId !== null) {
       let columnType = this.getColumnType();
       return <VariableList refreshRate={() => this.getRefreshRate()}
         decimalPoints={this.props.options.decimalPrecision}
@@ -190,13 +190,13 @@ export class UaListViewPanel extends PureComponent<Props, State> {
         bodyFontSize={this.props.options.bodyFontSize}
         query={(nodes, handle) => this.doQuery(nodes, handle)}
         browse={(parent, nodeClass, browseFilter) => this.browse(parent, nodeClass, browseFilter)}
-        parentNode={this.state.instanceId}> </ VariableList>;
+        parentNode={this.state.objectId}> </ VariableList>;
     }
     return <></>;
   }
 
   render() {
-    const instanceId = this.props.replaceVariables('$ObjectId');
+    const objectId = this.props.replaceVariables('$ObjectId');
 
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
@@ -207,8 +207,8 @@ export class UaListViewPanel extends PureComponent<Props, State> {
       this.setState({ refreshRate: refresh })
     }
 
-    if (this.state.instanceId === null || this.state.instanceId.nodeId !== instanceId && instanceId !== null && instanceId.length > 0) {
-      this.readNode(instanceId).then((res) => this.setState({ instanceId: res }));
+    if (this.state.objectId === null || this.state.objectId.nodeId !== objectId && objectId !== null && objectId.length > 0) {
+      this.readNode(objectId).then((res) => this.setState({ objectId: res }));
     }
     return this.renderChildren();
   }

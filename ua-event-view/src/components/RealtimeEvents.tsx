@@ -16,7 +16,6 @@ export class RealtimeEvents extends PureComponent<Props, State> {
   }
 
   render() {
-    //const instanceId = this.props.replaceVariables('$ObjectId');
     return (<></>);
   }
 }

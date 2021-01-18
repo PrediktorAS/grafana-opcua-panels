@@ -10,7 +10,7 @@ import { getDashboard } from './UaDashboardResolver';
 interface Props extends PanelProps<SimpleOptions> {}
 
 interface State {
-  instanceId: string | null,
+  objectId: string | null,
   fromDate: string | null,
   toDate: string | null,
   refresh: string | null,
@@ -27,7 +27,7 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      instanceId: null,
+      objectId: null,
       fromDate: null,
       toDate: null,
       refresh:null,
@@ -94,12 +94,12 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
 
   fetchChildrenDashboards() : void  {
     this.getDataSource();
-    const instanceId = this.props.replaceVariables('$InstanceId');
+    const objectId = this.props.replaceVariables('$ObjectId');
 
     //http://localhost:3000/api/dashboards/db/pumplooptype
     //DashboardModel
 
-    this.browse(instanceId).then((result) => {
+    this.browse(objectId).then((result) => {
       var promises = new Array();
       var dbs: DashboardMap[] = [];
       let maxLength = Math.min(result.length, this.props.options.maxChildren); 
@@ -121,16 +121,16 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
   fetchDashboard() {
     this.getDataSource();
     if (this.state.dataSource !== null) {
-      const instanceId = this.props.replaceVariables('$InstanceId');
-      if (instanceId !== null && instanceId.length > 0) {
-        getDashboard(instanceId, this.state.dataSource).then((dashboard) => {
+      const objectId = this.props.replaceVariables('$ObjectId');
+      if (objectId !== null && objectId.length > 0) {
+        getDashboard(objectId, this.state.dataSource).then((dashboard) => {
           if (dashboard === null) {
             if (this.props.options.dashboardFetch === "ChildrenIfNotInstance") {
               this.fetchChildrenDashboards();
             }
           }
           else {
-            this.readNode(instanceId).then((node) => {
+            this.readNode(objectId).then((node) => {
               if (node !== null) {
                 var dbs: DashboardMap[] = [];
                 dbs.push({ dashboard: dashboard, node: node });
@@ -144,10 +144,10 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
   }
 
 
-  renderDashboardIFrame(instanceId: string, fromDate: string | null, toDate: string | null, refresh: string | null, dsurl: string, width: number, height: number) {
+  renderDashboardIFrame(objectId: string, fromDate: string | null, toDate: string | null, refresh: string | null, dsurl: string, width: number, height: number) {
     const styles = this.getStyles();
 
-    let url = this.props.replaceVariables(dsurl + '?kiosk&from=' + fromDate + '&to=' + toDate + '&var-ObjectId=' + instanceId);
+    let url = this.props.replaceVariables(dsurl + '?kiosk&from=' + fromDate + '&to=' + toDate + '&var-ObjectId=' + objectId);
 
     if (refresh != null && refresh.length > 0)
       url = url + "&refresh=" + refresh;
@@ -171,10 +171,10 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
   }
 
 
-  renderDashboardEmbed(instanceId: string, fromDate: string, toDate: string, dsurl: string, width: number, height: number) {
+  renderDashboardEmbed(objectId: string, fromDate: string, toDate: string, dsurl: string, width: number, height: number) {
     const styles = this.getStyles();
 
-    let url = this.props.replaceVariables(dsurl + '?kiosk&from=' + fromDate + '&to=' + toDate + '&var-ObjectId=' + instanceId);
+    let url = this.props.replaceVariables(dsurl + '?kiosk&from=' + fromDate + '&to=' + toDate + '&var-ObjectId=' + objectId);
     return (
       <div
         className={cx(
@@ -211,7 +211,7 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
   render() {
 
 
-    const instanceId = this.props.replaceVariables('$InstanceId');
+    const objectId = this.props.replaceVariables('$ObjectId');
 
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
@@ -225,10 +225,10 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
 
     const refresh = this.getRefresh(urlParams);
 
-    //console.log("DashboardPanel: instanceId: " + instanceId + " fromDate: " + fromDate + " toDate: " + toDate);
+    //console.log("DashboardPanel: objectId: " + objectId + " fromDate: " + fromDate + " toDate: " + toDate);
 
-    if (this.state.instanceId === null || this.state.instanceId !== instanceId) {
-      this.setState({ instanceId: instanceId, dashboards: null });
+    if (this.state.objectId === null || this.state.objectId !== objectId) {
+      this.setState({ objectId: objectId, dashboards: null });
     }
 
     if ((this.state.fromDate === null && fromDate !== null)

@@ -18,7 +18,8 @@
   "devDependencies": {
     "@grafana/data": "^7.0.0",
     "@grafana/toolkit": "^7.0.0",
-    "@grafana/ui": "^7.0.0",
+    "@grafana/ui": "^7.3.6",
+    "@types/lodash": "^4.14.167",
     "emotion": "10.0.27"
   },
   "engines": {
@@ -29,6 +30,7 @@
     "@material-ui/data-grid": "^4.0.0-alpha.15",
     "@types/react-window": "^1.8.2",
     "@types/tinycolor2": "^1.4.2",
+    "lodash.map": "^4.6.0",
     "react-window": "^1.8.6",
     "tinycolor2": "^1.4.2"
   }
