@@ -19,6 +19,7 @@ export enum TableCellDisplayMode {
   JSONView = 'json-view',
   BasicGauge = 'basic',
   Image = 'image',
+  BooleanImage = 'booleanimage',
 }
 
 export type FieldTextAlignment = 'auto' | 'left' | 'right' | 'center';

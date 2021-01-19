@@ -15,6 +15,7 @@ import { DefaultCell } from './DefaultCell';
 import { TableCellDisplayMode, TableFieldOptions } from './types';
 //import { JSONViewCell } from './JSONViewCell';
 import { ImageCell } from './ImageCell';
+import { BooleanImageCell } from './BooleanImageCell';
 
 export function getTextAlign(field?: Field): ContentPosition {
   if (!field) {
@@ -96,10 +97,14 @@ export function getColumns(data: DataFrame, availableWidth: number, columnMinWid
 
 function getCellComponent(displayMode: TableCellDisplayMode, field: Field) {
 
+  console.log("displayMode: " + displayMode);
+
   switch (displayMode) {
     case TableCellDisplayMode.ColorText:
     case TableCellDisplayMode.ColorBackground:
       return DefaultCell;
+    case TableCellDisplayMode.BooleanImage:
+      return BooleanImageCell;
     case TableCellDisplayMode.Image:
       return ImageCell;
     case TableCellDisplayMode.LcdGauge:

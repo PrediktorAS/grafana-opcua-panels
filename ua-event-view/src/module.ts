@@ -1,5 +1,6 @@
 import { PanelPlugin } from '@grafana/data';
-import { TableCellDisplayMode } from '@grafana/ui';
+import { TableCellDisplayMode } from './DataGrid/types';
+//import { TableCellDisplayMode } from '@grafana/ui';
 import { UAAEPanelOptions } from './types';
 import { UAAEPanel } from './UAAEPanel';
 
@@ -45,6 +46,7 @@ export const plugin = new PanelPlugin<UAAEPanelOptions>(UAAEPanel)
               { value: TableCellDisplayMode.BasicGauge, label: 'Basic gauge' },
               { value: TableCellDisplayMode.JSONView, label: 'JSON View' },
               { value: TableCellDisplayMode.Image, label: 'Image' },
+              { value: TableCellDisplayMode.BooleanImage, label: 'BooleanImage' },
             ],
           },
         })
