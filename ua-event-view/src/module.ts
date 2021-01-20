@@ -1,6 +1,6 @@
-import { PanelPlugin } from '@grafana/data';
+import { FieldOverrideContext, PanelPlugin } from '@grafana/data';
+import { AlarmThreshold, AlarmThresholdEditor } from './DataGrid/AlarmThresholdEditor';
 import { TableCellDisplayMode } from './DataGrid/types';
-//import { TableCellDisplayMode } from '@grafana/ui';
 import { UAAEPanelOptions } from './types';
 import { UAAEPanel } from './UAAEPanel';
 
@@ -18,6 +18,24 @@ export const plugin = new PanelPlugin<UAAEPanelOptions>(UAAEPanel)
             max: 1300,
           },
           shouldApply: () => true,
+        })
+        .addCustomEditor({
+
+          id: 'alarmthresholds',
+          path: 'alarmthresholds',
+          name: 'Alarm Thresholds',
+          description: 'Alarm Thresholds icon/color configuration',
+          editor:  AlarmThresholdEditor,
+          override: AlarmThresholdEditor,
+          process: identityOverrideProcessor,
+          settings: {},
+          shouldApply: () => true,
+          defaultValue: <AlarmThreshold[]>
+            [
+              { iconId: 0, color: 'yellow' },
+              { iconId: 1, color: 'red' },
+            ],
+
         })
         .addRadio({
           path: 'align',
@@ -55,7 +73,9 @@ export const plugin = new PanelPlugin<UAAEPanelOptions>(UAAEPanel)
           name: 'Columns filterable',
           description: 'Enables/disables field filters in table',
           defaultValue: true,
-        });
+        })
+
+        ;
     },
   })
   .setPanelOptions(builder => {
@@ -79,3 +99,7 @@ export const plugin = new PanelPlugin<UAAEPanelOptions>(UAAEPanel)
       }
     });
 });
+
+export const identityOverrideProcessor = <T>(value: T, _context: FieldOverrideContext, _settings: any) => {
+  return value;
+};

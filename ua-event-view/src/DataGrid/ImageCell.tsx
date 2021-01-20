@@ -26,7 +26,7 @@ export const ImageCell: FC<TableCellProps> = props => {
 
   const textColor = getTextColorForBackground(cellProps.backgroundColor?.toString() ?? "black");
 
-  console.log("ImageCell: " + text + "  " + iconColor);
+  //console.log("ImageCell: " + text + "  " + iconColor);
 
   let { translate, ...restProps } = { ...cellProps };
 
@@ -138,9 +138,9 @@ export const ImageCell: FC<TableCellProps> = props => {
           </svg>
         </div >
 
-          <div style={{ color: textColor }}>
-        {text}
-      </div>
+        <div style={{ color: textColor }}>
+          {text}
+        </div>
 
     </div>
   );
