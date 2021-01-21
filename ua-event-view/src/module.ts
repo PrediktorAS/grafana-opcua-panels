@@ -1,6 +1,6 @@
 import { FieldOverrideContext, PanelPlugin } from '@grafana/data';
-import { AlarmThreshold, AlarmThresholdEditor } from './DataGrid/AlarmThresholdEditor';
-import { TableCellDisplayMode } from './DataGrid/types';
+import { AlarmThresholdEditor } from './DataGrid/AlarmThresholdEditor';
+import { AlarmThreshold, TableCellDisplayMode } from './DataGrid/types';
 import { UAAEPanelOptions } from './types';
 import { UAAEPanel } from './UAAEPanel';
 
@@ -32,8 +32,7 @@ export const plugin = new PanelPlugin<UAAEPanelOptions>(UAAEPanel)
           shouldApply: () => true,
           defaultValue: <AlarmThreshold[]>
             [
-              { iconId: 0, color: 'yellow' },
-              { iconId: 1, color: 'red' },
+              { iconId: 14, color: 'green', value: 0 },
             ],
 
         })

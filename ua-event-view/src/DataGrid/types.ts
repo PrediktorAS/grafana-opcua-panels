@@ -1,5 +1,5 @@
 import { CellProps } from 'react-table';
-import { Field } from '@grafana/data';
+import { Field, PanelProps } from '@grafana/data';
 import { TableStyles } from './styles';
 import { CSSProperties, FC } from 'react';
 
@@ -48,4 +48,46 @@ export interface TableCellProps extends CellProps<any> {
   onCellFilterAdded: TableFilterActionCallback;
 }
 
+//export interface MyField extends Field {
+
+//  config: FieldConfigGrid;
+
+//}
+
 export type CellComponent = FC<TableCellProps>;
+
+//export interface FieldOverrideEditorProps<TValue, TSettings> extends Omit<StandardEditorProps<TValue>, 'item'> {
+//  item: FieldConfigPropertyItem<TValue, TSettings>;
+//  context: FieldOverrideContext;
+//}
+
+//export interface FieldOverrideEditorPropsDataGrid<TValue, TSettings> extends FieldOverrideEditorProps<TValue, TSettings> {
+//  item: FieldConfigPropertyItem<TValue, TSettings>;
+//  context: FieldOverrideContextGrid;
+//}
+
+//export interface FieldOverrideContextGrid extends FieldOverrideContext {
+
+//  field?: MyField;
+//}
+
+//export interface FieldConfigGrid extends FieldConfig {
+
+//  findMe: string;
+//  alarmThresholds: AlarmThreshold[];
+//}
+
+
+export interface AlarmThreshold {
+  iconId: number,
+  color: string,
+  value: number
+}
+
+export interface SimpleOptions {
+  //alarmthresholds: AlarmThreshold[];
+}
+
+export interface AlarmThresholdProps extends PanelProps<SimpleOptions> {
+  alarmthresholds: AlarmThreshold[];
+}
