@@ -25,7 +25,7 @@ export const plugin = new PanelPlugin<UAAEPanelOptions>(UAAEPanel)
           path: 'alarmthresholds',
           name: 'Alarm Thresholds',
           description: 'Alarm Thresholds icon/color configuration',
-          editor:  AlarmThresholdEditor,
+          editor: AlarmThresholdEditor,
           override: AlarmThresholdEditor,
           process: identityOverrideProcessor,
           settings: {},

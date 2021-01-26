@@ -45,7 +45,7 @@ export const BooleanImageCell: FC<TableCellProps> = props => {
     }
   }
 
-  iconRenderer = new IconRenderer(iconId);
+  iconRenderer = new IconRenderer(iconId, (id) => { });
 
   const textColor = getTextColorForBackground(cellProps.backgroundColor?.toString() ?? "black");
 
