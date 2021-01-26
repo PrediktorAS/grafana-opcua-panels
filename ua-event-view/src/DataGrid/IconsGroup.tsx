@@ -15,7 +15,7 @@ export const IconsGroup = ({ selectedId, ids, onIconSelect, theme }: IconsGroupP
   let iconRenderer = new IconRenderer(selectedId, onIconSelect);
 
   return (
-    <div>
+    <div style={{ cursor: 'pointer' }}>
       {iconRenderer.render()}
     </div>
   );

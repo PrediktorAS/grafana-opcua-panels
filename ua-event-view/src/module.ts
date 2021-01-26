@@ -62,8 +62,8 @@ export const plugin = new PanelPlugin<UAAEPanelOptions>(UAAEPanel)
               { value: TableCellDisplayMode.LcdGauge, label: 'LCD gauge' },
               { value: TableCellDisplayMode.BasicGauge, label: 'Basic gauge' },
               { value: TableCellDisplayMode.JSONView, label: 'JSON View' },
-              { value: TableCellDisplayMode.Image, label: 'Image' },
-              { value: TableCellDisplayMode.BooleanImage, label: 'BooleanImage' },
+              { value: TableCellDisplayMode.AlarmImage, label: 'AlarmImage' },
+              { value: TableCellDisplayMode.BooleanImage, label: 'AlarmBooleanImage' },
             ],
           },
         })

@@ -14,7 +14,7 @@ import { DefaultCell } from './DefaultCell';
 //import { BarGaugeCell } from './BarGaugeCell';
 import { TableCellDisplayMode, TableFieldOptions } from './types';
 //import { JSONViewCell } from './JSONViewCell';
-import { ImageCell } from './ImageCell';
+import { AlarmImageCell } from './AlarmImageCell';
 import { BooleanImageCell } from './BooleanImageCell';
 
 export function getTextAlign(field?: Field): ContentPosition {
@@ -97,7 +97,7 @@ export function getColumns(data: DataFrame, availableWidth: number, columnMinWid
 
 function getCellComponent(displayMode: TableCellDisplayMode, field: Field) {
 
-  console.log("displayMode: " + displayMode);
+  //console.log("displayMode: " + displayMode);
 
   switch (displayMode) {
     case TableCellDisplayMode.ColorText:
@@ -105,8 +105,8 @@ function getCellComponent(displayMode: TableCellDisplayMode, field: Field) {
       return DefaultCell;
     case TableCellDisplayMode.BooleanImage:
       return BooleanImageCell;
-    case TableCellDisplayMode.Image:
-      return ImageCell;
+    case TableCellDisplayMode.AlarmImage:
+      return AlarmImageCell;
     case TableCellDisplayMode.LcdGauge:
     case TableCellDisplayMode.BasicGauge:
     //case TableCellDisplayMode.GradientGauge:

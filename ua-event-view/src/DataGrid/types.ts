@@ -18,7 +18,7 @@ export enum TableCellDisplayMode {
   LcdGauge = 'lcd-gauge',
   JSONView = 'json-view',
   BasicGauge = 'basic',
-  Image = 'image',
+  AlarmImage = 'alarmimage',
   BooleanImage = 'booleanimage',
 }
 

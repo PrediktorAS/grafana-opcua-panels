@@ -5,11 +5,10 @@ import { alarmIconIds } from './IconRenderer';
 
 
 export interface IconsPaletteProps extends Themeable {
-  id: number;
   onChange: (id: number) => void;
 }
 
-export const IconsPalette = ({ id, onChange, theme }: IconsPaletteProps) => {
+export const IconsPalette = ({ onChange, theme }: IconsPaletteProps) => {
   const alarmIcons: JSX.Element[] = [];
 
   alarmIconIds.forEach((id, index, alarmIconIds) => {
@@ -26,21 +25,18 @@ export const IconsPalette = ({ id, onChange, theme }: IconsPaletteProps) => {
     );
   });
 
-
-  //let iconRenderer = new IconRenderer(id, (id) => onChange(id));
-
   return (
     <div>
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(8, 1fr)',
-          gridRowGap: '24px',
-          gridColumnGap: '24px',
+          gridTemplateColumns: 'repeat(10, 1fr)',
+          gridRowGap: '15px',
+          gridColumnGap: '15px',
         }}
       >
         {alarmIcons}
-        </div>
       </div>
-  );
+    </div>
+);
 };

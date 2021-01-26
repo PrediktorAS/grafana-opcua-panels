@@ -108,7 +108,7 @@ export class AlarmThresholdEditor extends PureComponent<FieldOverrideEditorProps
     //const iconRenderer: IconRenderer = new IconRenderer(alarmThreshold.iconId, this.changeThresholdIcon);
     const iconRenderer: IconRenderer = new IconRenderer(alarmThreshold.iconId, (id) => { });
 
-    let iconPalette = IconsPalette({ id: 0, onChange: (id) => this.thresholdIconchanged(id), theme: {} as GrafanaTheme });
+    let iconPalette = IconsPalette({ onChange: (id) => this.thresholdIconchanged(id), theme: {} as GrafanaTheme });
 
     //const alarmIcons: IconRenderer[] = [];
 
@@ -132,22 +132,15 @@ export class AlarmThresholdEditor extends PureComponent<FieldOverrideEditorProps
             <div className="css-1w5c5dq-input-inputWrapper">
               <div className="css-13qljrm-input-prefix" >
 
-                <div className="css-1ikfeb0" style={{ color: alarmThreshold.color }} onClick={() => this.changeThresholdIcon(alarmThreshold.iconId)}  >
+                <div className="css-1ikfeb0" style={{ color: alarmThreshold.color, cursor: 'pointer' }} onClick={() => this.changeThresholdIcon(alarmThreshold.iconId)}  >
                   {iconRenderer.render()}
                 </div>
 
-                <div style={{ paddingLeft: '6px' }}>
-                  <ColorPicker
-                    color={alarmThreshold.color}
-                    onChange={color => this.onChangeThresholdColor(alarmThreshold, color)}
-                    enableNamedColors={true}
-                  />
-                </div>
               </div>
-              <input className="css-1bjepp-input-input" type="text" value={alarmThreshold.value} onChange={(event) => this.onChangeThresholdValue(alarmThreshold, event)} style={{ paddingLeft: '52px' }} />
+              <input className="css-1bjepp-input-input" type="text" value={alarmThreshold.value} onChange={(event) => this.onChangeThresholdValue(alarmThreshold, event)} style={{ paddingLeft: '40px' }} />
 
               <div className="css-1glgcqu-input-suffix">
-                <div className="css-1vzus6i-Icon">
+                <div className="css-1vzus6i-Icon" style={{ cursor: 'pointer' }}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="css-1ikfeb0" onClick={() => this.deleteThreshold(alarmThreshold) }>
                     <path d="M10,18a1,1,0,0,0,1-1V11a1,1,0,0,0-2,0v6A1,1,0,0,0,10,18ZM20,6H16V5a3,3,0,0,0-3-3H11A3,3,0,0,0,8,5V6H4A1,1,0,0,0,4,8H5V19a3,3,0,0,0,3,3h8a3,3,0,0,0,3-3V8h1a1,1,0,0,0,0-2ZM10,5a1,1,0,0,1,1-1h2a1,1,0,0,1,1,1V6H10Zm7,14a1,1,0,0,1-1,1H8a1,1,0,0,1-1-1V8H17Zm-3-1a1,1,0,0,0,1-1V11a1,1,0,0,0-2,0v6A1,1,0,0,0,14,18Z">
                     </path>
@@ -160,21 +153,38 @@ export class AlarmThresholdEditor extends PureComponent<FieldOverrideEditorProps
 
         </div>
 
-        <div style={{ color: alarmThreshold.color, width: "0px" }} hidden={!(this.state.showIconPopup && (alarmThreshold.iconId == this.state.selectedIconId))} >
-          {iconPalette}
+        <div onMouseLeave={() => this.hideIconPopup()} hidden={!(this.state.showIconPopup && (alarmThreshold.iconId == this.state.selectedIconId))} >
+          <div style={{ paddingBottom: '6px' }} >
+            Color:
+            <div className="css-1ikfeb0" style={{ paddingLeft: '6px' }}>
+              <ColorPicker
+                color={alarmThreshold.color}
+                onChange={color => this.onChangeThresholdColor(alarmThreshold, color)}
+                enableNamedColors={false}
+              />
+            </div>
+          </div>
+
+          <div style={{ color: alarmThreshold.color, width: "0px" }} >
+            {iconPalette}
+          </div>
         </div>
 
       </div>
     );
   }
 
-    changeThresholdIcon(iconId: number) {
-      console.log("changeThresholdIcon: " + iconId);
-      this.setState({ selectedIconId: iconId, showIconPopup: !this.state.showIconPopup });
-    }
+  hideIconPopup() {
+    this.setState({ showIconPopup: false });
+  }
+
+  changeThresholdIcon(iconId: number) {
+    //console.log("changeThresholdIcon: " + iconId);
+    this.setState({ selectedIconId: iconId, showIconPopup: !this.state.showIconPopup });
+  }
 
   onChangeThresholdColor(alarmThreshold: AlarmThreshold, color: string): void {
-    console.log("onChangeThresholdColor: " + color);
+    //console.log("onChangeThresholdColor: " + color);
 
     alarmThreshold.color = color;
     this.forceUpdate();

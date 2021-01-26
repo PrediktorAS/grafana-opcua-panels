@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 import { IconRenderer } from './IconRenderer';
 import { TableCellProps, AlarmThresholdProps } from './types';
 
-export const ImageCell: FC<TableCellProps> = props => {
+export const AlarmImageCell: FC<TableCellProps> = props => {
   const { field, cell, tableStyles, cellProps } = props;
 
   const dataValue = field.values.get(cell.row.index);
