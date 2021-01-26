@@ -8,8 +8,7 @@ import { IconsPalette } from './IconsPalette';
 
 
 interface State {
-  selectedIconId: number | undefined
-  showIconPopup: boolean
+  selectedRow: number,
 }
 
 export class AlarmThresholdEditor extends PureComponent<FieldOverrideEditorProps<AlarmThresholdProps, any>, State> {
@@ -17,8 +16,7 @@ export class AlarmThresholdEditor extends PureComponent<FieldOverrideEditorProps
   constructor(props: Readonly<FieldOverrideEditorProps<AlarmThresholdProps, any>>) {
     super(props);
     this.state = {
-      selectedIconId: undefined,
-      showIconPopup: false
+      selectedRow: -1,
     };
   }
 
@@ -90,38 +88,20 @@ export class AlarmThresholdEditor extends PureComponent<FieldOverrideEditorProps
 
     let almLims = (this.props.value as unknown as AlarmThreshold[]);
 
-    var foundItem = almLims.filter(lim => lim.iconId === this.state.selectedIconId)[0];
-
-    //console.log("thresholdIconchanged: current:" + foundItem.iconId + " new: "+ iconId);
+    var foundItem = almLims[this.state.selectedRow];
 
     foundItem.iconId = iconId;
 
-    this.setState({ selectedIconId: iconId, showIconPopup: false });
+    this.forceUpdate();
   }
-
-  //private onIconChanged(newId: number) {
-
-  //}
 
   private getThresholdView(alarmThreshold: AlarmThreshold, index: number) {
 
-    //const iconRenderer: IconRenderer = new IconRenderer(alarmThreshold.iconId, this.changeThresholdIcon);
+    //console.log("getThresholdView: index: " + index);
+
     const iconRenderer: IconRenderer = new IconRenderer(alarmThreshold.iconId, (id) => { });
 
     let iconPalette = IconsPalette({ onChange: (id) => this.thresholdIconchanged(id), theme: {} as GrafanaTheme });
-
-    //const alarmIcons: IconRenderer[] = [];
-
-    //alarmIconIds.forEach((id, index, alarmIconIds) => {
-
-    //  alarmIcons.push(new IconRenderer(id, this.changeThresholdIcon));
-    //});
-
-    //const alarmIcons: SelectableValue<string>[] = [SelectableValue{value:'34'}, '1231', '43412'];
-
-    //const r = createRef<any>();
-
-    //{ this.renderPopup(alarmThreshold) }
 
     return (
 
@@ -132,7 +112,7 @@ export class AlarmThresholdEditor extends PureComponent<FieldOverrideEditorProps
             <div className="css-1w5c5dq-input-inputWrapper">
               <div className="css-13qljrm-input-prefix" >
 
-                <div className="css-1ikfeb0" style={{ color: alarmThreshold.color, cursor: 'pointer' }} onClick={() => this.changeThresholdIcon(alarmThreshold.iconId)}  >
+                <div className="css-1ikfeb0" style={{ color: alarmThreshold.color, cursor: 'pointer' }} onClick={() => this.changeSelectedRow(index)}  >
                   {iconRenderer.render()}
                 </div>
 
@@ -153,7 +133,7 @@ export class AlarmThresholdEditor extends PureComponent<FieldOverrideEditorProps
 
         </div>
 
-        <div onMouseLeave={() => this.hideIconPopup()} hidden={!(this.state.showIconPopup && (alarmThreshold.iconId == this.state.selectedIconId))} >
+        <div onMouseLeave={() => this.hideIconPopup()} hidden={!(index == this.state.selectedRow)} >
           <div style={{ paddingBottom: '6px' }} >
             Color:
             <div className="css-1ikfeb0" style={{ paddingLeft: '6px' }}>
@@ -175,12 +155,13 @@ export class AlarmThresholdEditor extends PureComponent<FieldOverrideEditorProps
   }
 
   hideIconPopup() {
-    this.setState({ showIconPopup: false });
+    this.setState({ selectedRow: -1 });
   }
 
-  changeThresholdIcon(iconId: number) {
-    //console.log("changeThresholdIcon: " + iconId);
-    this.setState({ selectedIconId: iconId, showIconPopup: !this.state.showIconPopup });
+  changeSelectedRow(index: number) {
+    //console.log("changeSelectedRow: " + index);
+
+    this.setState({ selectedRow: index == this.state.selectedRow ? -1 : index });
   }
 
   onChangeThresholdColor(alarmThreshold: AlarmThreshold, color: string): void {
@@ -206,9 +187,9 @@ export class AlarmThresholdEditor extends PureComponent<FieldOverrideEditorProps
       for (let i = 0; i < almLims.length; i++) {
 
         if (almLims[i] === almThresh) {
+
           almLims[i].value = parseFloat(value);
           this.forceUpdate();
-
           break;
         }
       }

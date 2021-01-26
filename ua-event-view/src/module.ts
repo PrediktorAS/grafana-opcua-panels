@@ -23,8 +23,8 @@ export const plugin = new PanelPlugin<UAAEPanelOptions>(UAAEPanel)
 
           id: 'alarmthresholds',
           path: 'alarmthresholds',
-          name: 'Alarm Thresholds',
-          description: 'Alarm Thresholds icon/color configuration',
+          name: 'Alarm Image Thresholds',
+          description: 'Alarm Image Thresholds icon/color configuration',
           editor: AlarmThresholdEditor,
           override: AlarmThresholdEditor,
           process: identityOverrideProcessor,
@@ -56,14 +56,14 @@ export const plugin = new PanelPlugin<UAAEPanelOptions>(UAAEPanel)
           settings: {
             options: [
               { value: TableCellDisplayMode.Auto, label: 'Auto' },
+              { value: TableCellDisplayMode.AlarmImage, label: 'AlarmImage' },
+              { value: TableCellDisplayMode.BooleanImage, label: 'AlarmBooleanImage' },
               { value: TableCellDisplayMode.ColorText, label: 'Color text' },
               { value: TableCellDisplayMode.ColorBackground, label: 'Color background' },
               { value: TableCellDisplayMode.GradientGauge, label: 'Gradient gauge' },
               { value: TableCellDisplayMode.LcdGauge, label: 'LCD gauge' },
               { value: TableCellDisplayMode.BasicGauge, label: 'Basic gauge' },
               { value: TableCellDisplayMode.JSONView, label: 'JSON View' },
-              { value: TableCellDisplayMode.AlarmImage, label: 'AlarmImage' },
-              { value: TableCellDisplayMode.BooleanImage, label: 'AlarmBooleanImage' },
             ],
           },
         })

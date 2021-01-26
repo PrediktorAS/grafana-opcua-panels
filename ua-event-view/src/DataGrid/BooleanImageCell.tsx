@@ -26,7 +26,7 @@ export const BooleanImageCell: FC<TableCellProps> = props => {
     let stepsSorted = alarmThresholdProps.alarmthresholds.sort((a, b) => {
       if (a.value == b.value)
         return 0;
-      return a.value < b.value ? -1 : 1;
+      return a.value > b.value ? -1 : 1;
     });
 
     for (let i = 0; stepsSorted != undefined && i < stepsSorted?.length; i++) {
@@ -57,7 +57,7 @@ export const BooleanImageCell: FC<TableCellProps> = props => {
 
     <div {...restProps} className={tableStyles.cellContainer}>
 
-      <div style={{ color: iconColor, paddingRight: '4px' }}>
+      <div style={{ color: iconColor, paddingRight: '10px' }}>
         {iconRenderer.render()}
       </div >
       <div style={{ color: textColor }}>

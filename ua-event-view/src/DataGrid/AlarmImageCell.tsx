@@ -24,7 +24,7 @@ export const AlarmImageCell: FC<TableCellProps> = props => {
       let stepsSorted = alarmThresholdProps.alarmthresholds.sort((a, b) => {
         if (a.value == b.value)
           return 0;
-        return a.value < b.value ? -1 : 1;
+        return a.value > b.value ? -1 : 1;
       });
 
       for (let i = 0; stepsSorted != undefined && i < stepsSorted?.length; i++) {
@@ -32,10 +32,10 @@ export const AlarmImageCell: FC<TableCellProps> = props => {
         if (step != undefined && valueAsFloat > step.value) {
           iconColor = step.color;
           iconId = step.iconId;
+          break;
         }
       }
     }
-
 
   }
 
@@ -54,7 +54,7 @@ export const AlarmImageCell: FC<TableCellProps> = props => {
 
 
 
-      <div style={{ color: iconColor, paddingRight: '4px' }}>
+      <div style={{ color: iconColor, paddingRight: '10px' }}>
         {iconRenderer.render()}
       </div >
 
