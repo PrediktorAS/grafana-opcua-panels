@@ -4,7 +4,7 @@ import { DashboardData, OpcUaBrowseResults, OpcUaNodeInfo, SimpleOptions, Relati
 import { css, cx } from 'emotion';
 import { stylesFactory} from '@grafana/ui';
 import { DataSourceWithBackend, getDataSourceSrv } from '@grafana/runtime';
-import { getDashboard } from './UaDashboardResolver';
+import { getDashboard, getDashboardData } from './UaDashboardResolver';
 //import { getDashboardSrv } from "@grafana/runtime/services/backendSrv";
 
 interface Props extends PanelProps<SimpleOptions> {}
@@ -19,7 +19,7 @@ interface State {
 }
 
 interface DashboardMap {
-  node: OpcUaNodeInfo,
+  node: string,
   dashboard: DashboardData | null
 }
 
@@ -96,9 +96,6 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
     this.getDataSource();
     const objectId = this.props.replaceVariables('$ObjectId');
 
-    //http://localhost:3000/api/dashboards/db/pumplooptype
-    //DashboardModel
-
     this.browse(objectId).then((result) => {
       var promises = new Array();
       var dbs: DashboardMap[] = [];
@@ -110,7 +107,7 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
 
       Promise.all(promises).then((dashboarddatas: DashboardData[]) => {
         for (let i = 0; i < dashboarddatas.length; i++) {
-          dbs.push({ dashboard: dashboarddatas[i], node: result[i] });
+          dbs.push({ dashboard: dashboarddatas[i], node: result[i].nodeId });
         }
         this.setState({ dashboards: dbs });
       });
@@ -133,7 +130,7 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
             this.readNode(objectId).then((node) => {
               if (node !== null) {
                 var dbs: DashboardMap[] = [];
-                dbs.push({ dashboard: dashboard, node: node });
+                dbs.push({ dashboard: dashboard, node: node.nodeId });
                 this.setState({ dashboards: dbs });
               }
             });
@@ -199,9 +196,9 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
     if (this.state.dashboards !== null) {
       let dsCount = this.state.dashboards.length;
       if (dsCount > 0) {
-        let height = this.props.height / dsCount;
+        let height = (this.props.height - 0) / dsCount;
         let width = this.props.width;
-        return <>{this.state.dashboards.map((object, i) => this.renderDashboardIFrame(object.node.nodeId, this.state.fromDate, this.state.toDate, this.state.refresh,
+        return <>{this.state.dashboards.map((object, i) => this.renderDashboardIFrame(object.node, this.state.fromDate, this.state.toDate, this.state.refresh,
           object.dashboard != null ? object.dashboard.url : "", width, height))}</>;
       }
     }
@@ -245,10 +242,29 @@ export class UaDashboardPanel extends PureComponent<Props, State> {
     else {
       if (this.props.options.dashboardFetch === "Children")
         this.fetchChildrenDashboards();
+      else if (this.props.options.dashboardFetch === "NamedDashboard")
+        this.fetchNamedDashboard();
       else
         this.fetchDashboard();
       return <></>;
     }
+  }
+
+
+  fetchNamedDashboard() {
+
+    let dashName = this.props.options.namedDashboardName;
+    //console.log("fetchNamedDashboard for: " + dashName);
+
+    getDashboardData(dashName).then((res) => {
+
+      //console.log("fetchNamedDashboard uri: " + res?.url);
+      if (this.state.objectId != null) {
+        let dm: DashboardMap = { dashboard: res, node: this.state.objectId };
+        this.setState({ dashboards: [dm] });
+      }
+    }
+    );
   }
 
   private getFromToTime(urlParams: URLSearchParams) {

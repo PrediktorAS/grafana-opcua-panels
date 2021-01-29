@@ -1,10 +1,11 @@
 
 
-type DashboardFetch = 'Instance' | 'ChildrenIfNotInstance' | 'Children';
+type DashboardFetch = 'Instance' | 'ChildrenIfNotInstance' | 'Children' | 'NamedDashboard';
 
 export interface SimpleOptions {
   dashboardFetch: DashboardFetch;
   maxChildren: number;
+  namedDashboardName: string;
 }
 
 

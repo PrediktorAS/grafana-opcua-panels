@@ -52,6 +52,36 @@ export function getDashboard(nodeId: string, dataSource: DataSourceWithBackend |
 
 }
 
+export function getDashboardData(dashboardName: string): Promise<DashboardData | null> {
+
+  let dashQueryResult = fetch('/api/search?query=' + encodeURI(dashboardName));
+
+  if (dashQueryResult != null) {
+
+    let jsonDash = dashQueryResult.then(res => {
+      if (res != null)
+        return res.json();
+      else
+        return null;
+    });
+
+    if (jsonDash != null) {
+      return jsonDash.then(async res => {
+
+        if (res) {
+          let db = res as DashboardData[];
+          if (db.length > 0) {
+            return db[0];
+          }
+        }
+
+        return null;
+      })
+    }
+  }
+  return new Promise<DashboardData>(() => '');
+
+}
 //export function getDashboard(nodeId: string, dataSource: DataSourceWithBackend | null): Promise<DashboardData | null> {
 
 //  if (dataSource != null) {

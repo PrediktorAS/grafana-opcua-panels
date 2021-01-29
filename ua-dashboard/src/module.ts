@@ -22,6 +22,10 @@ export const plugin = new PanelPlugin<SimpleOptions>(UaDashboardPanel).setPanelO
             value: 'Children',
             label: 'Children',
           },
+          {
+            value: 'NamedDashboard',
+            label: 'Named Dashboard',
+          },
         ],
       }
     })
@@ -29,5 +33,10 @@ export const plugin = new PanelPlugin<SimpleOptions>(UaDashboardPanel).setPanelO
       path: 'maxChildren',
       name: 'Maximum Views',
       defaultValue: 10,
-    });
+    })
+    .addTextInput({
+      path: 'namedDashboardName',
+      name: 'Named Dashboard',
+      defaultValue: ''})
+    ;
 });

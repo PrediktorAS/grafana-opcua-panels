@@ -276,11 +276,35 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
       }
       else {
         let res = this.state.dataSource.getResource('browse', { nodeId: parentId });
-        return res;
+        return res.then((children) => {
+
+          let filtered = children as OpcUaBrowseResults[];
+
+          filtered = this.removeDuplicates(filtered);
+
+          return filtered;
+        });
       }
     }
 
     return new Promise<OpcUaBrowseResults[]>(() => [] );
+  }
+
+  removeDuplicates(brRes: OpcUaBrowseResults[]): OpcUaBrowseResults[] {
+
+    var encounteredSet = new Set();
+
+    const uniqueBrs = brRes.filter((val) => {
+
+      if (encounteredSet.has(val.nodeId))
+        return false;
+
+      encounteredSet.add(val.nodeId);
+
+      return true;
+    });
+
+    return uniqueBrs;
   }
 
   getNamespaces(): Promise<string[]> {
