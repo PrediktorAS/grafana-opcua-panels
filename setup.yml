@@ -42,7 +42,7 @@ steps:
 #grafana-ua-panel
 - task: Yarn@3
   inputs:
-   ProjectDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
+   ProjectDirectory: 'grafana/grafana-ua-panel'
    arguments: install
   displayName: 'grafana-ua-panel install pkgs'
 
@@ -61,7 +61,7 @@ steps:
 #ua-dashboard
 - task: Yarn@3
   inputs:
-   ProjectDirectory: 'Grafana-UA-Panel/ua-dashboard'
+   ProjectDirectory: 'grafana/ua-dashboard'
    arguments: install
   displayName: 'ua-dashboard install pkgs'
 
@@ -87,7 +87,7 @@ steps:
 - task: Yarn@3
   displayName: 'ua-list-view build'
   inputs:
-   projectDirectory: 'Grafana-UA-Panel/ua-list-view'
+   projectDirectory: 'grafana/ua-list-view'
    arguments: 'build'
   
 - task: CopyFiles@2
@@ -107,7 +107,7 @@ steps:
 - task: Yarn@3
   displayName: 'ua-event-view build'
   inputs:
-   projectDirectory: 'Grafana-UA-Panel/ua-event-view'
+   projectDirectory: 'grafana/ua-event-view'
    arguments: 'build'
   
 - task: CopyFiles@2
