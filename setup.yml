@@ -161,6 +161,7 @@ steps:
     command: 'publish'
     arguments: '-c Release'
     publishWebProjects: false
+    zipAfterPublish: false
     projects: 'grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
     
 
