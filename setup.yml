@@ -152,12 +152,14 @@ steps:
   displayName: 'dotnet build'
   inputs:
     command: 'build'
+    arguments: '-c Release'
     projects: 'grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet publish'
   inputs:
     command: 'publish'
+    arguments: '-c Release'
     publishWebProjects: false
     projects: 'grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
     
