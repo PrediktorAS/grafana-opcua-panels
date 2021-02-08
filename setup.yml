@@ -49,13 +49,13 @@ steps:
 - task: Yarn@3
   displayName: 'grafana-ua-panel build'
   inputs:
-   projectDirectory: 'Grafana-UA-Panel/grafana-ua-panel'
+   projectDirectory: 'grafana/grafana-ua-panel'
    arguments: 'build'
   
 - task: CopyFiles@2
   displayName: 'Copy grafana-ua-panel'
   inputs:
-    SourceFolder: '$(agent.builddirectory)/s/Grafana-UA-Panel/grafana-ua-panel/dist'
+    SourceFolder: '$(agent.builddirectory)/s/grafana/grafana-ua-panel/dist'
     Contents: '**'
     TargetFolder: '$(build.artifactstagingdirectory)/binaries/grafana-ua-panel'
 #ua-dashboard
