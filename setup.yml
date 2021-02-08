@@ -149,12 +149,13 @@ steps:
     projects: '**/*.csproj'
 
 - task: DotNetCoreCLI@2
+  displayName: 'dotnet build'
   inputs:
     command: 'build'
     projects: 'grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
 
 - task: DotNetCoreCLI@2
-displayName: 'dotnet publish'
+  displayName: 'dotnet publish'
   inputs:
     command: 'publish'
     publishWebProjects: false
