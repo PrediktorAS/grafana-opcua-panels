@@ -19,13 +19,18 @@ resources:
     endpoint: cfjeld
     name: srclosson/grafana-opcua-datasource
     ref: prediktor-opc-ae
+  - repository: grafanaplugins # The name used to reference this repository in the checkout step
+    type: github
+    endpoint: cfjeld
+    name: PrediktorAS/grafana
+    ref: main
 
 pool:
   name: apis-foundation-master 
   #nofresbld002
 
 steps:
-- checkout: self
+- checkout: grafanaplugins
 - checkout: opcau-datasource
 - task: NodeTool@0
   inputs:
