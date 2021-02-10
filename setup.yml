@@ -3,14 +3,14 @@ variables:
 
 trigger: none
 
-# # NOTE! in UTC !!!
-# schedules:
-# - cron: "0 4 * * *"
-#   #always: true
-#   displayName: Daily build master
-#   branches:
-#     include:
-#     - main
+# NOTE! in UTC !!!
+schedules:
+- cron: "0 4 * * *"
+  #always: true
+  displayName: Daily build master
+  branches:
+    include:
+    - main
 
 resources:
   repositories:
@@ -23,7 +23,7 @@ resources:
     type: github
     endpoint: cfjeld
     name: PrediktorAS/grafana
-    ref: rename_ua_panel
+    ref: self
 
 pool:
   name: apis-foundation-master 
