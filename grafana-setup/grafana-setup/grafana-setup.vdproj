@@ -250,8 +250,8 @@
             }
             "{994432C3-9487-495D-8656-3E829A8DBDDE}:_CF4105DA8C194BA48EA00FD30F60056E"
             {
-            "DefaultLocation" = "8:[TARGETDIR]\\ua-dashboard"
-            "Name" = "8:ua-dashboard"
+            "DefaultLocation" = "8:[TARGETDIR]\\ua-dashboard-container"
+            "Name" = "8:ua-dashboard-container"
             "AlwaysCreate" = "11:FALSE"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
