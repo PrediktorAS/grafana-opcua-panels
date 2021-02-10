@@ -30,11 +30,18 @@ namespace grafanacustomactions
 			throw new ArgumentException("Grafana could not be found on computer.");
 		}
 
+
+
 		protected override void OnBeforeInstall(IDictionary savedState)
 		{
 			base.OnBeforeInstall(savedState);
-			GetGrafanaService();
+			var grafanaService = GetGrafanaService();
+			var grafanaFolder = grafanaService.GetDirectoryName();
+			var targetDir = Context.Parameters["TARGETDIR"];
+			if (targetDir != null && targetDir.StartsWith(grafanaFolder))
+				throw new ArgumentException("Plugins can not be installed in the grafana folder. The installer will copy the plugins to the correct place. Please select another destination for the plugin files.");
 		}
+
 
 		private bool CanDeleteDirectory(string dir, string[] nonRemovables)
 		{
