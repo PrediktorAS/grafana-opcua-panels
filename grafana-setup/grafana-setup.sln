@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ualistviewsetup", "..\ua-li
 		{7947D8D9-DE25-4D65-B35F-781FB4271357} = {7947D8D9-DE25-4D65-B35F-781FB4271357}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uadashboardsetup", "..\ua-dashboard\uadashboardsetup\uadashboardsetup.csproj", "{7947D8D9-DE25-4D65-B35F-781FB4271357}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uadashboardsetup", "..\ua-dashboard-container\uadashboardsetup\uadashboardsetup.csproj", "{7947D8D9-DE25-4D65-B35F-781FB4271357}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F4324FE7-D08E-4444-819A-E2F8868A808D} = {F4324FE7-D08E-4444-819A-E2F8868A808D}
 	EndProjectSection
