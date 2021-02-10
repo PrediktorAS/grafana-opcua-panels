@@ -39,25 +39,25 @@ steps:
   inputs:
     versionSpec: '1.x'
 
-#grafana-ua-panel
+#ua-browser
 - task: Yarn@3
   inputs:
-   ProjectDirectory: 'grafana/grafana-ua-panel'
+   ProjectDirectory: 'grafana/ua-browser'
    arguments: install
-  displayName: 'grafana-ua-panel install pkgs'
+  displayName: 'ua-browser install pkgs'
 
 - task: Yarn@3
-  displayName: 'grafana-ua-panel build'
+  displayName: 'ua-browser build'
   inputs:
-   projectDirectory: 'grafana/grafana-ua-panel'
+   projectDirectory: 'grafana/ua-browser'
    arguments: 'build'
   
 - task: CopyFiles@2
-  displayName: 'Copy grafana-ua-panel'
+  displayName: 'Copy ua-browser'
   inputs:
-    SourceFolder: '$(agent.builddirectory)/s/grafana/grafana-ua-panel/dist'
+    SourceFolder: '$(agent.builddirectory)/s/grafana/ua-browser/dist'
     Contents: '**'
-    TargetFolder: '$(build.artifactstagingdirectory)/binaries/grafana-ua-panel'
+    TargetFolder: '$(build.artifactstagingdirectory)/binaries/ua-browser'
 #ua-dashboard
 - task: Yarn@3
   inputs:

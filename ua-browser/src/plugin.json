@@ -1,6 +1,6 @@
 {
   "type": "panel",
-  "name": "grafana-ua-panel",
+  "name": "ua-browser",
   "id": "prediktor-as-grafana-ua-panel",
   "info": {
     "description": "Create panels for OPC UA sources",
