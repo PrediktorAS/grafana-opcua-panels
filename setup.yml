@@ -10,7 +10,7 @@ schedules:
   displayName: Daily build master
   branches:
     include:
-    - master
+    - main
 
 resources:
   repositories:
