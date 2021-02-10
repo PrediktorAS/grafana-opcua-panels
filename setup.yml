@@ -23,7 +23,6 @@ resources:
     type: github
     endpoint: cfjeld
     name: PrediktorAS/grafana
-    ref: self
 
 pool:
   name: apis-foundation-master 
