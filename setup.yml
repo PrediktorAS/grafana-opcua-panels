@@ -23,6 +23,7 @@ resources:
     type: github
     endpoint: cfjeld
     name: PrediktorAS/grafana
+    ref: rename_ua_panel
 
 pool:
   name: apis-foundation-master 
