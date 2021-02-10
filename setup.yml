@@ -3,14 +3,14 @@ variables:
 
 trigger: none
 
-# NOTE! in UTC !!!
-schedules:
-- cron: "0 4 * * *"
-  #always: true
-  displayName: Daily build master
-  branches:
-    include:
-    - main
+# # NOTE! in UTC !!!
+# schedules:
+# - cron: "0 4 * * *"
+#   #always: true
+#   displayName: Daily build master
+#   branches:
+#     include:
+#     - main
 
 resources:
   repositories:
