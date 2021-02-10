@@ -202,8 +202,8 @@
         {
             "{994432C3-9487-495D-8656-3E829A8DBDDE}:_491B00627989422E88C266B94F9E6A00"
             {
-            "DefaultLocation" = "8:[TARGETDIR]\\grafana-ua-panel"
-            "Name" = "8:grafana-ua-panel"
+            "DefaultLocation" = "8:[TARGETDIR]\\ua-browser"
+            "Name" = "8:ua-browser"
             "AlwaysCreate" = "11:FALSE"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
