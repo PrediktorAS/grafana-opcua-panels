@@ -163,7 +163,7 @@ steps:
     zipAfterPublish: false
     projects: 'grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
 
--task: DotNetCoreCLI@2
+- task: DotNetCoreCLI@2
   displayName: 'pulish linux'
   inputs:
     command: 'publish'
