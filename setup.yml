@@ -162,7 +162,23 @@ steps:
     publishWebProjects: false
     zipAfterPublish: false
     projects: 'grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
-    
+
+-task: DotNetCoreCLI@2
+  displayName: 'pulish linux'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    zipAfterPublish: false
+    arguments: '-c Release -r linux-x64 --self-contained true'
+    projects: 'grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/linux.build.csproj'
+
+- task: CopyFiles@2
+  displayName: 'Copy linux'
+  inputs:
+    SourceFolder: '$(agent.builddirectory)/s/grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/bin/Release/netcoreapp3.1/publish/linux-x64'
+    Contents: '**'
+    TargetFolder: '$(build.artifactstagingdirectory)/binaries/opcua/linux'
+ 
 
 # - task: MSBuild@1
 #   displayName: 'Build backend plugin'
