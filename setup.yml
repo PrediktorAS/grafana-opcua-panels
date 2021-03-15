@@ -177,7 +177,7 @@ steps:
   inputs:
     SourceFolder: '$(agent.builddirectory)/s/grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/bin/Release/netcoreapp3.1/linux-x64/publish'
     Contents: '**'
-    TargetFolder: '$(build.artifactstagingdirectory)/binaries/opcua/linux'
+    TargetFolder: '$(build.artifactstagingdirectory)/binaries/opcua_linux'
  
 
 # - task: MSBuild@1
