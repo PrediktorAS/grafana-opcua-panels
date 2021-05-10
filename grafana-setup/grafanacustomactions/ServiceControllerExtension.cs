@@ -17,13 +17,13 @@ namespace grafanacustomactions
 
         private static string GetImagePath(string serviceName)
         {
-            string registryPath = @"SYSTEM\CurrentControlSet\Services\" + serviceName;
+            string registryPath = @"SYSTEM\CurrentControlSet\Services\Grafana\Parameters";
             RegistryKey keyHKLM = Registry.LocalMachine;
 
             RegistryKey key = keyHKLM.OpenSubKey(registryPath);
             
 
-            string value = key.GetValue("ImagePath").ToString();
+            string value = key.GetValue("AppDirectory").ToString();
             key.Close();
             var s = Environment.ExpandEnvironmentVariables(value);
             char[] c = {'"'};
