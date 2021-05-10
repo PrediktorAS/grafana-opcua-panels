@@ -18,7 +18,6 @@ resources:
     type: github
     endpoint: cfjeld
     name: srclosson/grafana-opcua-datasource
-    ref: master
   - repository: grafanaplugins # The name used to reference this repository in the checkout step
     type: github
     endpoint: cfjeld
