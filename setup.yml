@@ -18,7 +18,7 @@ resources:
     type: github
     endpoint: cfjeld
     name: srclosson/grafana-opcua-datasource
-    ref: prediktor-opc-ae
+    ref: master
   - repository: grafanaplugins # The name used to reference this repository in the checkout step
     type: github
     endpoint: cfjeld
@@ -152,7 +152,7 @@ steps:
   inputs:
     command: 'build'
     arguments: '-c Release'
-    projects: 'grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
+    projects: 'grafana-opcua-datasource/backend/plugin-dotnet.sln'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet publish'
@@ -161,7 +161,7 @@ steps:
     arguments: '-c Release'
     publishWebProjects: false
     zipAfterPublish: false
-    projects: 'grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
+    projects: 'grafana-opcua-datasource/backend/plugin-dotnet.sln'
 
 - task: DotNetCoreCLI@2
   displayName: 'pulish linux'
@@ -170,12 +170,12 @@ steps:
     publishWebProjects: false
     zipAfterPublish: false
     arguments: '-c Release -r linux-x64 --self-contained true'
-    projects: 'grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/.linux.build.csproj'
+    projects: 'grafana-opcua-datasource/backend/.linux.build.csproj'
 
 - task: CopyFiles@2
   displayName: 'Copy linux'
   inputs:
-    SourceFolder: '$(agent.builddirectory)/s/grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/bin/Release/netcoreapp3.1/linux-x64/publish'
+    SourceFolder: '$(agent.builddirectory)/s/grafana-opcua-datasource/backend/bin/Release/netcoreapp3.1/linux-x64/publish'
     Contents: '**'
     TargetFolder: '$(build.artifactstagingdirectory)/binaries/opcua_linux'
  
@@ -190,7 +190,7 @@ steps:
 - task: CopyFiles@2
   displayName: 'Copy setupkit'
   inputs:
-    SourceFolder: '$(agent.builddirectory)/s/grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/bin/Release/netcoreapp3.1/publish'
+    SourceFolder: '$(agent.builddirectory)/s/grafana-opcua-datasource/backend/bin/Release/netcoreapp3.1/publish'
     Contents: '**'
     TargetFolder: '$(build.artifactstagingdirectory)/binaries/opcua'
 

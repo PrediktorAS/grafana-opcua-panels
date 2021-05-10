@@ -18,7 +18,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uadashboardsetup", "..\ua-d
 		{F4324FE7-D08E-4444-819A-E2F8868A808D} = {F4324FE7-D08E-4444-819A-E2F8868A808D}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "plugin-dotnet", "..\..\grafana-opcua-datasource\pkg\dotnet\plugin-dotnet\plugin-dotnet.csproj", "{F4324FE7-D08E-4444-819A-E2F8868A808D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "plugin-dotnet", "..\..\grafana-opcua-datasource\backend\plugin-dotnet.csproj", "{F4324FE7-D08E-4444-819A-E2F8868A808D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uapanelsetup", "..\ua-browser\uapanelsetup\uapanelsetup.csproj", "{FF658FA1-DDB3-4931-BB0C-BF6F28C5F77E}"
 	ProjectSection(ProjectDependencies) = postProject
