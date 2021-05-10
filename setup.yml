@@ -17,7 +17,7 @@ resources:
   - repository: opcua-datasource # The name used to reference this repository in the checkout step
     type: github
     endpoint: cfjeld
-    name: srclosson/opcua-datasource
+    name: PrediktorAS/opcua-datasource
   - repository: grafanaplugins # The name used to reference this repository in the checkout step
     type: github
     endpoint: cfjeld
