@@ -117,20 +117,20 @@ steps:
 #opcua
 - task: Yarn@3
   inputs:
-   ProjectDirectory: 'grafana-opcua-datasource'
+   ProjectDirectory: 'opcua-datasource'
    arguments: install
-  displayName: 'grafana-opcua-datasource install pkgs'
+  displayName: 'opcua-datasource install pkgs'
 
 - task: Yarn@3
-  displayName: 'grafana-opcua-datasource build'
+  displayName: 'opcua-datasource build'
   inputs:
-   projectDirectory: 'grafana-opcua-datasource'
+   projectDirectory: 'opcua-datasource'
    arguments: 'build'
   
 - task: CopyFiles@2
-  displayName: 'Copy grafana-opcua-datasource'
+  displayName: 'Copy opcua-datasource'
   inputs:
-    SourceFolder: '$(agent.builddirectory)/s/grafana-opcua-datasource/dist'
+    SourceFolder: '$(agent.builddirectory)/s/opcua-datasource/dist'
     Contents: '**'
     TargetFolder: '$(build.artifactstagingdirectory)/binaries/opcua'
 
@@ -151,7 +151,7 @@ steps:
   inputs:
     command: 'build'
     arguments: '-c Release'
-    projects: 'grafana-opcua-datasource/backend/plugin-dotnet.sln'
+    projects: 'opcua-datasource/backend/plugin-dotnet.sln'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet publish'
@@ -160,7 +160,7 @@ steps:
     arguments: '-c Release'
     publishWebProjects: false
     zipAfterPublish: false
-    projects: 'grafana-opcua-datasource/backend/plugin-dotnet.sln'
+    projects: 'opcua-datasource/backend/plugin-dotnet.sln'
 
 - task: DotNetCoreCLI@2
   displayName: 'pulish linux'
@@ -169,12 +169,12 @@ steps:
     publishWebProjects: false
     zipAfterPublish: false
     arguments: '-c Release -r linux-x64 --self-contained true'
-    projects: 'grafana-opcua-datasource/backend/.linux.build.csproj'
+    projects: 'opcua-datasource/backend/.linux.build.csproj'
 
 - task: CopyFiles@2
   displayName: 'Copy linux'
   inputs:
-    SourceFolder: '$(agent.builddirectory)/s/grafana-opcua-datasource/backend/bin/Release/netcoreapp3.1/linux-x64/publish'
+    SourceFolder: '$(agent.builddirectory)/s/opcua-datasource/backend/bin/Release/netcoreapp3.1/linux-x64/publish'
     Contents: '**'
     TargetFolder: '$(build.artifactstagingdirectory)/binaries/opcua_linux'
  
@@ -182,14 +182,14 @@ steps:
 # - task: MSBuild@1
 #   displayName: 'Build backend plugin'
 #   inputs:
-#     solution: 'grafana-opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
+#     solution: 'opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
 #     platform: 'Any CPU'
 #     configuration: 'Release'
 
 - task: CopyFiles@2
   displayName: 'Copy setupkit'
   inputs:
-    SourceFolder: '$(agent.builddirectory)/s/grafana-opcua-datasource/backend/bin/Release/netcoreapp3.1/publish'
+    SourceFolder: '$(agent.builddirectory)/s/opcua-datasource/backend/bin/Release/netcoreapp3.1/publish'
     Contents: '**'
     TargetFolder: '$(build.artifactstagingdirectory)/binaries/opcua'
 
