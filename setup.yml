@@ -157,7 +157,7 @@ steps:
   displayName: 'dotnet publish'
   inputs:
     command: 'publish'
-    arguments: '-c Release -r win-x64 --self-contained true'
+    arguments: '-c Release -r Portable --self-contained true'
     publishWebProjects: false
     zipAfterPublish: false
     projects: 'opcua-datasource/backend/plugin-dotnet.sln'
