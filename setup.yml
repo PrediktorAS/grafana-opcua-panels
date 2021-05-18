@@ -186,12 +186,12 @@ steps:
 #     platform: 'Any CPU'
 #     configuration: 'Release'
 
-- task: CopyFiles@2
-  displayName: 'Copy setupkit'
-  inputs:
-    SourceFolder: '$(agent.builddirectory)/s/opcua-datasource/backend/bin/Release/netcoreapp3.1/win-x64/publish'
-    Contents: '**'
-    TargetFolder: '$(build.artifactstagingdirectory)/binaries/opcua'
+#- task: CopyFiles@2
+#  displayName: 'Copy setupkit'
+#  inputs:
+#    SourceFolder: '$(agent.builddirectory)/s/opcua-datasource/backend/bin/Release/netcoreapp3.1/win-x64/publish'
+#    Contents: '**'
+#    TargetFolder: '$(build.artifactstagingdirectory)/binaries/opcua'
 
 - task: DevEnvBuild@2
   displayName: 'Build setupkit'
