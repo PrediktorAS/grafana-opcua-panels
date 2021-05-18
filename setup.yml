@@ -153,14 +153,14 @@ steps:
     arguments: '-c Release'
     projects: 'opcua-datasource/backend/plugin-dotnet.sln'
 
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet publish'
-  inputs:
-    command: 'publish'
-    arguments: '-c Release -r win-x64 --self-contained true -p:PublishTrimmed=true -p:PublishSingleFile=true'
-    publishWebProjects: false
-    zipAfterPublish: false
-    projects: 'opcua-datasource/backend/plugin-dotnet.sln'
+#- task: DotNetCoreCLI@2
+#  displayName: 'dotnet publish'
+#  inputs:
+#    command: 'publish'
+#    arguments: '-c Release -r win-x64 --self-contained true -p:PublishTrimmed=true -p:PublishSingleFile=true'
+#    publishWebProjects: false
+#    zipAfterPublish: false
+#    projects: 'opcua-datasource/backend/plugin-dotnet.sln'
 
 - task: DotNetCoreCLI@2
   displayName: 'pulish linux'
@@ -168,7 +168,7 @@ steps:
     command: 'publish'
     publishWebProjects: false
     zipAfterPublish: false
-    arguments: '-c Release -r linux-x64 --self-contained true -p:PublishTrimmed=true -p:PublishSingleFile=true'
+    arguments: '-c Release -r linux-x64 --self-contained true'
     projects: 'opcua-datasource/backend/.linux.build.csproj'
 
 - task: CopyFiles@2
