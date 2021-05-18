@@ -198,8 +198,8 @@ steps:
   inputs:
     solution: 'grafana/grafana-setup/grafana-setup.sln'
     vsVersion: 'latest'
-    buildCfg: 'Release'
-    buildPlatform: 'Any CPU'
+    buildCfg: 'Setup_Release'
+    buildPlatform: 'x64'
 
 - task: CopyFiles@2
   displayName: 'Copy setupkit'
