@@ -838,7 +838,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_4E9C9A4C95614F2C99259CFB0E583870"
             {
-            "SourcePath" = "8:..\\..\\..\\grafana-opcua-datasource\\pkg\\dotnet\\plugin-dotnet\\obj\\Setup_Release\\netcoreapp3.1\\win-x64\\apphost.exe"
+            "SourcePath" = "8:..\\..\\..\\opcua-datasource\\backend\\obj\\Setup_Release\\netcoreapp3.1\\win-x64\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B03E88E211784DC7935C9C36A31768E1"
