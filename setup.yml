@@ -128,11 +128,18 @@ steps:
    arguments: 'build'
   
 - task: CopyFiles@2
-  displayName: 'Copy opcua-datasource'
+  displayName: 'Copy opcua-datasource Windows'
   inputs:
     SourceFolder: '$(agent.builddirectory)/s/opcua-datasource/dist'
     Contents: '**'
     TargetFolder: '$(build.artifactstagingdirectory)/binaries/opcua'
+
+- task: CopyFiles@2
+  displayName: 'Copy opcua-datasource Linux'
+  inputs:
+    SourceFolder: '$(agent.builddirectory)/s/opcua-datasource/dist'
+    Contents: '**'
+    TargetFolder: '$(build.artifactstagingdirectory)/binaries/opcua_linux'
 
 
 - task: NuGetToolInstaller@1
