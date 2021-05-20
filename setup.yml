@@ -153,30 +153,6 @@ steps:
     arguments: '-c Release'
     projects: 'opcua-datasource/backend/plugin-dotnet.sln'
 
-#- task: DotNetCoreCLI@2
-#  displayName: 'dotnet publish'
-#  inputs:
-#    command: 'publish'
-#    arguments: '-c Release -r win-x64 --self-contained true -p:PublishTrimmed=true -p:PublishSingleFile=true'
-#    publishWebProjects: false
-#    zipAfterPublish: false
-#    projects: 'opcua-datasource/backend/plugin-dotnet.sln'
- 
-
-# - task: MSBuild@1
-#   displayName: 'Build backend plugin'
-#   inputs:
-#     solution: 'opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
-#     platform: 'Any CPU'
-#     configuration: 'Release'
-
-#- task: CopyFiles@2
-#  displayName: 'Copy setupkit'
-#  inputs:
-#    SourceFolder: '$(agent.builddirectory)/s/opcua-datasource/backend/bin/Release/netcoreapp3.1/win-x64/publish'
-#    Contents: '**'
-#    TargetFolder: '$(build.artifactstagingdirectory)/binaries/opcua'
-
 - task: DevEnvBuild@2
   displayName: 'Build setupkit'
   inputs:
@@ -193,6 +169,30 @@ steps:
     TargetFolder: '$(build.artifactstagingdirectory)/setup'
 
 - task: DotNetCoreCLI@2
+  displayName: 'dotnet publish Windows'
+  inputs:
+    command: 'publish'
+    arguments: '-c Release -r win-x64 --self-contained true'
+    publishWebProjects: false
+    zipAfterPublish: false
+    projects: 'opcua-datasource/backend/plugin-dotnet.sln'
+ 
+
+# - task: MSBuild@1
+#   displayName: 'Build backend plugin'
+#   inputs:
+#     solution: 'opcua-datasource/pkg/dotnet/plugin-dotnet/plugin-dotnet.sln'
+#     platform: 'Any CPU'
+#     configuration: 'Release'
+
+- task: CopyFiles@2
+  displayName: 'Copy publish Windows'
+  inputs:
+    SourceFolder: '$(agent.builddirectory)/s/opcua-datasource/backend/bin/Release/netcoreapp3.1/win-x64/publish'
+    Contents: '**'
+    TargetFolder: '$(build.artifactstagingdirectory)/binaries/opcua'
+
+- task: DotNetCoreCLI@2
   displayName: 'pulish linux'
   inputs:
     command: 'publish'
@@ -202,7 +202,7 @@ steps:
     projects: 'opcua-datasource/backend/.linux.build.csproj'
 
 - task: CopyFiles@2
-  displayName: 'Copy linux'
+  displayName: 'Copy publish Linux'
   inputs:
     SourceFolder: '$(agent.builddirectory)/s/opcua-datasource/backend/bin/Release/netcoreapp3.1/linux-x64/publish'
     Contents: '**'
