@@ -81,12 +81,13 @@ export class DashMappingPanel extends Component<Props, State> {
   render() {
 
     let selectedNode = JSON.parse(this.props.selectedNode) as OpcUaBrowseResults;
+    //console.log("Selected node: " + selectedNode?.displayName);
     let selectedNodeType = JSON.parse(this.props.selectedNodeType) as OpcUaBrowseResults;
     let mappedDashboard = JSON.parse(this.props.mappedDashboard) as DashboardData;
     let interfaces = JSON.parse(this.props.interfaces) as OpcUaBrowseResults[];
 
-    let dashKey1 = mappedDashboard?.dashKeys?.length > 0 ? mappedDashboard.dashKeys[0] : "";
-    console.log("mappedDashboard: " + mappedDashboard?.title + " keys: " + mappedDashboard?.dashKeys?.length + " key1: " + dashKey1);
+    //let dashKey1 = mappedDashboard?.dashKeys?.length > 0 ? mappedDashboard.dashKeys[0] : "";
+    //console.log("mappedDashboard: " + mappedDashboard?.title + " keys: " + mappedDashboard?.dashKeys?.length + " key1: " + dashKey1);
 
     let selectedNodeDisplayName: string = " ";
     let selectedNodeTypeDisplayName: string = " ";
@@ -129,7 +130,7 @@ export class DashMappingPanel extends Component<Props, State> {
       let interfaceText = interfaces?.length > 0 ? <div>Interfaces</div> : "";
 
       //console.info("Pre render: this.state.typedefinitionChecked: " + this.state.typedefinitionChecked);
-
+      console.info("Interface count: " + this.state.interfaces?.length);
       return (
         <div style={{
           background: bg,
@@ -467,7 +468,7 @@ export class DashMappingPanel extends Component<Props, State> {
     }
 
     if (mappedDashboard != null) {
-
+      //console.log("Reset 4");
       if (!this.state.mappedDashboardChanged && this.state.mappedDashboard?.id != mappedDashboard.id) {
         this.setState({
           mappedDashboard: mappedDashboard,
@@ -476,7 +477,7 @@ export class DashMappingPanel extends Component<Props, State> {
       }
     }
     else if (this.state.mappedDashboard != null) {
-      //console.log("Reset 4");
+      //console.log("Reset 5");
       this.setState({
         mappedDashboard: null,
         mappedDashboardChanged: false,

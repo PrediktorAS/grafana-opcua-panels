@@ -12,10 +12,13 @@ import SplitPane from 'react-split-pane';
 interface Props extends PanelProps<SimpleOptions> { }
 
 interface State {
-  selectedNode: OpcUaBrowseResults | null, selectedNodeType: OpcUaBrowseResults | null,
+  selectedNode: OpcUaBrowseResults | null,
+  selectedNodeType: OpcUaBrowseResults | null,
   browsePath: QualifiedName[] | null,
-  dataSource: DataSourceWithBackend | null, mappedDashboard: DashboardData | null,
-  dashboards: DashboardData[] | null, interfaces: OpcUaNodeInfo[] | null,
+  dataSource: DataSourceWithBackend | null,
+  mappedDashboard: DashboardData | null,
+  dashboards: DashboardData[] | null,
+  interfaces: OpcUaNodeInfo[] | null,
   panelHeight: number,
   browserHeight: string
   dashMappingHeight: string
@@ -88,18 +91,19 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
             <Browser closeBrowser={() => { }} closeOnSelect={false}
               browse={a => this.browse(a)}
             ignoreRootNode={true} rootNodeId={rootNodeId}
-            onNodeSelectedChanged={(node, browsepath) => this.nodeSelectedChanged(node, browsepath) }>
+            onNodeSelectedChanged={async (node, browsepath) => await this.nodeSelectedChanged(node, browsepath)}>
             </Browser>
           </div>
       </div>;
     }
   }
 
-  private nodeSelectedChanged(node: OpcUaBrowseResults, browsepath: QualifiedName[]) {
+  private async nodeSelectedChanged(node: OpcUaBrowseResults, browsepath: QualifiedName[]) {
 
     console.log("nodeSelectedChanged: " + node?.displayName);
-    let browseType = this.browseReferenceTargets(node.nodeId, "i=40");
-    browseType.then((browseTypes: OpcUaBrowseResults[]) => {
+
+    await this.browseReferenceTargets(node.nodeId, "i=40")
+      .then((browseTypes: OpcUaBrowseResults[]) => {
 
       if (browseTypes?.length > 0) {
 
@@ -115,8 +119,8 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
       }
     });
 
-    let dashboard = getDashboard(node.nodeId, this.state.dataSource);
-    dashboard.then((mappedDashboard: DashboardData | null) => {
+    await getDashboard(node.nodeId, this.state.dataSource)
+      .then((mappedDashboard: DashboardData | null) => {
 
       console.info("mappedDashboard?.title: " + mappedDashboard?.title + " dachKeys: " + mappedDashboard?.dashKeys?.length);
 
@@ -141,65 +145,47 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
 
     if (this.props.options.configMode) {
 
+      let hasInterface = "i=17603";
+      let definedByEquipmentClass = "{\"namespaceUrl\":\"http://www.OPCFoundation.org/UA/2013/01/ISA95\",\"id\":\"i=4919\"}";
+
       let interfaceList = new Array<OpcUaBrowseResults>();
 
-      let hasInterface = "i=17603";
-      let hasInterfacePresent = this.isNodePresentAtServer(hasInterface);
-      hasInterfacePresent.then((present: boolean) => {
+      let ifacesExist = await this.isNodePresentAtServer(hasInterface);
+      console.info("ifacesExist : " + ifacesExist);
 
-        if (present) {
+      if (ifacesExist) {
+        var interfaces = await this.browseReferenceTargets(node.nodeId, hasInterface);
+        for (let i = 0; i < interfaces.length; i++)
+          interfaceList.push(interfaces[i]);
+      }
+      else {
+        console.info("Server does not support interfaces");
+      }
 
-          //console.log("Server supports interfaces");
+      let eqClassExist = await this.isNodePresentAtServer(definedByEquipmentClass);
+      console.info("eqClassExist : " + eqClassExist);
 
-          let interfaces = this.browseReferenceTargets(node.nodeId, hasInterface);
-          interfaces.then((interfaces: OpcUaBrowseResults[]) => {
+      if (eqClassExist) {
+        var eqClasses = await this.browseReferenceTargets(node.nodeId, definedByEquipmentClass);
+        for (let i = 0; i < eqClasses.length; i++)
+          interfaceList.push(eqClasses[i]);
+      }
+      else {
+        console.info("ISA95 not present");
+      }
 
-            for (let i = 0; i < interfaces?.length; i++) {
-              interfaceList.push(interfaces[i]);
-            }
-          });
-        }
-        else {
-          console.warn("Server does not support interfaces");
-        }
-
-      })
-        .then(() => {
-          let definedByEquipmentClass = "{\"namespaceUrl\":\"http://www.OPCFoundation.org/UA/2013/01/ISA95\",\"id\":\"i=4919\"}";
-          let defByEqClass = this.isNodePresentAtServer(definedByEquipmentClass);
-          defByEqClass.then((present: boolean) => {
-
-            if (present) {
-
-              //console.log("ISA95 is present");
-              let eqClasses = this.browseReferenceTargets(node.nodeId, definedByEquipmentClass);
-              eqClasses.then((eqClasses: OpcUaBrowseResults[]) => {
-
-                for (let i = 0; i < eqClasses?.length; i++) {
-                  interfaceList.push(eqClasses[i]);
-                }
-              });
-
-            }
-            else {
-              console.log("ISA95 not present");
-            }
-          });
-        }).then(() => {
-          this.setState({
-            interfaces: interfaceList
-          });
-        });
-
+      this.setState({
+        interfaces: interfaceList
+      });
     }
 
   }
 
-  private isNodePresentAtServer(nodeId:string): Promise<boolean> {
+  private async isNodePresentAtServer(nodeId: string): Promise<boolean> {
 
     if (this.state.dataSource != null) {
 
-      return this.state.dataSource.getResource('isnodepresent', { nodeId: nodeId })
+      return await this.state.dataSource.getResource('isnodepresent', { nodeId: nodeId })
         .then(res => {
 
           if (res) {
@@ -327,23 +313,30 @@ export class UaBrowserPanel extends PureComponent<Props, State> {
 
   }
 
-  browseReferenceTargets(nodeId: string, referenceId: string): Promise<OpcUaBrowseResults[]> {
+  async browseReferenceTargets(nodeId: string, referenceId: string): Promise<OpcUaBrowseResults[]> {
+
+    console.info("browseReferenceTargets: " + nodeId + "   Reference: " + referenceId);
 
     if (this.state.dataSource != null) {
 
-      return this.state.dataSource.getResource('browsereferencetargets', { nodeId: nodeId, referenceId: referenceId })
-      .then(res => {
+      return await this.state.dataSource.getResource('browsereferencetargets', { nodeId: nodeId, referenceId: referenceId })
+        .then(res => {
 
-        if (res) {
-          let interfaces = res as OpcUaBrowseResults[];
-          return interfaces;
-        }
+          if (res) {
+            let referencetargets = res as OpcUaBrowseResults[];
+            //console.info("browseReferenceTargets: " + referencetargets?.length);
+            return referencetargets;
+          }
 
-        return [];
-      });
+          //console.info("browseReferenceTargets: Found nothing");
+          return [];
+        });
+    }
+    else {
+      console.error("browseReferenceTargets: datasource is missing");
+      return new Promise<OpcUaBrowseResults[]>(() => []);
     }
 
-    return new Promise<OpcUaBrowseResults[]>(() => []);
   }
 
 
