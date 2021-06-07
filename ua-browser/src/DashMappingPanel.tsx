@@ -673,14 +673,8 @@ export class DashMappingPanel extends Component<Props, State> {
         updateState = true;
       }
       else {
-        for (let i = 0; i < iFaces?.length; i++) {
 
-          if (converted[i].nodeId != iFaces[i].nodeId) {
-
-            updateState = true;
-            break;
-          }
-        }
+        updateState = this.hasInterfacesChanged(iFaces);
       }
 
       this.setupInterfaceSelection(converted, mappedDashboard);
@@ -692,6 +686,31 @@ export class DashMappingPanel extends Component<Props, State> {
         });
       }
     }
+  }
+
+  private hasInterfacesChanged(iFaces: OpcUaBrowseResults[]) {
+
+    if (this.state.interfaces != null) {
+
+      for (let i = 0; i < iFaces?.length; i++) {
+
+        let isFound = false;
+        for (let j = 0; j < this.state.interfaces.length; j++) {
+
+          if (this.state.interfaces[j].nodeId == iFaces[i].nodeId) {
+            isFound = true;
+            break;
+          }
+        }
+
+        if (!isFound)
+          return true;
+      }
+
+      return false;
+    }
+
+    return true;
   }
 
   private setupInterfaceSelection(iFaces: InterfaceNodeInfo[], mappedDashboard: DashboardData) {
