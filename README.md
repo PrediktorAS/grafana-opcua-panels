@@ -1,23 +1,24 @@
-# Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+# Prediktor OPC UA Panels 
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+These panels lets you browse, list and view data from OPC UA data source plugin 
+* You can find our Grafana OPC UA Data Source plugin at https://github.com/PrediktorAS/opcua-datasource
+
+# Status
+Currently used in production and under active maintenance
 
 # Alarms & Conditions
 See [Alarms & Conditions](AlarmsAndConditions.md) for how to setup Alarms & Conditions with the ua-event-view panel.  
 
 # Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+* `yarn install` to install dependencies
+* `yarn build | yarn dev` to build the plugin
+* `yarn test` to test the plugin
+
+Restart Grafana and you should have the panel plugins installed.
 
 # Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+Contributions are most welcome. Fork the project and commit a PR with your requests.
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+![Prediktor](https://raw.githubusercontent.com/srclosson/grafana-opcua-datasource/master/src/img/PrediktorLogo_thumb.png) is a proud contributor
+Open Software like this project and open standards like OPC UA fits perfectly with our quest to give our clients the freedom to operate. To know more about our offerings and get in touch, check out https://prediktor.com.
+
