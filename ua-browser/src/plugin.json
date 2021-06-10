@@ -1,7 +1,7 @@
 {
   "type": "panel",
-  "name": "ua-browser",
-  "id": "prediktor-as-grafana-ua-panel",
+  "name": "prediktor-opc-ua-browser",
+  "id": "prediktor-opc-ua-browser",
   "info": {
     "description": "Create panels for OPC UA sources",
     "author": {
@@ -19,11 +19,11 @@
     "links": [
       {
         "name": "Website",
-        "url": "https://github.com/grafana/simple-react-panel"
+        "url": "https://github.com/PrediktorAS/grafana/tree/main/ua-browser"
       },
       {
         "name": "License",
-        "url": "https://github.com/grafana/simple-react-panel/blob/master/LICENSE"
+        "url": "https://github.com/PrediktorAS/grafana/tree/main/ua-browser/LICENSE"
       }
     ],
     "screenshots": [],

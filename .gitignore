@@ -358,3 +358,15 @@ MigrationBackup/
 .ionide/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio
+
+# Allow project releases folder
+!ua-browser/releases
+!ua-dashboard-container/releases
+!ua-event-view/releases
+!ua-list-view/releases
+
+#ignore dist copy folder
+ua-browser/prediktor-opc-ua-browser-*
+ua-dashboard-container/prediktor-opc-ua-dashboard-container-*
+ua-event-view/prediktor-opc-ua-event-view-*
+ua-list-view/prediktor-opc-ua-list-view-*

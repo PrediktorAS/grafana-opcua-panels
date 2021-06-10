@@ -1,7 +1,7 @@
 {
   "type": "panel",
-  "name": "ua-event-view",
-  "id": "prediktor-as-ua-event-view",
+  "name": "prediktor-opc-ua-event-view",
+  "id": "prediktor-opc-ua-event-view",
   "info": {
     "description": "A plugin for visualization of alarms and events",
     "author": {
@@ -21,11 +21,11 @@
     "links": [
       {
         "name": "Website",
-        "url": "https://github.com/grafana/simple-react-panel"
+        "url": "https://github.com/PrediktorAS/grafana/tree/main/ua-event-view"
       },
       {
         "name": "License",
-        "url": "https://github.com/grafana/simple-react-panel/blob/master/LICENSE"
+        "url": "https://github.com/PrediktorAS/grafana/tree/main/ua-event-view/LICENSE"
       }
     ],
     "screenshots": [],

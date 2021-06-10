@@ -1,7 +1,7 @@
 {
   "type": "panel",
-  "name": "ua-list-view",
-  "id": "prediktor-a-s-ua-list-view",
+  "name": "prediktor-opc-ua-list-view",
+  "id": "prediktor-opc-ua-list-view",
   "info": {
     "description": "Lists ua variables in a list",
     "author": {
@@ -9,7 +9,7 @@
       "url": "www.prediktor.com"
     },
     "keywords": [
-      "ua opc prediktor"
+      "opc ua prediktor"
     ],
     "logos": {
       "small": "img/logo.svg",
@@ -18,11 +18,11 @@
     "links": [
       {
         "name": "Website",
-        "url": "https://github.com/grafana/simple-react-panel"
+        "url": "https://github.com/PrediktorAS/grafana/tree/main/ua-list-view"
       },
       {
         "name": "License",
-        "url": "https://github.com/grafana/simple-react-panel/blob/master/LICENSE"
+        "url": "https://github.com/PrediktorAS/grafana/tree/main/ua-list-view/LICENSE"
       }
     ],
     "screenshots": [],

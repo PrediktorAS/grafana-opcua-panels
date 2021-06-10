@@ -1,5 +1,5 @@
 {
-  "name": "prediktor-opc-ua-browser-panel",
+  "name": "prediktor-opc-ua-browser",
   "version": "1.0.0",
   "description": "Panel for OPC UA datasource browse",
   "scripts": {
