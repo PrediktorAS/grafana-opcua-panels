@@ -1,4 +1,7 @@
-# Prediktor OPC UA Panels 
+> <i><b>Please note: These plugins are developed as open sources contributions are not actively maintained by Prediktor AS. Use at your own risk and contribute with code by forking out and creating a PR against this repo</b></i>.
+
+
+# Prediktor OPC UA Panels
 
 These panels lets you browse, list and view data from OPC UA data source plugin 
 * You can find our Grafana OPC UA Data Source plugin at https://github.com/PrediktorAS/opcua-datasource
