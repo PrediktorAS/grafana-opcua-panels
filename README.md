@@ -1,4 +1,4 @@
-> <i><b>Please note: These plugins are developed as open sources contributions are not actively maintained by Prediktor AS. Use at your own risk and feel free to contribute with code as described further down.</b></i>.
+> <i><b>Please note: These plugins are developed as open sources contributions and ARE NOT actively maintained by Prediktor AS. Use at your own risk and feel free to contribute with code as described further down.</b></i>.
 
 
 # Prediktor Panels for the OPC UA DataSource
