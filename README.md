@@ -1,13 +1,12 @@
-> <i><b>Please note: These plugins are developed as open sources contributions are not actively maintained by Prediktor AS. Use at your own risk and contribute with code by forking out and creating a PR against this repo</b></i>.
+> <i><b>Please note: These plugins are developed as open sources contributions are not actively maintained by Prediktor AS. Use at your own risk and feel free to contribute with code as described further down.</b></i>.
 
 
-# Prediktor OPC UA Panels
+# Prediktor Panels for the OPC UA DataSource
 
-These panels lets you browse, list and view data from OPC UA data source plugin 
-* You can find our Grafana OPC UA Data Source plugin at https://github.com/PrediktorAS/opcua-datasource
+These panels lets you browse, list and view data from [OPC UA data source plugin](https://grafana.com/grafana/plugins/grafana-opcua-datasource/)
 
 # Status
-Currently used in production and under active maintenance
+Has been used in production but are not under active maintenance
 
 # Alarms & Conditions
 See [Alarms & Conditions](AlarmsAndConditions.md) for how to setup Alarms & Conditions with the ua-event-view panel.  
